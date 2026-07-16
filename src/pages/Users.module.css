@@ -1,0 +1,73 @@
+.card {
+  flex: 1;
+  overflow: auto;
+}
+
+.userCell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  min-width: 30px;
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #FFFFFF;
+  flex-shrink: 0;
+}
+
+.badgeAdmin {
+  background-color: var(--menu-active-bg);
+  border-color: rgba(14, 107, 82, 0.2);
+  color: var(--primary-color);
+}
+
+.badgeActive {
+  background-color: rgba(34, 160, 107, 0.12);
+  border-color: rgba(34, 160, 107, 0.24);
+  color: var(--success-color);
+}
+
+.badgeInactive {
+  background-color: rgba(192, 57, 43, 0.1);
+  border-color: rgba(192, 57, 43, 0.2);
+  color: var(--danger-color);
+}
+
+.rowActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.resetPasswordHint {
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.resetPasswordValueRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: var(--surface-elevated);
+}
+
+.resetPasswordValue {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--text-primary);
+}

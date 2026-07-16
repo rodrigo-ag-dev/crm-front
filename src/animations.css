@@ -1,0 +1,100 @@
+/* Shared keyframes + a handful of motion utility classes used across the app.
+   Page/component-level animations (funnel columns, layout chrome) define their
+   own local @keyframes inside their CSS module and don't depend on this file. */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}
+
+@keyframes modalBackdropFadeIn {
+  from { background-color: transparent; }
+  to { background-color: var(--modal-backdrop); }
+}
+
+@keyframes modalContentPopIn {
+  from { opacity: 0; transform: scale(0.96) translateY(-16px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Skeleton loading placeholder */
+.skeleton {
+  background: linear-gradient(90deg, var(--surface-elevated) 0%, var(--surface-color) 50%, var(--surface-elevated) 100%);
+  background-size: 1000px 100%;
+  animation: shimmer 1.6s infinite;
+}
+
+/* Underline-on-hover for inline links (skips nav items, which manage their own state) */
+a:not([class]) {
+  transition: color 0.2s ease;
+}
+
+a:not([class])::before {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -2px;
+  left: 0;
+  background-color: var(--primary-color);
+  transition: width 0.2s ease;
+}
+
+a:not([class]):hover::before {
+  width: 100%;
+}
+
+/* Validation feedback draws attention without being jarring */
+.form-feedback,
+.funnel-error {
+  animation: shake 0.3s ease-in-out, fadeIn 0.2s ease-out;
+}
+
+/* Respect users who'd rather not see motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* User-configurable animation toggle (Configurações > Aparência) */
+.animations-disabled,
+.animations-disabled * {
+  animation: none !important;
+  transition: none !important;
+}

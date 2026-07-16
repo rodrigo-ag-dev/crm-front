@@ -1,0 +1,485 @@
+.appContainer {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg-gradient);
+}
+
+/* ── Icon rail ── */
+.rail {
+  width: 64px;
+  flex-shrink: 0;
+  background: var(--sidebar-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 0;
+  border-right: 1px solid var(--border-color);
+  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.04);
+  position: relative;
+  z-index: 100;
+}
+
+.rail::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0) 40%);
+  pointer-events: none;
+}
+
+.railBrand {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: var(--sidebar-brand-bg);
+  color: var(--sidebar-brand-icon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid rgba(11, 106, 82, 0.16);
+}
+
+.railNav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.railDivider {
+  width: 28px;
+  height: 1px;
+  background: var(--border-color);
+  margin: 6px 0;
+}
+
+.railItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  color: var(--text-secondary);
+  transition: background-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+  position: relative;
+}
+
+.railItem:hover {
+  background-color: var(--sidebar-hover);
+  color: var(--text-primary);
+}
+
+.railItem.active {
+  background: var(--sidebar-active);
+  color: var(--sidebar-active-accent);
+  box-shadow: inset 0 0 0 1px rgba(14, 107, 82, 0.08);
+}
+
+.railTooltip {
+  position: absolute;
+  left: calc(100% + 12px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--surface-color);
+  color: var(--text-primary);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 6px 11px;
+  border-radius: 7px;
+  white-space: nowrap;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.12s ease, transform 0.12s ease;
+  z-index: 100010;
+}
+
+.railItem:hover .railTooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(2px, -50%);
+}
+
+.railTooltipArrow,
+.railTooltipBorder {
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+}
+
+.railTooltipBorder {
+  transform: translateY(-50%);
+  border-right: 7px solid var(--border-color);
+}
+
+.railTooltipArrow {
+  transform: translate(1px, -50%);
+  border-right: 6px solid var(--surface-color);
+}
+
+/* ── Main content ── */
+.mainContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+/* Topbar */
+.topbar {
+  height: 52px;
+  background: var(--surface-color);
+  border-bottom: 1px solid var(--topbar-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 22px;
+  box-shadow: var(--topbar-shadow);
+  position: relative;
+  z-index: 100000;
+  overflow: visible;
+  flex-shrink: 0;
+}
+
+.topbarLeft {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.hamburgerButton {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  flex-shrink: 0;
+}
+
+.hamburgerButton:hover {
+  background-color: var(--surface-elevated);
+}
+
+.railOverlay {
+  display: none;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  flex-shrink: 0;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.backButton:hover {
+  background-color: var(--surface-elevated);
+  color: var(--text-primary);
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.breadcrumbHome {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: -0.2px;
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+
+.breadcrumbHome:hover {
+  color: var(--primary-color);
+}
+
+.breadcrumbHomeCurrent {
+  color: var(--text-primary);
+}
+
+.breadcrumbSeparator {
+  flex-shrink: 0;
+  color: var(--text-light);
+}
+
+.breadcrumbCurrent {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pageContent {
+  flex: 1;
+  padding: 22px 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.25s ease-out;
+}
+
+/* Topbar account */
+.layoutShell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.layoutAccountWrapper {
+  position: relative;
+}
+
+.topbarSearchButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  background: var(--surface-elevated);
+  padding: 7px 12px;
+  border-radius: 50px;
+  border: 1px solid var(--border-color);
+  font-size: 13px;
+  transition: background-color 0.18s ease, border-color 0.18s ease;
+}
+
+.topbarSearchButton:hover {
+  background-color: var(--control-hover-bg);
+  border-color: var(--primary-color);
+}
+
+.topbarSearchKbd {
+  font-size: 11px;
+  font-family: inherit;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.topbarAccountButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+  background: var(--surface-elevated);
+  padding: 7px 14px;
+  border-radius: 50px;
+  border: 1px solid var(--border-color);
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: background-color 0.18s ease, border-color 0.18s ease;
+}
+
+.topbarAccountButton:hover {
+  background-color: var(--control-hover-bg) !important;
+  border-color: var(--primary-color);
+}
+
+.topbarAccountStatusIcon {
+  transition: color 0.2s ease;
+}
+
+.topbarAccountStatusIconChecking {
+  color: var(--warning-color);
+}
+
+.topbarAccountStatusIconOnline {
+  color: var(--success-color);
+}
+
+.topbarAccountStatusIconOffline {
+  color: var(--danger-color);
+}
+
+.topbarAccountMenu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 100001;
+  width: 252px;
+  padding: 8px;
+  border-radius: 14px;
+  background: var(--surface-color);
+  border: 1px solid var(--surface-border);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.topbarAccountHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 10px 12px;
+  border-bottom: 1px solid var(--surface-border);
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.topbarAccountName {
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+.topbarAccountOffline {
+  margin-top: 2px;
+  font-size: 11.5px;
+  color: var(--danger-color);
+  font-weight: 600;
+}
+
+.topbarAccountItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+.topbarAccountItem:hover {
+  background-color: var(--menu-hover-bg);
+  color: var(--primary-color);
+}
+
+.topbarAccountItem.active {
+  background-color: var(--menu-active-bg);
+  color: var(--primary-color);
+}
+
+.topbarAccountLanguage {
+  padding-top: 4px;
+  border-top: 1px solid var(--surface-border);
+  margin-top: 2px;
+}
+
+.topbarAccountTheme {
+  padding-top: 4px;
+  border-top: 1px solid var(--surface-border);
+}
+
+.topbarAccountLogout {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  color: var(--danger-color);
+  font-size: 13.5px;
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--surface-border);
+  font-family: inherit;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  margin-top: 2px;
+  transition: background-color 0.18s ease;
+}
+
+.topbarAccountLogout:hover {
+  background-color: var(--menu-danger-hover-bg);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 640px) {
+  .hamburgerButton {
+    display: flex;
+  }
+
+  .rail {
+    position: fixed;
+    inset: 0 auto 0 0;
+    height: 100vh;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+    z-index: 100050;
+  }
+
+  .rail.railOpen {
+    transform: translateX(0);
+  }
+
+  .railOverlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 100040;
+  }
+
+  .topbar {
+    padding: 0 12px;
+  }
+
+  .pageContent {
+    padding: 16px 12px;
+  }
+
+  .topbarPageTitle {
+    font-size: 13px;
+  }
+
+  .layoutShell {
+    gap: 8px;
+  }
+
+  .topbarAccountButton span {
+    display: none;
+  }
+
+  .topbarSearchButton span,
+  .topbarSearchKbd {
+    display: none;
+  }
+
+  .topbarAccountButton {
+    padding: 8px;
+  }
+
+  .topbarAccountMenu {
+    width: min(280px, calc(100vw - 32px));
+  }
+}

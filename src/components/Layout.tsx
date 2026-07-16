@@ -1,0 +1,310 @@
+import React, { useEffect, useRef, useState } from 'react';
+import { Outlet, NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { useTranslation } from '../hooks/useTranslation';
+import { useHealthCheck } from '../hooks/useHealthCheck';
+import { LanguageSelector } from './LanguageSelector';
+import { ThemeSelector } from './ThemeSelector';
+import { CommandPalette } from './CommandPalette';
+import { ChangePasswordGate } from './ChangePasswordGate';
+import styles from './Layout.module.css';
+import {
+  LayoutDashboard,
+  Users,
+  Building2,
+  Briefcase,
+  LogOut,
+  UserCircle,
+  Ticket,
+  SlidersHorizontal,
+  Search,
+  Menu,
+  X,
+  ArrowLeft,
+  ChevronRight,
+} from 'lucide-react';
+
+type NavItem = {
+  to: string;
+  icon: React.ElementType;
+  labelKey: string;
+  end?: boolean;
+};
+
+const RAIL_ITEMS: NavItem[] = [
+  { to: '/deals', icon: Briefcase, labelKey: 'navigation.deals' },
+  { to: '/tickets', icon: Ticket, labelKey: 'navigation.tickets', end: true },
+  { to: '/companies', icon: Building2, labelKey: 'navigation.companies' },
+  { to: '/contacts', icon: Users, labelKey: 'navigation.contacts' },
+];
+
+const PAGE_TITLE_MAP: Record<string, string> = {
+  '/': 'navigation.dashboard',
+  '/deals': 'navigation.deals',
+  '/companies': 'navigation.companies',
+  '/contacts': 'navigation.contacts',
+  '/tickets': 'navigation.tickets',
+  '/settings': 'navigation.settings',
+};
+
+const PAGE_TITLE_PREFIXES: [string, string][] = [
+  ['/deals/', 'navigation.deals'],
+  ['/companies/', 'navigation.companies'],
+  ['/contacts/', 'navigation.contacts'],
+  ['/tickets/', 'navigation.tickets'],
+];
+
+const resolvePageTitleKey = (pathname: string): string => {
+  if (PAGE_TITLE_MAP[pathname]) return PAGE_TITLE_MAP[pathname];
+  const match = PAGE_TITLE_PREFIXES.find(([prefix]) => pathname.startsWith(prefix));
+  return match?.[1] ?? 'navigation.dashboard';
+};
+
+interface RailLinkProps {
+  to: string;
+  icon: React.ElementType;
+  label: string;
+  end?: boolean;
+  onClick?: () => void;
+}
+
+const RailLink: React.FC<RailLinkProps> = ({ to, icon: Icon, label, end, onClick }) => (
+  <NavLink
+    to={to}
+    end={end}
+    aria-label={label}
+    onClick={onClick}
+    className={({ isActive }) => `${styles.railItem} ${isActive ? styles.active : ''}`}
+  >
+    <Icon size={20} />
+    <span className={styles.railTooltip}>
+      {label}
+      <span className={styles.railTooltipBorder} />
+      <span className={styles.railTooltipArrow} />
+    </span>
+  </NavLink>
+);
+
+export const Layout: React.FC = () => {
+  const { user, signOut } = useAuth();
+  const { t } = useTranslation();
+  const { isOnline, isChecking } = useHealthCheck();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [railOpen, setRailOpen] = useState(false);
+  const accountMenuRef = useRef<HTMLDivElement | null>(null);
+  const railRef = useRef<HTMLElement | null>(null);
+
+  const displayName = user?.firstName || user?.username || user?.email || t('navigation.settings');
+  const fullName = user?.fullName || user?.username || user?.email || t('navigation.settings');
+
+  const currentPageKey = resolvePageTitleKey(location.pathname);
+  const pageTitle = t(currentPageKey);
+  const isDashboard = location.pathname === '/';
+  const canGoBack = Boolean(
+    typeof window !== 'undefined' && (window.history.state as { idx?: number } | null)?.idx,
+  );
+
+  const handleLogout = () => {
+    setAccountMenuOpen(false);
+    signOut();
+    navigate('/login');
+  };
+
+  const closeAccountMenu = () => setAccountMenuOpen(false);
+  const closeRail = () => setRailOpen(false);
+
+  useEffect(() => {
+    if (!accountMenuOpen) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!accountMenuRef.current?.contains(event.target as Node)) {
+        closeAccountMenu();
+      }
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') closeAccountMenu();
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [accountMenuOpen]);
+
+  useEffect(() => {
+    if (!railOpen) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!railRef.current?.contains(event.target as Node)) {
+        closeRail();
+      }
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') closeRail();
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [railOpen]);
+
+
+  useEffect(() => {
+    const handleShortcut = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        setCommandPaletteOpen((prev) => !prev);
+      }
+    };
+    document.addEventListener('keydown', handleShortcut);
+    return () => document.removeEventListener('keydown', handleShortcut);
+  }, []);
+
+  return (
+    <div className={styles.appContainer}>
+      {railOpen && <div className={styles.railOverlay} onClick={closeRail} />}
+
+      <aside ref={railRef} className={`${styles.rail}${railOpen ? ` ${styles.railOpen}` : ''}`}>
+        <div className={styles.railBrand} title={t('navigation.crmPro')}>
+          <Briefcase size={18} color="white" />
+        </div>
+
+        <nav className={styles.railNav}>
+          <RailLink to="/" end icon={LayoutDashboard} label={t('navigation.dashboard')} onClick={closeRail} />
+
+          <div className={styles.railDivider} />
+
+          {RAIL_ITEMS.map((item) => (
+            <RailLink key={item.to} to={item.to} end={item.end} icon={item.icon} label={t(item.labelKey)} onClick={closeRail} />
+          ))}
+        </nav>
+      </aside>
+
+      <main className={styles.mainContent}>
+        <header className={styles.topbar}>
+          <div className={styles.topbarLeft}>
+            <button
+              type="button"
+              className={styles.hamburgerButton}
+              onClick={() => setRailOpen((v) => !v)}
+              aria-label={railOpen ? t('navigation.closeMenu') : t('navigation.openMenu')}
+              aria-expanded={railOpen}
+            >
+              {railOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+            {canGoBack && (
+              <button
+                type="button"
+                className={styles.backButton}
+                onClick={() => navigate(-1)}
+                title={t('common.back')}
+                aria-label={t('common.back')}
+              >
+                <ArrowLeft size={16} />
+              </button>
+            )}
+
+            <nav className={styles.breadcrumb} aria-label="breadcrumb">
+              <Link
+                to="/"
+                className={`${styles.breadcrumbHome}${isDashboard ? ` ${styles.breadcrumbHomeCurrent}` : ''}`}
+              >
+                {t('navigation.dashboard')}
+              </Link>
+              {!isDashboard && (
+                <>
+                  <ChevronRight size={14} className={styles.breadcrumbSeparator} aria-hidden="true" />
+                  <span className={styles.breadcrumbCurrent}>{pageTitle}</span>
+                </>
+              )}
+            </nav>
+          </div>
+
+          <div className={styles.layoutShell}>
+            <button
+              type="button"
+              className={styles.topbarSearchButton}
+              onClick={() => setCommandPaletteOpen(true)}
+            >
+              <Search size={16} />
+              <span>{t('commandPalette.placeholder')}</span>
+              <kbd className={styles.topbarSearchKbd}>Ctrl K</kbd>
+            </button>
+            <div ref={accountMenuRef} className={styles.layoutAccountWrapper}>
+              <button
+                type="button"
+                onClick={() => setAccountMenuOpen((v) => !v)}
+                className={styles.topbarAccountButton}
+                aria-label={displayName}
+                aria-expanded={accountMenuOpen}
+                title={isOnline ? t('common.backendOnline') : t('common.backendOffline')}
+              >
+                <UserCircle
+                  size={22}
+                  className={`${styles.topbarAccountStatusIcon} ${
+                    isChecking
+                      ? styles.topbarAccountStatusIconChecking
+                      : isOnline
+                      ? styles.topbarAccountStatusIconOnline
+                      : styles.topbarAccountStatusIconOffline
+                  }`}
+                />
+                <span>{displayName}</span>
+              </button>
+
+              {accountMenuOpen && (
+                <div className={styles.topbarAccountMenu}>
+                  <div className={styles.topbarAccountHeader}>
+                    <UserCircle size={28} />
+                    <div>
+                      <div className={styles.topbarAccountName}>{fullName}</div>
+                      {!isOnline && !isChecking && (
+                        <div className={styles.topbarAccountOffline}>{t('common.backendOffline')}</div>
+                      )}
+                    </div>
+                  </div>
+
+                  <NavLink
+                    to="/settings"
+                    onClick={closeAccountMenu}
+                    className={({ isActive }) => `${styles.topbarAccountItem} ${isActive ? styles.active : ''}`}
+                  >
+                    <SlidersHorizontal size={16} />
+                    {t('settings.title')}
+                  </NavLink>
+
+                  <div className={styles.topbarAccountLanguage}>
+                    <LanguageSelector />
+                  </div>
+                  <div className={styles.topbarAccountTheme}>
+                    <ThemeSelector variant="compact" label={t('settings.appearanceTitle')} />
+                  </div>
+
+                  <button type="button" onClick={handleLogout} className={styles.topbarAccountLogout}>
+                    <LogOut size={16} />
+                    {t('common.logout')}
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </header>
+
+        <div className={styles.pageContent}>
+          <Outlet />
+        </div>
+      </main>
+
+      <CommandPalette isOpen={commandPaletteOpen} onClose={() => setCommandPaletteOpen(false)} />
+      <ChangePasswordGate />
+    </div>
+  );
+};

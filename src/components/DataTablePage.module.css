@@ -1,0 +1,106 @@
+.pageShell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.pageToolbar {
+  flex-shrink: 0;
+}
+
+.titleGroup {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.toolbarActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+  .pageHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .toolbarActions {
+    width: 100%;
+  }
+
+  .toolbarActions > * {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.pageMainCard {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding-bottom: 16px;
+}
+
+.searchBar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 320px;
+  margin-bottom: 16px;
+}
+
+.searchBar :global(.form-group) {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.tableScrollArea {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: auto;
+  transition: opacity 0.2s ease;
+}
+
+.tableScrollArea table {
+  min-width: 560px;
+}
+
+.tableScrollAreaLoading {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.paginationBar {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.paginationActions {
+  display: flex;
+  gap: 8px;
+}
+
+.iconButton {
+  padding: 8px;
+  display: flex;
+  align-items: center;
+}

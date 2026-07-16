@@ -1,0 +1,160 @@
+.wrapper {
+  width: 100%;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.triggerButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 2px solid var(--border-color);
+  background: var(--surface-color);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  font-size: 14px;
+  font-weight: 500;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.triggerButton:hover {
+  background: var(--control-hover-bg);
+  border-color: var(--border-light);
+}
+
+.triggerButton:focus-visible {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px var(--focus-ring-color);
+}
+
+.triggerSwatchGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.triggerSwatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 2px solid var(--border-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+  flex-shrink: 0;
+}
+
+.triggerHex {
+  font-size: 13px;
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+}
+
+.dropdown {
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: var(--shadow-lg);
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+.section {
+  margin-bottom: 12px;
+}
+
+.section:last-child {
+  margin-bottom: 0;
+}
+
+.sectionLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.swatchGrid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 8px;
+}
+
+.swatchGrid--presets {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.swatch {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  border: 2px solid var(--border-color);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.swatch:hover {
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+}
+
+.swatch--preset {
+  width: 40px;
+  height: 40px;
+  border-color: transparent;
+}
+
+.swatch--selected {
+  border-color: var(--text-primary);
+  box-shadow: 0 0 0 2px var(--surface-color), 0 0 0 4px var(--text-primary);
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin-top: 12px;
+}
+
+.customRow {
+  border-top: 1px solid var(--border-color);
+  padding-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.colorInput {
+  width: 50px;
+  height: 40px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  background: var(--surface-color);
+  padding: 2px;
+}
+
+.hexInput {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--surface-color);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+}
+
+.hexInput:focus-visible {
+  border-color: var(--primary-color);
+  outline: none;
+}

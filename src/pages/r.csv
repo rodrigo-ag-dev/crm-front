@@ -1,0 +1,300 @@
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('d8e0cb3a-b0ce-4e3a-96e4-f4d5e61ebff8', 'Equalisolucoes', 'Equali', 'milenerocha.alimentos@gmai.com', '48996706015', '23e123123123123', '', true, '2026-05-18 13:02:49.520', '2026-05-18 13:02:49.520');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000001', 'Solare Tecnologia Ltda', 'Solare', 'contato@solaretecnologia.com.br', '48) 99999-0001', 'Desenvolvimento de software', '12.345.678/0001-01', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000002', 'VerdeLogistica S/A', 'VerdeLog', 'comercial@verdelogistica.com.br', '48) 99999-0002', 'Transporte e logística', '23.456.789/0001-02', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000003', 'Alfa Consultoria Empresarial', 'AlfaCons', 'contato@alfaconsultoria.com.br', '48) 99999-0003', 'Consultoria empresarial', '34.567.890/0001-03', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000004', 'PontoSaude Farmacêutica', 'PontoSaude', 'sac@pontosaude.com.br', '48) 99999-0004', 'Distribuição farmacêutica', '45.678.901/0001-04', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000005', 'CasaVerde Construções', 'CasaVerde', 'contato@casaverdeconstrucao.com.br', '48) 99999-0005', 'Construção civil e obras', '56.789.012/0001-05', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000006', 'Nexo Marketing Digital', 'Nexo', 'hello@nexomarketing.com.br', '48) 99999-0006', 'Agência de marketing digital', '67.890.123/0001-06', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000007', 'Aurora Energias Renováveis', 'Aurora', 'contato@auroraenergia.com.br', '48) 99999-0007', 'Projetos de energia solar', '78.901.234/0001-07', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000008', 'MundoTec Eletrônicos', 'MundoTec', 'vendas@mundotec.com.br', '48) 99999-0008', 'Comércio de eletrônicos', '89.012.345/0001-08', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000009', 'BioAlimentos Indústria', 'BioAlimentos', 'contato@bioalimentos.com.br', '48) 99999-0009', 'Indústria alimentícia', '90.123.456/0001-09', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000010', 'Horizon Serviços Financeiros', 'Horizon', 'financeiro@horizonservicos.com.br', '48) 99999-0010', 'Serviços financeiros e crédito', '01.234.567/0001-10', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000011', 'Lumen Arquitetura', 'Lumen', 'contato@lumenarquitetura.com.br', '48) 99999-0011', 'Arquitetura e design', '11.223.344/0001-11', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000012', 'TecnoAgro Soluções Agrícolas', 'TecnoAgro', 'suporte@tecnoagro.com.br', '48) 99999-0012', 'Tecnologia para agricultura', '22.334.455/0001-12', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000013', 'VivaModa Comércio', 'VivaModa', 'contato@vivamoda.com.br', '48) 99999-0013', 'Varejo de moda', '33.445.566/0001-13', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000014', 'Atlas Engenharia', 'Atlas', 'contato@atlasengenharia.com.br', '48) 99999-0014', 'Engenharia civil e projetos', '44.556.677/0001-14', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000015', 'Café do Porto Ltda', 'CafePorto', 'contato@cafeporto.com.br', '48) 99999-0015', 'Torrefação e cafeteria', '55.667.788/0001-15', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000016', 'BlueWave Tecnologia Marinha', 'BlueWave', 'contato@bluewave.com.br', '48) 99999-0016', 'Soluções para indústria naval', '66.778.899/0001-16', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000017', 'EcoLimpo Serviços Ambientais', 'EcoLimpo', 'contato@ecolimpo.com.br', '48) 99999-0017', 'Gestão ambiental e limpeza', '77.889.900/0001-17', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000018', 'PrimeLog Sistemas', 'PrimeLog', 'suporte@primelog.com.br', '48) 99999-0018', 'Sistemas de gestão logística', '88.990.011/0001-18', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000019', 'Veritas Educação', 'Veritas', 'contato@veritaseducacao.com.br', '48) 99999-0019', 'Cursos e treinamentos', '99.101.112/0001-19', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000020', 'Orbit Telecomunicações', 'Orbit', 'vendas@orbittelecom.com.br', '48) 99999-0020', 'Serviços de telecom', '10.111.213/0001-20', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000021', 'NaturaTech Biotecnologia', 'NaturaTech', 'contato@naturatech.com.br', '48) 99999-0021', 'Biotecnologia e pesquisa', '21.121.314/0001-21', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000022', 'Mercatto Atacadista', 'Mercatto', 'comercial@mercatto.com.br', '48) 99999-0022', 'Atacado e distribuição', '32.232.425/0001-22', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000023', 'Pixel Studio Criativo', 'PixelStudio', 'contato@pixelstudio.com.br', '48) 99999-0023', 'Design e produção audiovisual', '43.343.536/0001-23', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000024', 'SafeBank Soluções de Pagamento', 'SafeBank', 'suporte@safebank.com.br', '48) 99999-0024', 'Plataforma de pagamentos', '54.454.647/0001-24', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000025', 'VerdeMar Pesca e Exportação', 'VerdeMar', 'export@verdemar.com.br', '48) 99999-0025', 'Pesca e exportação de pescado', '65.565.758/0001-25', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000026', 'SmartHome Automação', 'SmartHome', 'contato@smarthome.com.br', '48) 99999-0026', 'Automação residencial', '76.676.869/0001-26', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000027', 'VitaClin Saúde Integrada', 'VitaClin', 'contato@vitaclin.com.br', '48) 99999-0027', 'Clínica médica e exames', '87.787.980/0001-27', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000028', 'EcoPack Embalagens Sustentáveis', 'EcoPack', 'vendas@ecopack.com.br', '48) 99999-0028', 'Embalagens recicláveis', '98.898.091/0001-28', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000029', 'AlphaSeg Segurança Eletrônica', 'AlphaSeg', 'suporte@alphaseg.com.br', '48) 99999-0029', 'Soluções de segurança', '19.909.101/0001-29', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000030', 'GreenFoods Distribuição', 'GreenFoods', 'contato@greenfoods.com.br', '48) 99999-0030', 'Distribuição de alimentos orgânicos', '20.020.202/0001-30', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000031', 'OrbitData Analytics', 'OrbitData', 'contato@orbitdata.com.br', '48) 99999-0031', 'Análise de dados e BI', '31.131.313/0001-31', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000032', 'CasaBella Decorações', 'CasaBella', 'vendas@casabella.com.br', '48) 99999-0032', 'Decoração e móveis', '42.242.424/0001-32', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000033', 'AutoPrime Peças e Serviços', 'AutoPrime', 'contato@autoprime.com.br', '48) 99999-0033', 'Oficina e peças automotivas', '53.353.535/0001-33', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000034', 'Luz & Cia Iluminação', 'LuzCia', 'contato@luzecia.com.br', '48) 99999-0034', 'Comércio de iluminação', '64.464.646/0001-34', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000035', 'FreshMarket Hortifruti', 'FreshMarket', 'contato@freshmarket.com.br', '48) 99999-0035', 'Hortifruti e perecíveis', '75.575.757/0001-35', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000036', 'Skyline Imobiliária', 'Skyline', 'contato@skylineimobiliaria.com.br', '48) 99999-0036', 'Intermediação imobiliária', '86.686.868/0001-36', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000037', 'ByteSecure TI', 'ByteSecure', 'contato@bytesecure.com.br', '48) 99999-0037', 'Segurança da informação', '97.797.979/0001-37', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000038', 'Flor & Arte Eventos', 'FlorArte', 'contato@florearteeventos.com.br', '48) 99999-0038', 'Organização de eventos', '08.808.808/0001-38', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000039', 'OceanView Turismo', 'OceanView', 'reservas@oceanviewturismo.com.br', '48) 99999-0039', 'Agência de viagens', '18.918.918/0001-39', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000040', 'BioClean Produtos de Limpeza', 'BioClean', 'vendas@bioclean.com.br', '48) 99999-0040', 'Produtos de limpeza ecológicos', '29.029.029/0001-40', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000041', 'PrimeHealth Suprimentos Médicos', 'PrimeHealth', 'contato@primehealth.com.br', '48) 99999-0041', 'Suprimentos para saúde', '30.130.130/0001-41', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000042', 'EcoMove Transporte Sustentável', 'EcoMove', 'contato@ecomove.com.br', '48) 99999-0042', 'Transporte sustentável', '41.241.241/0001-42', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000043', 'StudioVerde Paisagismo', 'StudioVerde', 'contato@studioverde.com.br', '48) 99999-0043', 'Paisagismo e jardinagem', '52.352.352/0001-43', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000044', 'NextGen Robótica', 'NextGen', 'contato@nextgenrobotica.com.br', '48) 99999-0044', 'Robótica industrial', '63.463.463/0001-44', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000045', 'BellaCasa Imóveis', 'BellaCasa', 'contato@bellacasa.com.br', '48) 99999-0045', 'Corretora de imóveis', '74.574.574/0001-45', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000046', 'AgroPrime Sementes', 'AgroPrime', 'vendas@agroprime.com.br', '48) 99999-0046', 'Produção e venda de sementes', '85.685.685/0001-46', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000047', 'CineMax Entretenimento', 'CineMax', 'contato@cinemax.com.br', '48) 99999-0047', 'Produção de conteúdo audiovisual', '96.796.796/0001-47', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000048', 'FreshBrew Cafeteria', 'FreshBrew', 'contato@freshbrew.com.br', '48) 99999-0048', 'Rede de cafeterias', '07.707.707/0001-48', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000049', 'TechBridge Consultoria TI', 'TechBridge', 'contato@techbridge.com.br', '48) 99999-0049', 'Consultoria em TI', '17.817.817/0001-49', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000050', 'VerdeVivo Agricultura Urbana', 'VerdeVivo', 'contato@verdevivo.com.br', '48) 99999-0050', 'Agricultura urbana e hortas', '27.927.927/0001-50', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000051', 'NovaEra Consultoria RH', 'NovaEra', 'contato@novaerahr.com.br', '48) 99999-0051', 'Recursos humanos e recrutamento', '38.038.038/0001-51', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000052', 'Solaris Arquitetura Paisagística', 'Solaris', 'contato@solarispaisagismo.com.br', '48) 99999-0052', 'Paisagismo e urbanismo', '48.148.148/0001-52', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000053', 'MobiFit Equipamentos Esportivos', 'MobiFit', 'vendas@mobifit.com.br', '48) 99999-0053', 'Equipamentos esportivos', '58.258.258/0001-53', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000054', 'ClearWater Tratamento de Água', 'ClearWater', 'contato@clearwater.com.br', '48) 99999-0054', 'Sistemas de tratamento de água', '68.368.368/0001-54', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000055', 'EcoRide Bicicletas Elétricas', 'EcoRide', 'contato@ecoride.com.br', '48) 99999-0055', 'Fabricação de bicicletas elétricas', '78.478.478/0001-55', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000056', 'AlphaFoods Restaurante', 'AlphaFoods', 'reservas@alphafoods.com.br', '48) 99999-0056', 'Restaurante e catering', '88.588.588/0001-56', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000057', 'GreenBuild Materiais Sustentáveis', 'GreenBuild', 'vendas@greenbuild.com.br', '48) 99999-0057', 'Materiais de construção sustentáveis', '98.698.698/0001-57', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000058', 'NovaMídia Produções', 'NovaMidia', 'contato@novamidia.com.br', '48) 99999-0058', 'Produção de mídia e eventos', '09.809.809/0001-58', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000059', 'SafeHome Seguros', 'SafeHome', 'contato@safehome.com.br', '48) 99999-0059', 'Corretora de seguros', '19.919.919/0001-59', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000060', 'BioSense Diagnósticos', 'BioSense', 'contato@biosense.com.br', '48) 99999-0060', 'Laboratório de diagnósticos', '29.029.929/0001-60', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000061', 'UrbanMove Mobilidade', 'UrbanMove', 'contato@urbanmove.com.br', '48) 99999-0061', 'Soluções de mobilidade urbana', '39.139.139/0001-61', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000062', 'EcoPrint Impressão Sustentável', 'EcoPrint', 'contato@ecoprint.com.br', '48) 99999-0062', 'Serviços de impressão ecológica', '49.249.249/0001-62', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000063', 'SmartMed Tecnologia Médica', 'SmartMed', 'contato@smartmed.com.br', '48) 99999-0063', 'Equipamentos médicos', '59.359.359/0001-63', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000064', 'BlueSky Consultoria Ambiental', 'BlueSky', 'contato@blueskyambiental.com.br', '48) 99999-0064', 'Consultoria ambiental', '69.469.469/0001-64', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000065', 'CasaVerde Paisagens', 'CasaVerdePais', 'contato@casaverdepaisagens.com.br', '48) 99999-0065', 'Paisagismo residencial', '79.579.579/0001-65', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000066', 'TechWave Desenvolvimento', 'TechWave', 'contato@techwave.com.br', '48) 99999-0066', 'Desenvolvimento de software sob medida', '89.689.689/0001-66', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000067', 'GreenLine Logística Verde', 'GreenLine', 'contato@greenline.com.br', '48) 99999-0067', 'Logística com foco em sustentabilidade', '99.799.799/0001-67', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000068', 'VitaPlus Suplementos', 'VitaPlus', 'vendas@vitaplus.com.br', '48) 99999-0068', 'Suplementos alimentares', '10.010.010/0001-68', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000069', 'NovaForma Academia', 'NovaForma', 'contato@novaforma.com.br', '48) 99999-0069', 'Academia e bem-estar', '20.120.120/0001-69', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000070', 'EcoFoods Produtos Naturais', 'EcoFoods', 'vendas@ecofoods.com.br', '48) 99999-0070', 'Alimentos naturais e orgânicos', '30.230.230/0001-70', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000071', 'BrightLaw Advocacia', 'BrightLaw', 'contato@brightlaw.com.br', '48) 99999-0071', 'Serviços jurídicos', '40.340.340/0001-71', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000072', 'OceanTech Soluções Marinhas', 'OceanTech', 'contato@oceantech.com.br', '48) 99999-0072', 'Tecnologia para o setor marítimo', '50.450.450/0001-72', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000073', 'GreenLeaf Horticultura', 'GreenLeaf', 'contato@greenleaf.com.br', '48) 99999-0073', 'Produção de plantas e flores', '60.560.560/0001-73', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000074', 'SmartBuild Engenharia', 'SmartBuild', 'contato@smartbuild.com.br', '48) 99999-0074', 'Engenharia e construção modular', '70.670.670/0001-74', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000075', 'BioVida Cosméticos', 'BioVida', 'contato@biovidacosmeticos.com.br', '48) 99999-0075', 'Cosméticos naturais', '80.780.780/0001-75', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000076', 'UrbanArt Galeria', 'UrbanArt', 'contato@urbanart.com.br', '48) 99999-0076', 'Galeria de arte contemporânea', '90.890.890/0001-76', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000077', 'FreshWave Alimentos', 'FreshWave', 'contato@freshwave.com.br', '48) 99999-0077', 'Processamento de alimentos', '01.901.901/0001-77', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000078', 'TechLab Inovação', 'TechLab', 'contato@techlab.com.br', '48) 99999-0078', 'Laboratório de inovação tecnológica', '11.011.011/0001-78', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000079', 'GreenWave Energia', 'GreenWave', 'contato@greenwave.com.br', '48) 99999-0079', 'Projetos de energia renovável', '21.121.121/0001-79', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000080', 'BellaFlor Floricultura', 'BellaFlor', 'contato@bellaflor.com.br', '48) 99999-0080', 'Floricultura e arranjos', '31.231.231/0001-80', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000081', 'NovaTrack Rastreamento', 'NovaTrack', 'contato@novatrack.com.br', '48) 99999-0081', 'Sistemas de rastreamento veicular', '41.341.341/0001-81', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000082', 'EcoStyle Moda Sustentável', 'EcoStyle', 'contato@ecostyle.com.br', '48) 99999-0082', 'Moda sustentável', '51.451.451/0001-82', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000083', 'PrimeTech Hardware', 'PrimeTech', 'vendas@primetech.com.br', '48) 99999-0083', 'Fabricação de hardware', '61.561.561/0001-83', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000084', 'VivaKids Educação Infantil', 'VivaKids', 'contato@vivakids.com.br', '48) 99999-0084', 'Educação infantil', '71.671.671/0001-84', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000085', 'OceanFresh Pescados', 'OceanFresh', 'vendas@oceanfresh.com.br', '48) 99999-0085', 'Processamento de pescados', '81.781.781/0001-85', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000086', 'BrightTech Educação', 'BrightTech', 'contato@brighttech.com.br', '48) 99999-0086', 'Plataforma educacional', '91.891.891/0001-86', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000087', 'GreenCare Serviços', 'GreenCare', 'contato@greencare.com.br', '48) 99999-0087', 'Serviços de cuidado domiciliar', '02.902.902/0001-87', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000088', 'UrbanFoods Delivery', 'UrbanFoods', 'contato@urbanfoods.com.br', '48) 99999-0088', 'Delivery de refeições saudáveis', '12.012.012/0001-88', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000089', 'TechServe Suporte TI', 'TechServe', 'suporte@techserve.com.br', '48) 99999-0089', 'Suporte técnico e manutenção', '22.122.122/0001-89', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000090', 'BioFarm Produtos Naturais', 'BioFarm', 'vendas@biofarm.com.br', '48) 99999-0090', 'Produtos naturais e fitoterápicos', '32.232.232/0001-90', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000091', 'NovaVida Clínica', 'NovaVida', 'contato@novavida.com.br', '48) 99999-0091', 'Clínica multiprofissional', '42.342.342/0001-91', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000092', 'GreenTech Automação Industrial', 'GreenTech', 'contato@greentech.com.br', '48) 99999-0092', 'Automação industrial', '52.452.452/0001-92', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000093', 'BellaKids Brinquedos', 'BellaKids', 'vendas@bellakids.com.br', '48) 99999-0093', 'Fabricação de brinquedos', '62.562.562/0001-93', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000094', 'PrimeConsult Engenharia', 'PrimeConsult', 'contato@primeconsult.com.br', '48) 99999-0094', 'Consultoria em engenharia', '72.672.672/0001-94', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000095', 'EcoMove Soluções Verdes', 'EcoMove2', 'contato@ecomove2.com.br', '48) 99999-0095', 'Consultoria em sustentabilidade', '82.782.782/0001-95', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000096', 'SkyNet Serviços de TI', 'SkyNet', 'contato@skynetservicos.com.br', '48) 99999-0096', 'Serviços gerenciados de TI', '92.892.892/0001-96', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000097', 'GreenWave Consultoria Agrícola', 'GreenWaveAgro', 'contato@greenwaveagro.com.br', '48) 99999-0097', 'Consultoria agrícola', '03.903.903/0001-97', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000098', 'BrightHome Decoração', 'BrightHome', 'contato@brighthome.com.br', '48) 99999-0098', 'Decoração e interiores', '13.013.013/0001-98', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
+INSERT INTO crm.company
+(id, "name", alias, email, phone, description, id_regional, active, updated_at, created_at)
+VALUES('00000000-0000-0000-0000-000000000099', 'NovaEnergia Soluções', 'NovaEnergia', 'contato@novaenergia.com.br', '48) 99999-0099', 'Soluções energéticas', '23.123.123/0001-99', true, '2026-05-18 14:09:00.000', '2026-05-18 14:09:00.000');
