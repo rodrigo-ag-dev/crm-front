@@ -10,9 +10,13 @@ const getStoredToken = () => {
 };
 
 const getApiBaseUrl = () => {
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (envUrl) {
+    return envUrl;
+  }
+
   const protocol = window.location.protocol || 'http:';
   const hostname = window.location.hostname || 'localhost';
-  const port = window.location.port || '5173';
 
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
     return 'http://localhost:8080/api';
