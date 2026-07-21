@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight, Edit2, Trash2 } from 'lucide-react';
+import { ChevronRight, Edit2, Plus, Trash2 } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
 import { getInitials, getAvatarStyle } from '../utils/avatarUtils';
 import styles from './RecordPane.module.css';
@@ -70,15 +70,30 @@ export const RecordPaneEmptyState: React.FC<RecordPaneEmptyStateProps> = ({ text
 interface RelatedSectionProps {
   title: string;
   emptyText: string;
+  onCreate?: () => void;
+  createLabel?: string;
   children: React.ReactNode;
 }
 
-export const RelatedSection: React.FC<RelatedSectionProps> = ({ title, emptyText, children }) => {
+export const RelatedSection: React.FC<RelatedSectionProps> = ({ title, emptyText, onCreate, createLabel, children }) => {
   const hasItems = React.Children.count(children) > 0;
 
   return (
     <div className={`card ${styles.relatedCard}`}>
-      <h3 className={styles.sectionTitle}>{title}</h3>
+      <div className={styles.sectionHeader}>
+        <h3 className={styles.sectionTitle}>{title}</h3>
+        {onCreate && (
+          <button
+            type="button"
+            className={styles.createButton}
+            onClick={onCreate}
+            title={createLabel}
+            aria-label={createLabel}
+          >
+            <Plus size={14} />
+          </button>
+        )}
+      </div>
       {hasItems ? (
         <div className={styles.relatedList}>{children}</div>
       ) : (

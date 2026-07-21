@@ -5,6 +5,9 @@ import api from '../services/api';
 import { useTranslation } from '../hooks/useTranslation';
 import { Modal } from '../components/Modal';
 import { ConfirmModal } from '../components/ConfirmModal';
+import { ContactModal } from '../components/ContactModal';
+import { DealModal } from '../components/DealModal';
+import { TicketModal } from '../components/TicketModal';
 import { SplitViewShell, RecordListRow, CollapsibleSearchBar } from '../components/SplitViewShell';
 import { RecordPane, RecordPaneEmptyState, RelatedItem, RelatedSection } from '../components/RecordPane';
 import Input from '../components/Input';
@@ -68,6 +71,7 @@ export const Companies: React.FC = () => {
   const [contacts, setContacts] = useState<RelatedContact[]>([]);
   const [deals, setDeals] = useState<RelatedDeal[]>([]);
   const [tickets, setTickets] = useState<RelatedTicket[]>([]);
+  const [createRelatedModal, setCreateRelatedModal] = useState<'contact' | 'deal' | 'ticket' | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -248,19 +252,34 @@ export const Companies: React.FC = () => {
                 </div>
 
                 <div className={paneStyles.relatedGrid}>
-                  <RelatedSection title={t('contacts.title')} emptyText={t('contacts.noContacts')}>
+                  <RelatedSection
+                    title={t('contacts.title')}
+                    emptyText={t('contacts.noContacts')}
+                    onCreate={() => setCreateRelatedModal('contact')}
+                    createLabel={t('contacts.createContact')}
+                  >
                     {contacts.map((contact) => (
                       <RelatedItem key={contact.id} to={`/contacts/${contact.id}`} primary={contact.name} secondary={contact.email} />
                     ))}
                   </RelatedSection>
 
-                  <RelatedSection title={t('deals.title')} emptyText={t('deals.noDeals')}>
+                  <RelatedSection
+                    title={t('deals.title')}
+                    emptyText={t('deals.noDeals')}
+                    onCreate={() => setCreateRelatedModal('deal')}
+                    createLabel={t('deals.createDeal')}
+                  >
                     {deals.map((deal) => (
                       <RelatedItem key={deal.id} to={`/deals/${deal.id}`} primary={deal.title} secondary={abbreviateNumber(deal.amount)} />
                     ))}
                   </RelatedSection>
 
-                  <RelatedSection title={t('tickets.title')} emptyText={t('tickets.noTickets')}>
+                  <RelatedSection
+                    title={t('tickets.title')}
+                    emptyText={t('tickets.noTickets')}
+                    onCreate={() => setCreateRelatedModal('ticket')}
+                    createLabel={t('tickets.createTicket')}
+                  >
                     {tickets.map((ticket) => (
                       <RelatedItem key={ticket.id} to={`/tickets/${ticket.id}`} primary={ticket.title} secondary={ticket.contactName} />
                     ))}
@@ -290,6 +309,36 @@ export const Companies: React.FC = () => {
           </div>
         </form>
       </Modal>
+
+      <ContactModal
+        isOpen={createRelatedModal === 'contact'}
+        onClose={() => setCreateRelatedModal(null)}
+        presetCompanyId={id}
+        onContactSaved={() => {
+          setCreateRelatedModal(null);
+          fetchDetail();
+        }}
+      />
+
+      <DealModal
+        isOpen={createRelatedModal === 'deal'}
+        onClose={() => setCreateRelatedModal(null)}
+        presetCompanyId={id}
+        onDealSaved={() => {
+          setCreateRelatedModal(null);
+          fetchDetail();
+        }}
+      />
+
+      <TicketModal
+        isOpen={createRelatedModal === 'ticket'}
+        onClose={() => setCreateRelatedModal(null)}
+        presetCompanyId={id}
+        onTicketSaved={() => {
+          setCreateRelatedModal(null);
+          fetchDetail();
+        }}
+      />
 
       <ConfirmModal
         isOpen={confirmDeleteId != null}

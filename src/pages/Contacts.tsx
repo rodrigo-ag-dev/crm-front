@@ -3,12 +3,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import api from '../services/api';
 import { useTranslation } from '../hooks/useTranslation';
-import { Modal } from '../components/Modal';
 import { ConfirmModal } from '../components/ConfirmModal';
-import { CompanyCombobox } from '../components/CompanyCombobox';
+import { ContactModal } from '../components/ContactModal';
+import { DealModal } from '../components/DealModal';
+import { TicketModal } from '../components/TicketModal';
 import { SplitViewShell, RecordListRow, CollapsibleSearchBar } from '../components/SplitViewShell';
 import { RecordPane, RecordPaneEmptyState, RelatedItem, RelatedSection } from '../components/RecordPane';
-import Input from '../components/Input';
 import { abbreviateNumber } from '../utils/numberUtils';
 import splitStyles from '../components/SplitViewShell.module.css';
 import paneStyles from '../components/RecordPane.module.css';
@@ -39,8 +39,6 @@ interface RelatedTicket {
   companyName?: string;
 }
 
-const emptyContact: Contact = { name: '', alias: '', email: '', phone: '', companyId: '' };
-
 export const Contacts: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -56,9 +54,8 @@ export const Contacts: React.FC = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingContact, setEditingContact] = useState<Contact | null>(null);
-  const [formData, setFormData] = useState<Contact>(emptyContact);
-  const [error, setError] = useState('');
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [createRelatedModal, setCreateRelatedModal] = useState<'deal' | 'ticket' | null>(null);
 
   const [detail, setDetail] = useState<Contact | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
@@ -129,7 +126,6 @@ export const Contacts: React.FC = () => {
 
   const handleOpenModal = (contact?: Contact) => {
     setEditingContact(contact || null);
-    setFormData(contact || emptyContact);
     setIsModalOpen(true);
   };
 
@@ -138,18 +134,9 @@ export const Contacts: React.FC = () => {
     setEditingContact(null);
   };
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    setError('');
-    try {
-      await api.post('/contacts', formData);
-      fetchContacts();
-      if (formData.id === id) fetchDetail();
-      handleCloseModal();
-    } catch (err) {
-      console.error('Error saving contact', err);
-      setError(t('contacts.errorSaving'));
-    }
+  const handleContactSaved = (savedContact: Contact) => {
+    fetchContacts();
+    if (savedContact.id === id) fetchDetail();
   };
 
   const performDelete = async (confirmed: boolean) => {
@@ -162,7 +149,7 @@ export const Contacts: React.FC = () => {
       if (targetId === id) navigate('/contacts');
     } catch (err) {
       console.error('Error deleting contact', err);
-      setError(t('contacts.errorDeleting'));
+      setDetailError(t('contacts.errorDeleting'));
     }
   };
 
@@ -248,13 +235,23 @@ export const Contacts: React.FC = () => {
                     {company && <RelatedItem to={`/companies/${company.id}`} primary={company.name} />}
                   </RelatedSection>
 
-                  <RelatedSection title={t('deals.title')} emptyText={t('deals.noDeals')}>
+                  <RelatedSection
+                    title={t('deals.title')}
+                    emptyText={t('deals.noDeals')}
+                    onCreate={() => setCreateRelatedModal('deal')}
+                    createLabel={t('deals.createDeal')}
+                  >
                     {deals.map((deal) => (
                       <RelatedItem key={deal.id} to={`/deals/${deal.id}`} primary={deal.title} secondary={abbreviateNumber(deal.amount)} />
                     ))}
                   </RelatedSection>
 
-                  <RelatedSection title={t('tickets.title')} emptyText={t('tickets.noTickets')}>
+                  <RelatedSection
+                    title={t('tickets.title')}
+                    emptyText={t('tickets.noTickets')}
+                    onCreate={() => setCreateRelatedModal('ticket')}
+                    createLabel={t('tickets.createTicket')}
+                  >
                     {tickets.map((ticket) => (
                       <RelatedItem key={ticket.id} to={`/tickets/${ticket.id}`} primary={ticket.title} secondary={ticket.companyName} />
                     ))}
@@ -268,22 +265,34 @@ export const Contacts: React.FC = () => {
         />
       </div>
 
-      <Modal isOpen={isModalOpen} onClose={handleCloseModal} title={editingContact ? t('contacts.editContact') : t('contacts.createContact')}>
-        <form autoComplete="off" onSubmit={handleSubmit}>
-          <Input required label={t('contacts.name')} value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
-          <Input label={t('contacts.alias')} value={formData.alias} onChange={(e) => setFormData({ ...formData, alias: e.target.value })} />
-          <Input type="email" label={t('contacts.email')} value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
-          <Input label={t('contacts.phone')} value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} />
-          <CompanyCombobox value={formData.companyId} onChange={(companyId) => setFormData({ ...formData, companyId })} />
+      <ContactModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        initialContact={editingContact}
+        onContactSaved={handleContactSaved}
+      />
 
-          {error && <div className="form-feedback">{error}</div>}
+      <DealModal
+        isOpen={createRelatedModal === 'deal'}
+        onClose={() => setCreateRelatedModal(null)}
+        presetContactId={id}
+        presetCompanyId={company?.id}
+        onDealSaved={() => {
+          setCreateRelatedModal(null);
+          fetchDetail();
+        }}
+      />
 
-          <div className="modal-footer">
-            <button type="button" className="btn-secondary" onClick={handleCloseModal}>{t('common.cancel')}</button>
-            <button type="submit" className="btn-primary">{t('common.save')}</button>
-          </div>
-        </form>
-      </Modal>
+      <TicketModal
+        isOpen={createRelatedModal === 'ticket'}
+        onClose={() => setCreateRelatedModal(null)}
+        presetContactId={id}
+        presetCompanyId={company?.id}
+        onTicketSaved={() => {
+          setCreateRelatedModal(null);
+          fetchDetail();
+        }}
+      />
 
       <ConfirmModal
         isOpen={confirmDeleteId != null}

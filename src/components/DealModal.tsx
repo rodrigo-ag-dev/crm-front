@@ -27,13 +27,17 @@ interface DealModalProps {
   onClose: () => void;
   onDealSaved?: () => void;
   initialDeal?: Deal | null;
+  presetCompanyId?: string;
+  presetContactId?: string;
 }
 
 export const DealModal: React.FC<DealModalProps> = ({
   isOpen,
   onClose,
   onDealSaved,
-  initialDeal = null
+  initialDeal = null,
+  presetCompanyId,
+  presetContactId
 }) => {
   const { t } = useTranslation();
   const [editingDeal, setEditingDeal] = useState<Deal | null>(null);
@@ -68,13 +72,13 @@ export const DealModal: React.FC<DealModalProps> = ({
           closeDateExpected: '',
           amount: 0,
           probability: 0,
-          companyId: '',
+          companyId: presetCompanyId || '',
           stageId: '',
-          contactId: ''
+          contactId: presetContactId || ''
         });
       }
     }
-  }, [isOpen, initialDeal]);
+  }, [isOpen, initialDeal, presetCompanyId, presetContactId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

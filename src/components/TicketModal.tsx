@@ -104,9 +104,18 @@ interface TicketModalProps {
   onClose: () => void;
   onTicketSaved?: (ticket: Ticket) => void;
   initialTicket?: Ticket | null;
+  presetCompanyId?: string;
+  presetContactId?: string;
 }
 
-export const TicketModal: React.FC<TicketModalProps> = ({ isOpen, onClose, onTicketSaved, initialTicket = null }) => {
+export const TicketModal: React.FC<TicketModalProps> = ({
+  isOpen,
+  onClose,
+  onTicketSaved,
+  initialTicket = null,
+  presetCompanyId,
+  presetContactId,
+}) => {
   const { t } = useTranslation();
   const [ticketStages, setTicketStages] = useState<TicketStageOption[]>([]);
   const [saving, setSaving] = useState(false);
@@ -135,9 +144,13 @@ export const TicketModal: React.FC<TicketModalProps> = ({ isOpen, onClose, onTic
     if (initialTicket) {
       setFormData(mapTicketToForm(initialTicket, defaultTicketStageId));
     } else {
-      setFormData(emptyTicket(defaultTicketStageId));
+      setFormData({
+        ...emptyTicket(defaultTicketStageId),
+        companyId: presetCompanyId || '',
+        contactId: presetContactId || '',
+      });
     }
-  }, [isOpen, initialTicket]);
+  }, [isOpen, initialTicket, presetCompanyId, presetContactId]);
 
   const handleClose = () => {
     setErrorMessage('');
