@@ -3,6 +3,7 @@ import { Maximize2, Minimize2, Send } from 'lucide-react';
 import { ticketService, type TicketComment, type TicketCommentType, type TicketStageHistoryEntry } from '../services/ticketService';
 import type { Ticket } from './TicketModal';
 import { useTranslation } from '../hooks/useTranslation';
+import { SimpleDropdown } from './SimpleDropdown';
 import styles from './TicketTimeline.module.css';
 
 interface TicketTimelineProps {
@@ -178,15 +179,16 @@ export const TicketTimeline: React.FC<TicketTimelineProps> = ({ ticketId, ticket
       )}
 
       <form className={styles.composer} onSubmit={handleSendComment}>
-        <select
-          className={styles.composerSelect}
+        <SimpleDropdown
           value={commentType}
-          onChange={(event) => setCommentType(event.target.value as TicketCommentType)}
-        >
-          <option value="CONTACT_MESSAGE">{t('tickets.timeline.type.CONTACT_MESSAGE')}</option>
-          <option value="AGENT_REPLY">{t('tickets.timeline.type.AGENT_REPLY')}</option>
-          <option value="INTERNAL_NOTE">{t('tickets.timeline.type.INTERNAL_NOTE')}</option>
-        </select>
+          onChange={(id) => setCommentType(id as TicketCommentType)}
+          wrapperClassName={styles.composerTypeDropdown}
+          options={[
+            { id: 'CONTACT_MESSAGE', name: t('tickets.timeline.type.CONTACT_MESSAGE') },
+            { id: 'AGENT_REPLY', name: t('tickets.timeline.type.AGENT_REPLY') },
+            { id: 'INTERNAL_NOTE', name: t('tickets.timeline.type.INTERNAL_NOTE') },
+          ]}
+        />
         <textarea
           className={styles.composerTextarea}
           rows={2}

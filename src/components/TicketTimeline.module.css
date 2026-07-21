@@ -155,14 +155,9 @@
   border-top: 1px solid var(--border-color);
 }
 
-.composerSelect {
+.composerTypeDropdown {
   flex: 0 0 auto;
-  padding: 7px 9px;
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-  background-color: var(--surface-color);
-  color: var(--text-primary);
-  font-size: 12px;
+  width: 160px;
 }
 
 .composerTextarea {
@@ -202,8 +197,11 @@
     gap: 10px;
   }
 
-  .composerTextarea,
-  .composerSelect {
+  .composerTextarea {
     font-size: 12px;
+  }
+
+  .composerTypeDropdown {
+    width: 100%;
   }
 }

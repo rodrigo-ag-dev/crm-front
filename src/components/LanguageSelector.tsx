@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Globe } from 'lucide-react';
+import { SimpleDropdown } from './SimpleDropdown';
 
 interface LanguageSelectorProps {
   variant?: 'surface' | 'sidebar';
@@ -19,17 +20,11 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 's
   return (
     <div className={`selector-box ${isSidebar ? 'selector-box--sidebar' : 'selector-box--surface'}`}>
       <Globe size={20} className={isSidebar ? 'selector-icon--sidebar' : 'selector-icon--surface'} />
-      <select
+      <SimpleDropdown
         value={language}
-        onChange={(e) => setLanguage(e.target.value as 'pt-BR' | 'en-US' | 'es-ES')}
-        className={`selector-input ${isSidebar ? 'selector-input--sidebar' : 'selector-input--surface'}`}
-      >
-        {languages.map((lang) => (
-          <option key={lang.code} value={lang.code} className="selector-option">
-            {lang.flag} {lang.label}
-          </option>
-        ))}
-      </select>
+        onChange={(id) => setLanguage(id as 'pt-BR' | 'en-US' | 'es-ES')}
+        options={languages.map((lang) => ({ id: lang.code, name: lang.label, icon: lang.flag }))}
+      />
     </div>
   );
 };
