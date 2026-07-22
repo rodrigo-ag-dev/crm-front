@@ -3,11 +3,11 @@ import { Copy, Edit2, KeyRound, Plus, ShieldMinus, ShieldPlus, UserCheck, UserX 
 import { useTranslation } from '../hooks/useTranslation';
 import { useAuth } from '../contexts/AuthContext';
 import { userService, type UserRecord, type UserRole } from '../services/userService';
-import { tenantService, type TenantRecord } from '../services/tenantService';
 import { getInitials, getAvatarStyle } from '../utils/avatarUtils';
 import { Modal } from '../components/Modal';
 import { ConfirmModal } from '../components/ConfirmModal';
 import Input from '../components/Input';
+import { TenantCombobox } from '../components/TenantCombobox';
 import splitStyles from '../components/SplitViewShell.module.css';
 import styles from './Users.module.css';
 
@@ -16,10 +16,10 @@ interface UserFormData {
   fullName: string;
   email: string;
   password: string;
-  tenantSlug: string;
+  tenantId: string;
 }
 
-const emptyForm: UserFormData = { username: '', fullName: '', email: '', password: '', tenantSlug: '' };
+const emptyForm: UserFormData = { username: '', fullName: '', email: '', password: '', tenantId: '' };
 
 export const Users: React.FC = () => {
   const { t } = useTranslation();
@@ -28,7 +28,6 @@ export const Users: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [updatingId, setUpdatingId] = useState<string | null>(null);
-  const [tenants, setTenants] = useState<TenantRecord[]>([]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<UserRecord | null>(null);
@@ -57,17 +56,6 @@ export const Users: React.FC = () => {
   useEffect(() => {
     fetchUsers();
   }, []);
-
-  useEffect(() => {
-    if (!currentUser?.platformAdmin) {
-      return;
-    }
-    tenantService.listTenants()
-      .then((response) => setTenants(response.data || []))
-      .catch((err) => console.error('Error fetching tenants', err));
-  }, [currentUser?.platformAdmin]);
-
-  const tenantSlugById = (tenantId: string) => tenants.find((t) => t.id === tenantId)?.slug || '';
 
   const handleToggleRole = async (targetUser: UserRecord) => {
     const nextRole: UserRole = targetUser.role === 'ADMIN' ? 'USER' : 'ADMIN';
@@ -122,7 +110,7 @@ export const Users: React.FC = () => {
 
   const handleOpenCreateModal = () => {
     setEditingUser(null);
-    setFormData({ ...emptyForm, tenantSlug: currentUser?.tenantId ? tenantSlugById(currentUser.tenantId) : '' });
+    setFormData({ ...emptyForm, tenantId: currentUser?.tenantId || '' });
     setFormError('');
     setIsModalOpen(true);
   };
@@ -134,7 +122,7 @@ export const Users: React.FC = () => {
       fullName: targetUser.fullName,
       email: targetUser.email,
       password: '',
-      tenantSlug: tenantSlugById(targetUser.tenantId),
+      tenantId: targetUser.tenantId,
     });
     setFormError('');
     setIsModalOpen(true);
@@ -155,7 +143,7 @@ export const Users: React.FC = () => {
           username: formData.username,
           fullName: formData.fullName,
           email: formData.email,
-          tenantSlug: formData.tenantSlug,
+          tenantId: formData.tenantId,
         });
         setUsers((prev) => prev.map((u) => (u.id === editingUser.id ? response.data : u)));
       } else {
@@ -309,19 +297,10 @@ export const Users: React.FC = () => {
             />
           )}
           {currentUser?.platformAdmin && (
-            <div className="form-group">
-              <label className="form-label" htmlFor="user-tenant-select">{t('users.tenant')}</label>
-              <select
-                id="user-tenant-select"
-                className="input-field"
-                value={formData.tenantSlug}
-                onChange={(e) => setFormData((current) => ({ ...current, tenantSlug: e.target.value }))}
-              >
-                {tenants.map((tenant) => (
-                  <option key={tenant.id} value={tenant.slug}>{tenant.name}</option>
-                ))}
-              </select>
-            </div>
+            <TenantCombobox
+              value={formData.tenantId}
+              onChange={(tenantId) => setFormData((current) => ({ ...current, tenantId }))}
+            />
           )}
 
           {formError && <div className="form-feedback">{formError}</div>}

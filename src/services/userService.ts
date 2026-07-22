@@ -19,7 +19,7 @@ export interface CreateUserPayload {
   email: string;
   password: string;
   /** Ignored unless the caller is a platform admin - see userService.listUsers. */
-  tenantSlug?: string;
+  tenantId?: string;
 }
 
 export interface UpdateUserPayload {
@@ -27,7 +27,7 @@ export interface UpdateUserPayload {
   fullName: string;
   email: string;
   /** Ignored unless the caller is a platform admin. */
-  tenantSlug?: string;
+  tenantId?: string;
 }
 
 export interface ResetPasswordResult {

@@ -282,6 +282,7 @@
     "searchContact": "Search contact...",
     "stage": "Stage",
     "searchStage": "Search stage...",
+    "searchTenant": "Search company...",
     "noResults": "No results found"
   },
   "users": {
