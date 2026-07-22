@@ -3,6 +3,7 @@ import { Copy, Edit2, KeyRound, Plus, ShieldMinus, ShieldPlus, UserCheck, UserX 
 import { useTranslation } from '../hooks/useTranslation';
 import { useAuth } from '../contexts/AuthContext';
 import { userService, type UserRecord, type UserRole } from '../services/userService';
+import { tenantService, type TenantRecord } from '../services/tenantService';
 import { getInitials, getAvatarStyle } from '../utils/avatarUtils';
 import { Modal } from '../components/Modal';
 import { ConfirmModal } from '../components/ConfirmModal';
@@ -15,9 +16,10 @@ interface UserFormData {
   fullName: string;
   email: string;
   password: string;
+  tenantSlug: string;
 }
 
-const emptyForm: UserFormData = { username: '', fullName: '', email: '', password: '' };
+const emptyForm: UserFormData = { username: '', fullName: '', email: '', password: '', tenantSlug: '' };
 
 export const Users: React.FC = () => {
   const { t } = useTranslation();
@@ -26,6 +28,7 @@ export const Users: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [tenants, setTenants] = useState<TenantRecord[]>([]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<UserRecord | null>(null);
@@ -54,6 +57,17 @@ export const Users: React.FC = () => {
   useEffect(() => {
     fetchUsers();
   }, []);
+
+  useEffect(() => {
+    if (!currentUser?.platformAdmin) {
+      return;
+    }
+    tenantService.listTenants()
+      .then((response) => setTenants(response.data || []))
+      .catch((err) => console.error('Error fetching tenants', err));
+  }, [currentUser?.platformAdmin]);
+
+  const tenantSlugById = (tenantId: string) => tenants.find((t) => t.id === tenantId)?.slug || '';
 
   const handleToggleRole = async (targetUser: UserRecord) => {
     const nextRole: UserRole = targetUser.role === 'ADMIN' ? 'USER' : 'ADMIN';
@@ -108,14 +122,20 @@ export const Users: React.FC = () => {
 
   const handleOpenCreateModal = () => {
     setEditingUser(null);
-    setFormData(emptyForm);
+    setFormData({ ...emptyForm, tenantSlug: currentUser?.tenantId ? tenantSlugById(currentUser.tenantId) : '' });
     setFormError('');
     setIsModalOpen(true);
   };
 
   const handleOpenEditModal = (targetUser: UserRecord) => {
     setEditingUser(targetUser);
-    setFormData({ username: targetUser.username, fullName: targetUser.fullName, email: targetUser.email, password: '' });
+    setFormData({
+      username: targetUser.username,
+      fullName: targetUser.fullName,
+      email: targetUser.email,
+      password: '',
+      tenantSlug: tenantSlugById(targetUser.tenantId),
+    });
     setFormError('');
     setIsModalOpen(true);
   };
@@ -135,6 +155,7 @@ export const Users: React.FC = () => {
           username: formData.username,
           fullName: formData.fullName,
           email: formData.email,
+          tenantSlug: formData.tenantSlug,
         });
         setUsers((prev) => prev.map((u) => (u.id === editingUser.id ? response.data : u)));
       } else {
@@ -286,6 +307,21 @@ export const Users: React.FC = () => {
               value={formData.password}
               onChange={(e) => setFormData((current) => ({ ...current, password: e.target.value }))}
             />
+          )}
+          {currentUser?.platformAdmin && (
+            <div className="form-group">
+              <label className="form-label" htmlFor="user-tenant-select">{t('users.tenant')}</label>
+              <select
+                id="user-tenant-select"
+                className="input-field"
+                value={formData.tenantSlug}
+                onChange={(e) => setFormData((current) => ({ ...current, tenantSlug: e.target.value }))}
+              >
+                {tenants.map((tenant) => (
+                  <option key={tenant.id} value={tenant.slug}>{tenant.name}</option>
+                ))}
+              </select>
+            </div>
           )}
 
           {formError && <div className="form-feedback">{formError}</div>}

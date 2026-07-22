@@ -18,12 +18,16 @@ export interface CreateUserPayload {
   fullName: string;
   email: string;
   password: string;
+  /** Ignored unless the caller is a platform admin - see userService.listUsers. */
+  tenantSlug?: string;
 }
 
 export interface UpdateUserPayload {
   username: string;
   fullName: string;
   email: string;
+  /** Ignored unless the caller is a platform admin. */
+  tenantSlug?: string;
 }
 
 export interface ResetPasswordResult {
