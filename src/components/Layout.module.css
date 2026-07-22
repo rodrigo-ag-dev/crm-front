@@ -355,6 +355,13 @@
   font-weight: 700;
 }
 
+.topbarAccountTenant {
+  margin-top: 2px;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
 .topbarAccountOffline {
   margin-top: 2px;
   font-size: 11.5px;

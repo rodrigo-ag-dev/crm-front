@@ -266,6 +266,9 @@ export const Layout: React.FC = () => {
                     <UserCircle size={28} />
                     <div>
                       <div className={styles.topbarAccountName}>{fullName}</div>
+                      {user?.tenantName && (
+                        <div className={styles.topbarAccountTenant}>{user.tenantName}</div>
+                      )}
                       {!isOnline && !isChecking && (
                         <div className={styles.topbarAccountOffline}>{t('common.backendOffline')}</div>
                       )}

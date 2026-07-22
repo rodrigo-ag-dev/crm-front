@@ -289,6 +289,7 @@
     "name": "Nombre",
     "username": "Usuario",
     "email": "Correo electrónico",
+    "tenant": "Empresa",
     "password": "Contraseña",
     "passwordPlaceholder": "Mínimo 6 caracteres",
     "role": "Rol",

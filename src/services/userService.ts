@@ -9,6 +9,8 @@ export interface UserRecord {
   email: string;
   role: UserRole;
   active: boolean;
+  tenantId: string;
+  tenantName: string;
 }
 
 export interface CreateUserPayload {

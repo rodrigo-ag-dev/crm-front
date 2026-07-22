@@ -170,6 +170,7 @@ export const Users: React.FC = () => {
             <tr>
               <th>{t('users.name')}</th>
               <th>{t('users.email')}</th>
+              <th>{t('users.tenant')}</th>
               <th>{t('users.role')}</th>
               <th>{t('users.status')}</th>
               <th className="table-header-actions--right">{t('common.actions')}</th>
@@ -187,6 +188,7 @@ export const Users: React.FC = () => {
                   </div>
                 </td>
                 <td>{u.email}</td>
+                <td>{u.tenantName}</td>
                 <td>
                   <span className={`badge ${u.role === 'ADMIN' ? styles.badgeAdmin : ''}`}>
                     {u.role === 'ADMIN' ? t('users.roleAdmin') : t('users.roleUser')}
@@ -243,7 +245,7 @@ export const Users: React.FC = () => {
             ))}
             {!loading && users.length === 0 && (
               <tr>
-                <td colSpan={5} className="empty-state">{t('users.noUsers')}</td>
+                <td colSpan={6} className="empty-state">{t('users.noUsers')}</td>
               </tr>
             )}
           </tbody>

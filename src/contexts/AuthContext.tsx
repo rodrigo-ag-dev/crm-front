@@ -11,6 +11,8 @@ interface User {
   username: string;
   role?: string;
   mustChangePassword?: boolean;
+  tenantId?: string;
+  tenantName?: string;
 }
 
 interface RawUserPayload {
@@ -22,6 +24,8 @@ interface RawUserPayload {
   username: string;
   role?: string;
   mustChangePassword?: boolean;
+  tenantId?: string;
+  tenantName?: string;
 }
 
 interface AuthContextData {
@@ -50,6 +54,8 @@ const normalizeUser = (user: RawUserPayload): User => {
     username: user.username,
     role: user.role,
     mustChangePassword: Boolean(user.mustChangePassword),
+    tenantId: user.tenantId,
+    tenantName: user.tenantName,
   };
 };
 
