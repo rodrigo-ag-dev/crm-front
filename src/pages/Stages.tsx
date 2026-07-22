@@ -92,8 +92,15 @@ export const Stages: React.FC = () => {
     e.preventDefault();
     setError('');
     try {
-      await api.post('/stages', formData);
-      fetchStages();
+      const response = await api.post<Stage>('/stages', formData);
+      const saved = response.data;
+      // Apply the just-saved record straight from the response rather than refetching - a
+      // refetch right after a write can race a Redis cache eviction still propagating and
+      // briefly return the pre-edit value, silently undoing this update.
+      setStages(prev => {
+        const exists = prev.some(s => s.id === saved.id);
+        return exists ? prev.map(s => (s.id === saved.id ? saved : s)) : [...prev, saved];
+      });
       handleCloseModal();
     } catch (err) {
       console.error('Error saving stage', err);
@@ -179,7 +186,8 @@ export const Stages: React.FC = () => {
             try {
               setError('');
               await api.delete(`/stages/${confirmModalOpen}`);
-              fetchStages();
+              const deletedId = confirmModalOpen;
+              setStages(prev => prev.filter(s => s.id !== deletedId));
             } catch (err) {
               console.error('Error deleting stage', err);
               setError(t('stages.errorDeleting'));
