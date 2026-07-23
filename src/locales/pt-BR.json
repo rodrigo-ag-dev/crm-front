@@ -146,6 +146,7 @@
     "tabPreferences": "Preferências",
     "tabStages": "Etapas",
     "tabUsers": "Usuários",
+    "tabTenants": "Empresas",
     "description": "Marque ou desmarque os parâmetros que deseja ativar para o seu usuário.",
     "listTitle": "Parâmetros disponíveis",
     "listHint": "Selecione os itens que deseja manter ativos e confirme com OK.",
@@ -317,6 +318,18 @@
     "errorUpdatingStatus": "Erro ao atualizar o status do usuário",
     "errorSaving": "Erro ao salvar usuário",
     "errorResettingPassword": "Erro ao redefinir a senha do usuário"
+  },
+  "tenants": {
+    "title": "Empresas",
+    "name": "Nome",
+    "slug": "Identificador",
+    "slugPlaceholder": "ex: acme",
+    "slugHint": "Letras minúsculas, números e underscore, começando com letra. Não pode ser alterado depois de criado.",
+    "createTenant": "Criar empresa",
+    "createHint": "Cria um schema isolado no banco de dados para a nova empresa, com todas as tabelas necessárias já configuradas.",
+    "noTenants": "Nenhuma empresa encontrada",
+    "errorLoading": "Erro ao carregar empresas",
+    "errorSaving": "Erro ao criar empresa"
   },
   "changePassword": {
     "title": "Trocar senha",

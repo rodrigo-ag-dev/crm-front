@@ -146,6 +146,7 @@
     "tabPreferences": "Preferences",
     "tabStages": "Stages",
     "tabUsers": "Users",
+    "tabTenants": "Companies",
     "description": "Select the parameters you want to enable for your user account.",
     "listTitle": "Available parameters",
     "listHint": "Mark the items you want to keep active and confirm with OK.",
@@ -317,6 +318,18 @@
     "errorUpdatingStatus": "Error updating user status",
     "errorSaving": "Error saving user",
     "errorResettingPassword": "Error resetting user password"
+  },
+  "tenants": {
+    "title": "Companies",
+    "name": "Name",
+    "slug": "Identifier",
+    "slugPlaceholder": "e.g. acme",
+    "slugHint": "Lowercase letters, digits and underscores, starting with a letter. Can't be changed after creation.",
+    "createTenant": "Create company",
+    "createHint": "Provisions an isolated database schema for the new company, with all required tables already set up.",
+    "noTenants": "No companies found",
+    "errorLoading": "Error loading companies",
+    "errorSaving": "Error creating company"
   },
   "changePassword": {
     "title": "Change password",

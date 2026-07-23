@@ -4,9 +4,10 @@ import { useTranslation } from '../hooks/useTranslation';
 import { UserPreferences } from './UserPreferences';
 import { Stages } from './Stages';
 import { Users } from './Users';
+import { Tenants } from './Tenants';
 import styles from './UserSettings.module.css';
 
-type SettingsTab = 'preferences' | 'stages' | 'users';
+type SettingsTab = 'preferences' | 'stages' | 'users' | 'tenants';
 
 export const UserSettings: React.FC = () => {
   const { user } = useAuth();
@@ -14,6 +15,7 @@ export const UserSettings: React.FC = () => {
   const [activeTab, setActiveTab] = useState<SettingsTab>('preferences');
 
   const isAdmin = user?.role === 'ADMIN';
+  const isPlatformAdmin = Boolean(user?.platformAdmin);
 
   return (
     <div className={styles.container}>
@@ -48,12 +50,23 @@ export const UserSettings: React.FC = () => {
             {t('settings.tabUsers')}
           </button>
         )}
+        {isPlatformAdmin && (
+          <button
+            type="button"
+            onClick={() => setActiveTab('tenants')}
+            className={`selector-button selector-button--surface ${activeTab === 'tenants' ? 'selector-button--active' : 'selector-button--inactive'}`}
+            aria-pressed={activeTab === 'tenants'}
+          >
+            {t('settings.tabTenants')}
+          </button>
+        )}
       </div>
 
       <div className={styles.tabContent}>
         {activeTab === 'preferences' && <UserPreferences />}
         {activeTab === 'stages' && <Stages />}
         {activeTab === 'users' && isAdmin && <Users />}
+        {activeTab === 'tenants' && isPlatformAdmin && <Tenants />}
       </div>
     </div>
   );

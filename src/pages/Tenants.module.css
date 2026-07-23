@@ -1,0 +1,28 @@
+.card {
+  flex: 1;
+  overflow: auto;
+}
+
+.badgeActive {
+  background-color: rgba(34, 160, 107, 0.12);
+  border-color: rgba(34, 160, 107, 0.24);
+  color: var(--success-color);
+}
+
+.badgeInactive {
+  background-color: rgba(192, 57, 43, 0.1);
+  border-color: rgba(192, 57, 43, 0.2);
+  color: var(--danger-color);
+}
+
+.slugCell {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.hint {
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
