@@ -140,8 +140,15 @@ export const DealModal: React.FC<DealModalProps> = ({
         />
 
         <StageCombobox value={formData.stageId} onChange={id => setFormData({ ...formData, stageId: id })} />
-        <CompanyCombobox value={formData.companyId} onChange={id => setFormData({ ...formData, companyId: id })} />
-        <ContactCombobox value={formData.contactId} onChange={id => setFormData({ ...formData, contactId: id })} />
+        <CompanyCombobox
+          value={formData.companyId}
+          onChange={id => setFormData({ ...formData, companyId: id, contactId: id === formData.companyId ? formData.contactId : '' })}
+        />
+        <ContactCombobox
+          value={formData.contactId}
+          onChange={id => setFormData({ ...formData, contactId: id })}
+          companyId={formData.companyId}
+        />
 
         <div className="modal-footer">
           <button type="button" className="btn-secondary" onClick={handleClose}>

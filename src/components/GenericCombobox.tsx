@@ -19,6 +19,9 @@ interface GenericComboboxProps {
   label: string;
   mapOption: (data: any) => ComboboxOption;
   mapSelectedName?: (data: any) => string;
+  extraParams?: Record<string, string>;
+  disabled?: boolean;
+  disabledMessage?: string;
 }
 
 interface Option {
@@ -32,7 +35,10 @@ export const GenericCombobox: React.FC<GenericComboboxProps> = ({
   endpoint,
   label,
   mapOption,
-  mapSelectedName = (data) => data?.name
+  mapSelectedName = (data) => data?.name,
+  extraParams,
+  disabled = false,
+  disabledMessage
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedName, setSelectedName] = useState('');
@@ -76,11 +82,17 @@ export const GenericCombobox: React.FC<GenericComboboxProps> = ({
   }, [isOpen, selectedName]);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || disabled) return;
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await api.get(`${endpoint}/search?name=${searchTerm}&page=${page}&size=5`);
+        const params = new URLSearchParams({ name: searchTerm, page: String(page), size: '5' });
+        if (extraParams) {
+          Object.entries(extraParams).forEach(([key, val]) => {
+            if (val) params.set(key, val);
+          });
+        }
+        const response = await api.get(`${endpoint}/search?${params.toString()}`);
         const newOptions = (response.data.content || []).map(mapOption);
         if (page === 0) {
           setOptions(newOptions);
@@ -100,7 +112,7 @@ export const GenericCombobox: React.FC<GenericComboboxProps> = ({
     };
     const delayDebounceFn = setTimeout(() => fetchData(), 300);
     return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, isOpen, page, endpoint, mapOption]);
+  }, [searchTerm, isOpen, page, endpoint, mapOption, disabled, JSON.stringify(extraParams)]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -125,11 +137,12 @@ export const GenericCombobox: React.FC<GenericComboboxProps> = ({
           autoComplete='off'
           spellCheck={false}
           type="text"
-          placeholder={placeholder}
+          disabled={disabled}
+          placeholder={disabled && disabledMessage ? disabledMessage : placeholder}
           value={searchTerm}
           onChange={e => { setSearchTerm(e.target.value); setPage(0); setIsOpen(true); setLoading(true); }}
-          onFocus={() => { setPage(0); setIsOpen(true); setLoading(true); }}
-          onClick={() => { if (!isOpen) { setPage(0); setIsOpen(true); setLoading(true); } }}
+          onFocus={() => { if (!disabled) { setPage(0); setIsOpen(true); setLoading(true); } }}
+          onClick={() => { if (!disabled && !isOpen) { setPage(0); setIsOpen(true); setLoading(true); } }}
           onBlur={(e) => {
             if (wrapperRef.current && !wrapperRef.current.contains(e.relatedTarget as Node)) {
               setIsOpen(false);

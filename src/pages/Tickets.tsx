@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import api from '../services/api';
@@ -13,9 +13,12 @@ import { TicketTimeline } from '../components/TicketTimeline';
 import { getTicketStages, type TicketStageOption } from '../services/ticketStageService';
 import { toFormatedDate } from '../utils/dateUtils';
 import { getStoredViewMode, setStoredViewMode, type ViewMode } from '../utils/viewPreferences';
+import { getListCache, setListCache } from '../utils/listCache';
 import { TicketsKanbanView } from './TicketsKanbanView';
 import splitStyles from '../components/SplitViewShell.module.css';
 import paneStyles from '../components/RecordPane.module.css';
+
+const LIST_CACHE_KEY = 'tickets';
 
 const stageLabelById = (ticketStageId: string, stages: TicketStageOption[]) => {
   return stages.find((stage) => stage.id === ticketStageId)?.name || ticketStageId || '-';
@@ -27,14 +30,15 @@ export const Tickets: React.FC = () => {
   const { t } = useTranslation();
   const [viewMode, setViewMode] = useState<ViewMode>(() => getStoredViewMode('tickets'));
 
-  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const cached = getListCache<Ticket>(LIST_CACHE_KEY);
+  const [tickets, setTickets] = useState<Ticket[]>(cached?.items ?? []);
   const [ticketStages, setTicketStages] = useState<TicketStageOption[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
+  const [loading, setLoading] = useState(!cached);
+  const [page, setPage] = useState(cached?.page ?? 0);
+  const [totalPages, setTotalPages] = useState(cached?.totalPages ?? 0);
   const size = 10;
-  const [searchTerm, setSearchTerm] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [searchTerm, setSearchTerm] = useState(cached?.searchTerm ?? '');
+  const [debouncedSearch, setDebouncedSearch] = useState(cached?.debouncedSearch ?? '');
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTicket, setEditingTicket] = useState<Ticket | null>(null);
@@ -48,7 +52,12 @@ export const Tickets: React.FC = () => {
     setStoredViewMode('tickets', mode);
   };
 
+  const isFirstSearchRun = useRef(true);
   useEffect(() => {
+    if (isFirstSearchRun.current) {
+      isFirstSearchRun.current = false;
+      return;
+    }
     const timer = setTimeout(() => {
       setDebouncedSearch(searchTerm);
       if (page !== 0) setPage(0);
@@ -82,8 +91,11 @@ export const Tickets: React.FC = () => {
     setLoading(true);
     try {
       const response = await ticketService.searchTickets<Ticket>({ page, size, title: debouncedSearch });
-      setTickets(response.data.content || []);
-      setTotalPages(response.data.totalPages || 0);
+      const items = response.data.content || [];
+      const total = response.data.totalPages || 0;
+      setTickets(items);
+      setTotalPages(total);
+      setListCache<Ticket>(LIST_CACHE_KEY, { items, page, totalPages: total, searchTerm, debouncedSearch });
     } catch (error) {
       console.error('Error fetching tickets', error);
       setTickets([]);
@@ -215,6 +227,18 @@ export const Tickets: React.FC = () => {
               </div>
 
               <div className={splitStyles.listPaneBody}>
+                {detail && id && !tickets.some((ticket) => ticket.id === id) && (
+                  <div className={splitStyles.notInPageBanner}>
+                    <span>{t('common.notInCurrentPage')}</span>
+                    <button
+                      type="button"
+                      className={splitStyles.notInPageBannerButton}
+                      onClick={() => setSearchTerm(detail.title)}
+                    >
+                      {t('buttons.locate')}
+                    </button>
+                  </div>
+                )}
                 {tickets.map((ticket) => (
                   <RecordListRow
                     key={ticket.id}

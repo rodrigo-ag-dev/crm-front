@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import api from '../services/api';
@@ -12,9 +12,12 @@ import { RecordPane, RecordPaneEmptyState, RelatedItem, RelatedSection } from '.
 import { abbreviateNumber } from '../utils/numberUtils';
 import { toFormatedDate } from '../utils/dateUtils';
 import { getStoredViewMode, setStoredViewMode, type ViewMode } from '../utils/viewPreferences';
+import { getListCache, setListCache } from '../utils/listCache';
 import { DealsKanbanView } from './DealsKanbanView';
 import splitStyles from '../components/SplitViewShell.module.css';
 import paneStyles from '../components/RecordPane.module.css';
+
+const LIST_CACHE_KEY = 'deals';
 
 interface Deal {
   id?: string;
@@ -44,13 +47,14 @@ export const Deals: React.FC = () => {
   const { t } = useTranslation();
   const [viewMode, setViewMode] = useState<ViewMode>(() => getStoredViewMode('deals'));
 
-  const [deals, setDeals] = useState<Deal[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
+  const cached = getListCache<Deal>(LIST_CACHE_KEY);
+  const [deals, setDeals] = useState<Deal[]>(cached?.items ?? []);
+  const [loading, setLoading] = useState(!cached);
+  const [page, setPage] = useState(cached?.page ?? 0);
+  const [totalPages, setTotalPages] = useState(cached?.totalPages ?? 0);
   const size = 10;
-  const [searchTerm, setSearchTerm] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [searchTerm, setSearchTerm] = useState(cached?.searchTerm ?? '');
+  const [debouncedSearch, setDebouncedSearch] = useState(cached?.debouncedSearch ?? '');
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingDeal, setEditingDeal] = useState<Deal | null>(null);
@@ -69,7 +73,12 @@ export const Deals: React.FC = () => {
     setStoredViewMode('deals', mode);
   };
 
+  const isFirstSearchRun = useRef(true);
   useEffect(() => {
+    if (isFirstSearchRun.current) {
+      isFirstSearchRun.current = false;
+      return;
+    }
     const timer = setTimeout(() => {
       setDebouncedSearch(searchTerm);
       if (page !== 0) setPage(0);
@@ -91,8 +100,11 @@ export const Deals: React.FC = () => {
       const queryParams = new URLSearchParams({ page: page.toString(), size: size.toString() });
       if (debouncedSearch) queryParams.append('title', debouncedSearch);
       const response = await api.get(`/deals/search?${queryParams.toString()}`);
-      setDeals(response.data.content || []);
-      setTotalPages(response.data.totalPages || 0);
+      const items = response.data.content || [];
+      const total = response.data.totalPages || 0;
+      setDeals(items);
+      setTotalPages(total);
+      setListCache<Deal>(LIST_CACHE_KEY, { items, page, totalPages: total, searchTerm, debouncedSearch });
     } catch (err) {
       console.error('Error fetching deals', err);
       setDeals([]);
@@ -255,6 +267,18 @@ export const Deals: React.FC = () => {
               </div>
 
               <div className={splitStyles.listPaneBody}>
+                {detail && id && !deals.some((deal) => deal.id === id) && (
+                  <div className={splitStyles.notInPageBanner}>
+                    <span>{t('common.notInCurrentPage')}</span>
+                    <button
+                      type="button"
+                      className={splitStyles.notInPageBannerButton}
+                      onClick={() => setSearchTerm(detail.title)}
+                    >
+                      {t('buttons.locate')}
+                    </button>
+                  </div>
+                )}
                 {deals.map((deal) => (
                   <RecordListRow
                     key={deal.id}

@@ -222,11 +222,16 @@ export const TicketModal: React.FC<TicketModalProps> = ({
         <div className="form-grid-two">
           <CompanyCombobox
             value={formData.companyId}
-            onChange={(id) => setFormData((current) => ({ ...current, companyId: id }))}
+            onChange={(id) => setFormData((current) => ({
+              ...current,
+              companyId: id,
+              contactId: id === current.companyId ? current.contactId : '',
+            }))}
           />
           <ContactCombobox
             value={formData.contactId}
             onChange={(id) => setFormData((current) => ({ ...current, contactId: id }))}
+            companyId={formData.companyId}
           />
         </div>
 

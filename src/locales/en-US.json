@@ -20,6 +20,7 @@
     "actions": "Actions",
     "createdAt": "Created At",
     "selectRecordPrompt": "Select a record from the list to see the details.",
+    "notInCurrentPage": "Not on this page",
     "viewMode": "View mode",
     "viewList": "List",
     "viewKanban": "Kanban",
@@ -262,7 +263,8 @@
     "next": "Next",
     "won": "✓ Won",
     "lost": "✗ Lost",
-    "edit": "Edit"
+    "edit": "Edit",
+    "locate": "Locate"
   },
   "pagination": {
     "pageOf": "Page {page} of {total}"
@@ -284,7 +286,8 @@
     "stage": "Stage",
     "searchStage": "Search stage...",
     "searchTenant": "Search company...",
-    "noResults": "No results found"
+    "noResults": "No results found",
+    "selectCompanyFirst": "Select a company first"
   },
   "users": {
     "title": "Users",

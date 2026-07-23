@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import api from '../services/api';
@@ -10,8 +10,11 @@ import { TicketModal } from '../components/TicketModal';
 import { SplitViewShell, RecordListRow, CollapsibleSearchBar } from '../components/SplitViewShell';
 import { RecordPane, RecordPaneEmptyState, RelatedItem, RelatedSection } from '../components/RecordPane';
 import { abbreviateNumber } from '../utils/numberUtils';
+import { getListCache, setListCache } from '../utils/listCache';
 import splitStyles from '../components/SplitViewShell.module.css';
 import paneStyles from '../components/RecordPane.module.css';
+
+const LIST_CACHE_KEY = 'contacts';
 
 interface Contact {
   id?: string;
@@ -44,13 +47,14 @@ export const Contacts: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const [contacts, setContacts] = useState<Contact[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
+  const cached = getListCache<Contact>(LIST_CACHE_KEY);
+  const [contacts, setContacts] = useState<Contact[]>(cached?.items ?? []);
+  const [loading, setLoading] = useState(!cached);
+  const [page, setPage] = useState(cached?.page ?? 0);
+  const [totalPages, setTotalPages] = useState(cached?.totalPages ?? 0);
   const size = 10;
-  const [searchTerm, setSearchTerm] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [searchTerm, setSearchTerm] = useState(cached?.searchTerm ?? '');
+  const [debouncedSearch, setDebouncedSearch] = useState(cached?.debouncedSearch ?? '');
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingContact, setEditingContact] = useState<Contact | null>(null);
@@ -64,7 +68,12 @@ export const Contacts: React.FC = () => {
   const [deals, setDeals] = useState<RelatedDeal[]>([]);
   const [tickets, setTickets] = useState<RelatedTicket[]>([]);
 
+  const isFirstSearchRun = useRef(true);
   useEffect(() => {
+    if (isFirstSearchRun.current) {
+      isFirstSearchRun.current = false;
+      return;
+    }
     const timer = setTimeout(() => {
       setDebouncedSearch(searchTerm);
       if (page !== 0) setPage(0);
@@ -86,8 +95,11 @@ export const Contacts: React.FC = () => {
       const queryParams = new URLSearchParams({ page: page.toString(), size: size.toString() });
       if (debouncedSearch) queryParams.append('name', debouncedSearch);
       const response = await api.get(`/contacts/search?${queryParams.toString()}`);
-      setContacts(response.data.content || []);
-      setTotalPages(response.data.totalPages || 0);
+      const items = response.data.content || [];
+      const total = response.data.totalPages || 0;
+      setContacts(items);
+      setTotalPages(total);
+      setListCache<Contact>(LIST_CACHE_KEY, { items, page, totalPages: total, searchTerm, debouncedSearch });
     } catch (err) {
       console.error('Error fetching contacts', err);
       setContacts([]);
@@ -180,6 +192,18 @@ export const Contacts: React.FC = () => {
               </div>
 
               <div className={splitStyles.listPaneBody}>
+                {detail && id && !contacts.some((contact) => contact.id === id) && (
+                  <div className={splitStyles.notInPageBanner}>
+                    <span>{t('common.notInCurrentPage')}</span>
+                    <button
+                      type="button"
+                      className={splitStyles.notInPageBannerButton}
+                      onClick={() => setSearchTerm(detail.name)}
+                    >
+                      {t('buttons.locate')}
+                    </button>
+                  </div>
+                )}
                 {contacts.map((contact) => (
                   <RecordListRow
                     key={contact.id}

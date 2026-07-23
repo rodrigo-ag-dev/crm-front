@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import api from '../services/api';
@@ -13,8 +13,11 @@ import { RecordPane, RecordPaneEmptyState, RelatedItem, RelatedSection } from '.
 import Input from '../components/Input';
 import Textarea from '../components/Textarea';
 import { abbreviateNumber } from '../utils/numberUtils';
+import { getListCache, setListCache } from '../utils/listCache';
 import splitStyles from '../components/SplitViewShell.module.css';
 import paneStyles from '../components/RecordPane.module.css';
+
+const LIST_CACHE_KEY = 'companies';
 
 interface Company {
   id?: string;
@@ -51,13 +54,14 @@ export const Companies: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const [companies, setCompanies] = useState<Company[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
+  const cached = getListCache<Company>(LIST_CACHE_KEY);
+  const [companies, setCompanies] = useState<Company[]>(cached?.items ?? []);
+  const [loading, setLoading] = useState(!cached);
+  const [page, setPage] = useState(cached?.page ?? 0);
+  const [totalPages, setTotalPages] = useState(cached?.totalPages ?? 0);
   const size = 10;
-  const [searchTerm, setSearchTerm] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [searchTerm, setSearchTerm] = useState(cached?.searchTerm ?? '');
+  const [debouncedSearch, setDebouncedSearch] = useState(cached?.debouncedSearch ?? '');
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCompany, setEditingCompany] = useState<Company | null>(null);
@@ -73,7 +77,12 @@ export const Companies: React.FC = () => {
   const [tickets, setTickets] = useState<RelatedTicket[]>([]);
   const [createRelatedModal, setCreateRelatedModal] = useState<'contact' | 'deal' | 'ticket' | null>(null);
 
+  const isFirstSearchRun = useRef(true);
   useEffect(() => {
+    if (isFirstSearchRun.current) {
+      isFirstSearchRun.current = false;
+      return;
+    }
     const timer = setTimeout(() => {
       setDebouncedSearch(searchTerm);
       if (page !== 0) setPage(0);
@@ -95,8 +104,11 @@ export const Companies: React.FC = () => {
       const queryParams = new URLSearchParams({ page: page.toString(), size: size.toString() });
       if (debouncedSearch) queryParams.append('name', debouncedSearch);
       const response = await api.get(`/companies/search?${queryParams.toString()}`);
-      setCompanies(response.data.content || []);
-      setTotalPages(response.data.totalPages || 0);
+      const items = response.data.content || [];
+      const total = response.data.totalPages || 0;
+      setCompanies(items);
+      setTotalPages(total);
+      setListCache<Company>(LIST_CACHE_KEY, { items, page, totalPages: total, searchTerm, debouncedSearch });
     } catch (err) {
       console.error('Error fetching companies', err);
       setCompanies([]);
@@ -197,6 +209,18 @@ export const Companies: React.FC = () => {
               </div>
 
               <div className={splitStyles.listPaneBody}>
+                {detail && id && !companies.some((company) => company.id === id) && (
+                  <div className={splitStyles.notInPageBanner}>
+                    <span>{t('common.notInCurrentPage')}</span>
+                    <button
+                      type="button"
+                      className={splitStyles.notInPageBannerButton}
+                      onClick={() => setSearchTerm(detail.name)}
+                    >
+                      {t('buttons.locate')}
+                    </button>
+                  </div>
+                )}
                 {companies.map((company) => (
                   <RecordListRow
                     key={company.id}

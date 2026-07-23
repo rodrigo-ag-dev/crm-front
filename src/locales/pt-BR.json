@@ -20,6 +20,7 @@
     "actions": "Ações",
     "createdAt": "Criado em",
     "selectRecordPrompt": "Selecione um registro na lista para ver os detalhes.",
+    "notInCurrentPage": "Fora desta página",
     "viewMode": "Modo de visualização",
     "viewList": "Lista",
     "viewKanban": "Kanban",
@@ -262,7 +263,8 @@
     "next": "Próxima",
     "won": "✓ Ganho",
     "lost": "✗ Perdido",
-    "edit": "Editar"
+    "edit": "Editar",
+    "locate": "Localizar"
   },
   "pagination": {
     "pageOf": "Página {page} de {total}"
@@ -284,7 +286,8 @@
     "stage": "Etapa",
     "searchStage": "Buscar etapa...",
     "searchTenant": "Buscar empresa...",
-    "noResults": "Nenhum resultado encontrado"
+    "noResults": "Nenhum resultado encontrado",
+    "selectCompanyFirst": "Selecione uma empresa primeiro"
   },
   "users": {
     "title": "Usuários",

@@ -59,21 +59,22 @@ interface CollapsibleSearchBarProps {
 
 export const CollapsibleSearchBar: React.FC<CollapsibleSearchBarProps> = ({ value, onChange, placeholder }) => {
   const { t } = useTranslation();
-  const [open, setOpen] = useState(Boolean(value));
+  const [manuallyOpened, setManuallyOpened] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
+  const open = manuallyOpened || Boolean(value);
 
   useEffect(() => {
     if (open) wrapRef.current?.querySelector('input')?.focus();
   }, [open]);
 
   const close = () => {
-    setOpen(false);
+    setManuallyOpened(false);
     onChange('');
   };
 
   if (!open) {
     return (
-      <button type="button" className={styles.searchToggle} onClick={() => setOpen(true)} title={t('common.search')}>
+      <button type="button" className={styles.searchToggle} onClick={() => setManuallyOpened(true)} title={t('common.search')}>
         <Search size={16} />
       </button>
     );
