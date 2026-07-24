@@ -50,6 +50,8 @@
   gap: 8px;
   padding: 10px 12px;
   border-bottom: 1px solid var(--border-light);
+  height: 50px;
+  min-height: 50px;
 }
 
 .listPaneTitle {
@@ -166,8 +168,10 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 12px;
+  height: var(--row-height, auto);
+  padding: 12px 12px;
   border-bottom: 1px solid var(--border-light);
+  box-sizing: border-box;
   cursor: pointer;
   transition: background-color 0.15s ease;
 }

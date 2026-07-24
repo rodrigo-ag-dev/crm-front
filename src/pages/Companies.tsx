@@ -14,6 +14,7 @@ import Input from '../components/Input';
 import Textarea from '../components/Textarea';
 import { abbreviateNumber } from '../utils/numberUtils';
 import { getListCache, setListCache } from '../utils/listCache';
+import { useFittedPageSize } from '../hooks/useFittedPageSize';
 import splitStyles from '../components/SplitViewShell.module.css';
 import paneStyles from '../components/RecordPane.module.css';
 
@@ -59,7 +60,8 @@ export const Companies: React.FC = () => {
   const [loading, setLoading] = useState(!cached);
   const [page, setPage] = useState(cached?.page ?? 0);
   const [totalPages, setTotalPages] = useState(cached?.totalPages ?? 0);
-  const size = 10;
+  const listBodyRef = useRef<HTMLDivElement>(null);
+  const { size, rowHeight } = useFittedPageSize(listBodyRef, companies.length, cached?.size ?? 10);
   const [searchTerm, setSearchTerm] = useState(cached?.searchTerm ?? '');
   const [debouncedSearch, setDebouncedSearch] = useState(cached?.debouncedSearch ?? '');
 
@@ -92,7 +94,7 @@ export const Companies: React.FC = () => {
 
   useEffect(() => {
     fetchCompanies();
-  }, [page, debouncedSearch]);
+  }, [page, debouncedSearch, size]);
 
   useEffect(() => {
     fetchDetail();
@@ -108,7 +110,8 @@ export const Companies: React.FC = () => {
       const total = response.data.totalPages || 0;
       setCompanies(items);
       setTotalPages(total);
-      setListCache<Company>(LIST_CACHE_KEY, { items, page, totalPages: total, searchTerm, debouncedSearch });
+      setListCache<Company>(LIST_CACHE_KEY, { items, page, totalPages: total, searchTerm, debouncedSearch, size });
+      if (page > 0 && page >= total) setPage(Math.max(0, total - 1));
     } catch (err) {
       console.error('Error fetching companies', err);
       setCompanies([]);
@@ -208,7 +211,11 @@ export const Companies: React.FC = () => {
                 />
               </div>
 
-              <div className={splitStyles.listPaneBody}>
+              <div
+                className={splitStyles.listPaneBody}
+                ref={listBodyRef}
+                style={rowHeight ? ({ '--row-height': `${rowHeight}px` } as React.CSSProperties) : undefined}
+              >
                 {detail && id && !companies.some((company) => company.id === id) && (
                   <div className={splitStyles.notInPageBanner}>
                     <span>{t('common.notInCurrentPage')}</span>

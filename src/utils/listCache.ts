@@ -4,6 +4,7 @@ export interface ListCacheEntry<T> {
   totalPages: number;
   searchTerm: string;
   debouncedSearch: string;
+  size: number;
 }
 
 const cache = new Map<string, ListCacheEntry<unknown>>();

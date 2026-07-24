@@ -35,6 +35,7 @@ export const RecordListRow: React.FC<RecordListRowProps> = ({ to, isActive, prim
       onClick={() => navigate(to)}
       role="button"
       tabIndex={0}
+      data-record-row
       onKeyDown={(event) => {
         if (event.key === 'Enter') navigate(to);
       }}

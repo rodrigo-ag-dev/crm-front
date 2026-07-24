@@ -11,6 +11,7 @@ import { SplitViewShell, RecordListRow, CollapsibleSearchBar } from '../componen
 import { RecordPane, RecordPaneEmptyState, RelatedItem, RelatedSection } from '../components/RecordPane';
 import { abbreviateNumber } from '../utils/numberUtils';
 import { getListCache, setListCache } from '../utils/listCache';
+import { useFittedPageSize } from '../hooks/useFittedPageSize';
 import splitStyles from '../components/SplitViewShell.module.css';
 import paneStyles from '../components/RecordPane.module.css';
 
@@ -52,7 +53,8 @@ export const Contacts: React.FC = () => {
   const [loading, setLoading] = useState(!cached);
   const [page, setPage] = useState(cached?.page ?? 0);
   const [totalPages, setTotalPages] = useState(cached?.totalPages ?? 0);
-  const size = 10;
+  const listBodyRef = useRef<HTMLDivElement>(null);
+  const { size, rowHeight } = useFittedPageSize(listBodyRef, contacts.length, cached?.size ?? 10);
   const [searchTerm, setSearchTerm] = useState(cached?.searchTerm ?? '');
   const [debouncedSearch, setDebouncedSearch] = useState(cached?.debouncedSearch ?? '');
 
@@ -83,7 +85,7 @@ export const Contacts: React.FC = () => {
 
   useEffect(() => {
     fetchContacts();
-  }, [page, debouncedSearch]);
+  }, [page, debouncedSearch, size]);
 
   useEffect(() => {
     fetchDetail();
@@ -99,7 +101,8 @@ export const Contacts: React.FC = () => {
       const total = response.data.totalPages || 0;
       setContacts(items);
       setTotalPages(total);
-      setListCache<Contact>(LIST_CACHE_KEY, { items, page, totalPages: total, searchTerm, debouncedSearch });
+      setListCache<Contact>(LIST_CACHE_KEY, { items, page, totalPages: total, searchTerm, debouncedSearch, size });
+      if (page > 0 && page >= total) setPage(Math.max(0, total - 1));
     } catch (err) {
       console.error('Error fetching contacts', err);
       setContacts([]);
@@ -191,7 +194,11 @@ export const Contacts: React.FC = () => {
                 />
               </div>
 
-              <div className={splitStyles.listPaneBody}>
+              <div
+                className={splitStyles.listPaneBody}
+                ref={listBodyRef}
+                style={rowHeight ? ({ '--row-height': `${rowHeight}px` } as React.CSSProperties) : undefined}
+              >
                 {detail && id && !contacts.some((contact) => contact.id === id) && (
                   <div className={splitStyles.notInPageBanner}>
                     <span>{t('common.notInCurrentPage')}</span>

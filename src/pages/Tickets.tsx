@@ -14,6 +14,7 @@ import { getTicketStages, type TicketStageOption } from '../services/ticketStage
 import { toFormatedDate } from '../utils/dateUtils';
 import { getStoredViewMode, setStoredViewMode, type ViewMode } from '../utils/viewPreferences';
 import { getListCache, setListCache } from '../utils/listCache';
+import { useFittedPageSize } from '../hooks/useFittedPageSize';
 import { TicketsKanbanView } from './TicketsKanbanView';
 import splitStyles from '../components/SplitViewShell.module.css';
 import paneStyles from '../components/RecordPane.module.css';
@@ -36,7 +37,8 @@ export const Tickets: React.FC = () => {
   const [loading, setLoading] = useState(!cached);
   const [page, setPage] = useState(cached?.page ?? 0);
   const [totalPages, setTotalPages] = useState(cached?.totalPages ?? 0);
-  const size = 10;
+  const listBodyRef = useRef<HTMLDivElement>(null);
+  const { size, rowHeight } = useFittedPageSize(listBodyRef, tickets.length, cached?.size ?? 10);
   const [searchTerm, setSearchTerm] = useState(cached?.searchTerm ?? '');
   const [debouncedSearch, setDebouncedSearch] = useState(cached?.debouncedSearch ?? '');
 
@@ -67,7 +69,7 @@ export const Tickets: React.FC = () => {
 
   useEffect(() => {
     if (viewMode === 'list') fetchTickets();
-  }, [page, debouncedSearch, viewMode]);
+  }, [page, debouncedSearch, size, viewMode]);
 
   useEffect(() => {
     fetchTicketStages();
@@ -95,7 +97,8 @@ export const Tickets: React.FC = () => {
       const total = response.data.totalPages || 0;
       setTickets(items);
       setTotalPages(total);
-      setListCache<Ticket>(LIST_CACHE_KEY, { items, page, totalPages: total, searchTerm, debouncedSearch });
+      setListCache<Ticket>(LIST_CACHE_KEY, { items, page, totalPages: total, searchTerm, debouncedSearch, size });
+      if (page > 0 && page >= total) setPage(Math.max(0, total - 1));
     } catch (error) {
       console.error('Error fetching tickets', error);
       setTickets([]);
@@ -226,7 +229,11 @@ export const Tickets: React.FC = () => {
                 />
               </div>
 
-              <div className={splitStyles.listPaneBody}>
+              <div
+                className={splitStyles.listPaneBody}
+                ref={listBodyRef}
+                style={rowHeight ? ({ '--row-height': `${rowHeight}px` } as React.CSSProperties) : undefined}
+              >
                 {detail && id && !tickets.some((ticket) => ticket.id === id) && (
                   <div className={splitStyles.notInPageBanner}>
                     <span>{t('common.notInCurrentPage')}</span>
