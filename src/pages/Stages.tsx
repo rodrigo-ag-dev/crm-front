@@ -92,7 +92,9 @@ export const Stages: React.FC = () => {
     e.preventDefault();
     setError('');
     try {
-      const response = await api.post<Stage>('/stages', formData);
+      const response = formData.id
+        ? await api.put<Stage>(`/stages/${formData.id}`, formData)
+        : await api.post<Stage>('/stages', formData);
       const saved = response.data;
       // Apply the just-saved record straight from the response rather than refetching - a
       // refetch right after a write can race a Redis cache eviction still propagating and

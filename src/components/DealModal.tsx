@@ -88,7 +88,11 @@ export const DealModal: React.FC<DealModalProps> = ({
       if (payload.closeDateExpected) {
         payload.closeDateExpected = `${payload.closeDateExpected}T00:00:00`;
       }
-      await api.post('/deals', payload);
+      if (payload.id) {
+        await api.put(`/deals/${payload.id}`, payload);
+      } else {
+        await api.post('/deals', payload);
+      }
       onDealSaved?.();
       handleClose();
     } catch (err) {

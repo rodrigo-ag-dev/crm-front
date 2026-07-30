@@ -63,7 +63,9 @@ export const ContactModal: React.FC<ContactModalProps> = ({
     event.preventDefault();
     setError('');
     try {
-      const response = await api.post('/contacts', formData);
+      const response = formData.id
+        ? await api.put(`/contacts/${formData.id}`, formData)
+        : await api.post('/contacts', formData);
       onContactSaved?.(response.data as Contact);
       handleClose();
     } catch (err) {

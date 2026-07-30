@@ -19,10 +19,10 @@ const getApiBaseUrl = () => {
   const hostname = window.location.hostname || 'localhost';
 
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
-    return 'http://localhost:8080/api';
+    return 'http://localhost:5035/api';
   }
 
-  return `${protocol}//${hostname}:8080/api`;
+  return `${protocol}//${hostname}:5035/api`;
 };
 
 const api = axios.create({

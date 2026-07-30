@@ -161,7 +161,11 @@ export const Companies: React.FC = () => {
     event.preventDefault();
     setError('');
     try {
-      await api.post('/companies', formData);
+      if (formData.id) {
+        await api.put(`/companies/${formData.id}`, formData);
+      } else {
+        await api.post('/companies', formData);
+      }
       fetchCompanies();
       if (formData.id === id) fetchDetail();
       handleCloseModal();
