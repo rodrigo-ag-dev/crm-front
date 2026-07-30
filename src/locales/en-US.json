@@ -320,7 +320,11 @@
     "errorUpdating": "Error updating user role",
     "errorUpdatingStatus": "Error updating user status",
     "errorSaving": "Error saving user",
-    "errorResettingPassword": "Error resetting user password"
+    "errorResettingPassword": "Error resetting user password",
+    "filterByTenant": "Filter by company",
+    "allTenants": "All companies",
+    "viewingTenant": "Showing users from: {name}",
+    "viewingAllTenants": "Showing users from {count} companies"
   },
   "tenants": {
     "title": "Companies",

@@ -71,3 +71,36 @@
   letter-spacing: 0.5px;
   color: var(--text-primary);
 }
+
+.tenantContext {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.tenantFilterCombobox {
+  width: 240px;
+}
+
+.tenantFilterCombobox :global(.form-group) {
+  margin-bottom: 0;
+}
+
+.tenantGroupRow td {
+  background-color: var(--surface-elevated);
+}
+
+.tenantGroupCell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 4px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+}

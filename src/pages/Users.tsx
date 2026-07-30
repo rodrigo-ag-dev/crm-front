@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { Copy, Edit2, KeyRound, Plus, ShieldMinus, ShieldPlus, UserCheck, UserX } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Building2, Copy, Edit2, KeyRound, Plus, ShieldMinus, ShieldPlus, UserCheck, UserX } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
 import { useAuth } from '../contexts/AuthContext';
 import { userService, type UserRecord, type UserRole } from '../services/userService';
+import api from '../services/api';
 import { getInitials, getAvatarStyle } from '../utils/avatarUtils';
 import { Modal } from '../components/Modal';
 import { ConfirmModal } from '../components/ConfirmModal';
@@ -38,6 +39,47 @@ export const Users: React.FC = () => {
   const [deactivateTarget, setDeactivateTarget] = useState<UserRecord | null>(null);
   const [resetPasswordTarget, setResetPasswordTarget] = useState<UserRecord | null>(null);
   const [resetPasswordResult, setResetPasswordResult] = useState<{ user: UserRecord; temporaryPassword: string } | null>(null);
+
+  const [tenantFilter, setTenantFilter] = useState('');
+  const isPlatformAdmin = Boolean(currentUser?.platformAdmin);
+
+  const tenantOptions = useMemo(() => {
+    const byId = new Map<string, string>();
+    users.forEach((u) => byId.set(u.tenantId, u.tenantName));
+    return Array.from(byId.entries())
+      .map(([id, name]) => ({ id, name }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }, [users]);
+
+  const visibleUsers = useMemo(() => {
+    const filtered = tenantFilter ? users.filter((u) => u.tenantId === tenantFilter) : users;
+    return [...filtered].sort((a, b) => {
+      const tenantCompare = a.tenantName.localeCompare(b.tenantName);
+      if (tenantCompare !== 0) return tenantCompare;
+      return (a.fullName || a.username).localeCompare(b.fullName || b.username);
+    });
+  }, [users, tenantFilter]);
+
+  const [tenantFilterName, setTenantFilterName] = useState('');
+
+  useEffect(() => {
+    if (!tenantFilter) {
+      setTenantFilterName('');
+      return;
+    }
+    const known = tenantOptions.find((o) => o.id === tenantFilter)?.name;
+    if (known) {
+      setTenantFilterName(known);
+      return;
+    }
+    let active = true;
+    api.get(`/tenants/${tenantFilter}`).then((res) => {
+      if (active) setTenantFilterName(res.data?.name || '');
+    }).catch(() => {
+      if (active) setTenantFilterName('');
+    });
+    return () => { active = false; };
+  }, [tenantFilter, tenantOptions]);
 
   async function fetchUsers() {
     setLoading(true);
@@ -110,7 +152,7 @@ export const Users: React.FC = () => {
 
   const handleOpenCreateModal = () => {
     setEditingUser(null);
-    setFormData({ ...emptyForm, tenantId: currentUser?.tenantId || '' });
+    setFormData({ ...emptyForm, tenantId: tenantFilter || currentUser?.tenantId || '' });
     setFormError('');
     setIsModalOpen(true);
   };
@@ -162,8 +204,23 @@ export const Users: React.FC = () => {
   return (
     <div className={splitStyles.page}>
       <div className="page-header">
-        <h1 className="page-title">{t('users.title')}</h1>
+        <div>
+          <h1 className="page-title">{t('users.title')}</h1>
+          {isPlatformAdmin && (
+            <p className={styles.tenantContext}>
+              <Building2 size={14} />
+              {tenantFilter
+                ? t('users.viewingTenant', { name: tenantFilterName })
+                : t('users.viewingAllTenants', { count: String(tenantOptions.length) })}
+            </p>
+          )}
+        </div>
         <div className="toolbar-actions">
+          {isPlatformAdmin && (
+            <div className={styles.tenantFilterCombobox}>
+              <TenantCombobox value={tenantFilter} onChange={setTenantFilter} />
+            </div>
+          )}
           <button className="btn-primary" onClick={handleOpenCreateModal}>
             <Plus size={18} />
             {t('users.createUser')}
@@ -186,71 +243,81 @@ export const Users: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map((u) => (
-              <tr key={u.id}>
-                <td>
-                  <div className={styles.userCell}>
-                    <span className={styles.avatar} style={getAvatarStyle(u.fullName || u.username)}>
-                      {getInitials(u.fullName || u.username)}
+            {visibleUsers.map((u, index) => (
+              <React.Fragment key={u.id}>
+                {isPlatformAdmin && (index === 0 || visibleUsers[index - 1].tenantId !== u.tenantId) && (
+                  <tr className={styles.tenantGroupRow}>
+                    <td colSpan={6} className={styles.tenantGroupCell}>
+                      <Building2 size={14} />
+                      {u.tenantName}
+                    </td>
+                  </tr>
+                )}
+                <tr>
+                  <td>
+                    <div className={styles.userCell}>
+                      <span className={styles.avatar} style={getAvatarStyle(u.fullName || u.username)}>
+                        {getInitials(u.fullName || u.username)}
+                      </span>
+                      <strong>{u.fullName || u.username}</strong>
+                    </div>
+                  </td>
+                  <td>{u.email}</td>
+                  <td>{u.tenantName}</td>
+                  <td>
+                    <span className={`badge ${u.role === 'ADMIN' ? styles.badgeAdmin : ''}`}>
+                      {u.role === 'ADMIN' ? t('users.roleAdmin') : t('users.roleUser')}
                     </span>
-                    <strong>{u.fullName || u.username}</strong>
-                  </div>
-                </td>
-                <td>{u.email}</td>
-                <td>{u.tenantName}</td>
-                <td>
-                  <span className={`badge ${u.role === 'ADMIN' ? styles.badgeAdmin : ''}`}>
-                    {u.role === 'ADMIN' ? t('users.roleAdmin') : t('users.roleUser')}
-                  </span>
-                </td>
-                <td>
-                  <span className={`badge ${u.active ? styles.badgeActive : styles.badgeInactive}`}>
-                    {u.active ? t('users.statusActive') : t('users.statusInactive')}
-                  </span>
-                </td>
-                <td>
-                  <div className={styles.rowActions}>
-                    <button
-                      type="button"
-                      className="btn-icon"
-                      title={t('common.edit')}
-                      onClick={() => handleOpenEditModal(u)}
-                    >
-                      <Edit2 size={16} />
-                    </button>
-                    <button
-                      type="button"
-                      className="btn-icon"
-                      disabled={u.id === currentUser?.id || updatingId === u.id}
-                      title={u.id === currentUser?.id ? t('users.cannotChangeSelf') : (u.role === 'ADMIN' ? t('users.demoteToUser') : t('users.promoteToAdmin'))}
-                      aria-label={u.role === 'ADMIN' ? t('users.demoteToUser') : t('users.promoteToAdmin')}
-                      onClick={() => handleToggleRole(u)}
-                    >
-                      {u.role === 'ADMIN' ? <ShieldMinus size={16} /> : <ShieldPlus size={16} />}
-                    </button>
-                    <button
-                      type="button"
-                      className={u.active ? 'btn-icon-danger' : 'btn-icon'}
-                      disabled={u.id === currentUser?.id || updatingId === u.id}
-                      title={u.id === currentUser?.id ? t('users.cannotChangeSelf') : (u.active ? t('users.deactivate') : t('users.activate'))}
-                      aria-label={u.active ? t('users.deactivate') : t('users.activate')}
-                      onClick={() => handleToggleActive(u)}
-                    >
-                      {u.active ? <UserX size={16} /> : <UserCheck size={16} />}
-                    </button>
-                    <button
-                      type="button"
-                      className="btn-icon"
-                      disabled={updatingId === u.id}
-                      title={t('users.resetPassword')}
-                      aria-label={t('users.resetPassword')}
-                      onClick={() => setResetPasswordTarget(u)}
-                    >
-                      <KeyRound size={16} />
-                    </button>
-                  </div>
-                </td>
-              </tr>
+                  </td>
+                  <td>
+                    <span className={`badge ${u.active ? styles.badgeActive : styles.badgeInactive}`}>
+                      {u.active ? t('users.statusActive') : t('users.statusInactive')}
+                    </span>
+                  </td>
+                  <td>
+                    <div className={styles.rowActions}>
+                      <button
+                        type="button"
+                        className="btn-icon"
+                        title={t('common.edit')}
+                        onClick={() => handleOpenEditModal(u)}
+                      >
+                        <Edit2 size={16} />
+                      </button>
+                      <button
+                        type="button"
+                        className="btn-icon"
+                        disabled={u.id === currentUser?.id || updatingId === u.id}
+                        title={u.id === currentUser?.id ? t('users.cannotChangeSelf') : (u.role === 'ADMIN' ? t('users.demoteToUser') : t('users.promoteToAdmin'))}
+                        aria-label={u.role === 'ADMIN' ? t('users.demoteToUser') : t('users.promoteToAdmin')}
+                        onClick={() => handleToggleRole(u)}
+                      >
+                        {u.role === 'ADMIN' ? <ShieldMinus size={16} /> : <ShieldPlus size={16} />}
+                      </button>
+                      <button
+                        type="button"
+                        className={u.active ? 'btn-icon-danger' : 'btn-icon'}
+                        disabled={u.id === currentUser?.id || updatingId === u.id}
+                        title={u.id === currentUser?.id ? t('users.cannotChangeSelf') : (u.active ? t('users.deactivate') : t('users.activate'))}
+                        aria-label={u.active ? t('users.deactivate') : t('users.activate')}
+                        onClick={() => handleToggleActive(u)}
+                      >
+                        {u.active ? <UserX size={16} /> : <UserCheck size={16} />}
+                      </button>
+                      <button
+                        type="button"
+                        className="btn-icon"
+                        disabled={updatingId === u.id}
+                        title={t('users.resetPassword')}
+                        aria-label={t('users.resetPassword')}
+                        onClick={() => setResetPasswordTarget(u)}
+                      >
+                        <KeyRound size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </React.Fragment>
             ))}
             {!loading && users.length === 0 && (
               <tr>

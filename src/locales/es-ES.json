@@ -320,7 +320,11 @@
     "errorUpdating": "Error al actualizar el rol del usuario",
     "errorUpdatingStatus": "Error al actualizar el estado del usuario",
     "errorSaving": "Error al guardar usuario",
-    "errorResettingPassword": "Error al restablecer la contraseña del usuario"
+    "errorResettingPassword": "Error al restablecer la contraseña del usuario",
+    "filterByTenant": "Filtrar por empresa",
+    "allTenants": "Todas las empresas",
+    "viewingTenant": "Mostrando usuarios de: {name}",
+    "viewingAllTenants": "Mostrando usuarios de {count} empresas"
   },
   "tenants": {
     "title": "Empresas",

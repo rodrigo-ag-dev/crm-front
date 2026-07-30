@@ -320,7 +320,11 @@
     "errorUpdating": "Erro ao atualizar o papel do usuário",
     "errorUpdatingStatus": "Erro ao atualizar o status do usuário",
     "errorSaving": "Erro ao salvar usuário",
-    "errorResettingPassword": "Erro ao redefinir a senha do usuário"
+    "errorResettingPassword": "Erro ao redefinir a senha do usuário",
+    "filterByTenant": "Filtrar por empresa",
+    "allTenants": "Todas as empresas",
+    "viewingTenant": "Exibindo usuários da empresa: {name}",
+    "viewingAllTenants": "Exibindo usuários de {count} empresas"
   },
   "tenants": {
     "title": "Empresas",
