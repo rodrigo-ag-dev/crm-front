@@ -6,8 +6,11 @@ import { useHealthCheck } from '../hooks/useHealthCheck';
 import { LanguageSelector } from './LanguageSelector';
 import { ThemeSelector } from './ThemeSelector';
 import { CommandPalette } from './CommandPalette';
+import { NotificationBell } from './NotificationBell';
+import { QuickAddTask } from './QuickAddTask';
 import { ChangePasswordGate } from './ChangePasswordGate';
 import styles from './Layout.module.css';
+import quickAddStyles from './QuickAddTask.module.css';
 import {
   LayoutDashboard,
   Users,
@@ -22,6 +25,8 @@ import {
   X,
   ArrowLeft,
   ChevronRight,
+  CheckSquare,
+  Plus,
 } from 'lucide-react';
 
 type NavItem = {
@@ -32,6 +37,7 @@ type NavItem = {
 };
 
 const RAIL_ITEMS: NavItem[] = [
+  { to: '/my-day', icon: CheckSquare, labelKey: 'navigation.myDay', end: true },
   { to: '/deals', icon: Briefcase, labelKey: 'navigation.deals' },
   { to: '/tickets', icon: Ticket, labelKey: 'navigation.tickets', end: true },
   { to: '/companies', icon: Building2, labelKey: 'navigation.companies' },
@@ -40,6 +46,7 @@ const RAIL_ITEMS: NavItem[] = [
 
 const PAGE_TITLE_MAP: Record<string, string> = {
   '/': 'navigation.dashboard',
+  '/my-day': 'navigation.myDay',
   '/deals': 'navigation.deals',
   '/companies': 'navigation.companies',
   '/contacts': 'navigation.contacts',
@@ -93,6 +100,7 @@ export const Layout: React.FC = () => {
   const location = useLocation();
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [quickAddTaskOpen, setQuickAddTaskOpen] = useState(false);
   const [railOpen, setRailOpen] = useState(false);
   const accountMenuRef = useRef<HTMLDivElement | null>(null);
   const railRef = useRef<HTMLElement | null>(null);
@@ -158,15 +166,33 @@ export const Layout: React.FC = () => {
 
 
   useEffect(() => {
+    const isTypingTarget = (target: EventTarget | null) => {
+      const el = target as HTMLElement | null;
+      if (!el) return false;
+      const tag = el.tagName;
+      return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || el.isContentEditable;
+    };
+
     const handleShortcut = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault();
         setCommandPaletteOpen((prev) => !prev);
+        return;
+      }
+
+      if (
+        event.key.toLowerCase() === 't' &&
+        !event.metaKey && !event.ctrlKey && !event.altKey &&
+        !isTypingTarget(event.target) &&
+        !commandPaletteOpen
+      ) {
+        event.preventDefault();
+        setQuickAddTaskOpen((prev) => !prev);
       }
     };
     document.addEventListener('keydown', handleShortcut);
     return () => document.removeEventListener('keydown', handleShortcut);
-  }, []);
+  }, [commandPaletteOpen]);
 
   return (
     <div className={styles.appContainer}>
@@ -238,6 +264,7 @@ export const Layout: React.FC = () => {
               <span>{t('commandPalette.placeholder')}</span>
               <kbd className={styles.topbarSearchKbd}>Ctrl K</kbd>
             </button>
+            <NotificationBell />
             <div ref={accountMenuRef} className={styles.layoutAccountWrapper}>
               <button
                 type="button"
@@ -307,7 +334,18 @@ export const Layout: React.FC = () => {
       </main>
 
       <CommandPalette isOpen={commandPaletteOpen} onClose={() => setCommandPaletteOpen(false)} />
+      <QuickAddTask isOpen={quickAddTaskOpen} onClose={() => setQuickAddTaskOpen(false)} />
       <ChangePasswordGate />
+
+      <button
+        type="button"
+        className={quickAddStyles.fab}
+        onClick={() => setQuickAddTaskOpen(true)}
+        title={t('tasks.quickAdd.fabLabel')}
+        aria-label={t('tasks.quickAdd.fabLabel')}
+      >
+        <Plus size={22} />
+      </button>
     </div>
   );
 };

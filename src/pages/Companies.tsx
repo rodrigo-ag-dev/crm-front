@@ -10,6 +10,7 @@ import { DealModal } from '../components/DealModal';
 import { TicketModal } from '../components/TicketModal';
 import { SplitViewShell, RecordListRow, CollapsibleSearchBar } from '../components/SplitViewShell';
 import { RecordPane, RecordPaneEmptyState, RelatedItem, RelatedSection } from '../components/RecordPane';
+import { TaskWidget } from '../components/TaskWidget';
 import Input from '../components/Input';
 import Textarea from '../components/Textarea';
 import { abbreviateNumber } from '../utils/numberUtils';
@@ -349,6 +350,10 @@ export const Companies: React.FC = () => {
                       />
                     ))}
                   </RelatedSection>
+                </div>
+
+                <div className={`card ${paneStyles.relatedCard}`}>
+                  <TaskWidget entityType="COMPANY" entityId={id} />
                 </div>
               </RecordPane>
             ) : (

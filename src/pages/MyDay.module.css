@@ -1,0 +1,166 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 760px;
+}
+
+.titleGroup {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.quickAdd {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.quickAddInput {
+  flex: 1;
+  border-radius: var(--border-radius-button);
+  border: 1px solid var(--border-color);
+  background: var(--surface-color);
+  color: var(--text-primary);
+  padding: 10px 14px;
+  font-size: 0.92rem;
+}
+
+.quickAddDate {
+  border-radius: var(--border-radius-button);
+  border: 1px solid var(--border-color);
+  background: var(--surface-color);
+  color: var(--text-primary);
+  padding: 9px 10px;
+  font-size: 0.85rem;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.groupHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 4px 8px;
+}
+
+.groupDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.dotOverdue { background: var(--danger-color); }
+.dotToday { background: var(--warning-color); }
+.dotFuture { background: var(--text-light); }
+
+.groupTitle {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+}
+
+.groupCount {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  font-variant-numeric: tabular-nums;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: var(--border-radius-button);
+  background: var(--surface-color);
+  border: 1px solid var(--border-light);
+}
+
+.row + .row {
+  margin-top: 6px;
+}
+
+.checkbox {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  border: 1.5px solid var(--border-color);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+}
+
+.checkboxDone {
+  background: var(--success-color);
+  border-color: var(--success-color);
+}
+
+.rowBody {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rowTitle {
+  font-size: 0.92rem;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.rowMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.76rem;
+  color: var(--text-light);
+}
+
+.entityLink {
+  color: var(--secondary-color);
+  text-decoration: none;
+}
+
+.entityLink:hover {
+  text-decoration: underline;
+}
+
+.priorityDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.priorityHigh { background: var(--danger-color); }
+.priorityMedium { background: var(--warning-color); }
+.priorityLow { background: var(--text-light); }
+
+.snoozeButton {
+  background: none;
+  border: none;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.76rem;
+  white-space: nowrap;
+}
+
+.snoozeButton:hover {
+  color: var(--text-primary);
+  background: var(--control-hover-bg);
+}

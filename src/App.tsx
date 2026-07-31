@@ -10,6 +10,7 @@ import { Deals } from './pages/Deals';
 import { Contacts } from './pages/Contacts';
 import { Companies } from './pages/Companies';
 import { Tickets } from './pages/Tickets';
+import { MyDay } from './pages/MyDay';
 import { UserSettings } from './pages/UserSettings';
 import { parameterService } from './services/parameterService';
 import { applyAnimationPreference } from './utils/animationPreferences';
@@ -90,6 +91,7 @@ const AppRoutes = () => {
 
       <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
         <Route index element={<Dashboard />} />
+        <Route path="my-day" element={<MyDay />} />
         <Route path="deals" element={<Deals />} />
         <Route path="deals/:id" element={<Deals />} />
         <Route path="pipeline" element={<Navigate to="/deals" replace />} />

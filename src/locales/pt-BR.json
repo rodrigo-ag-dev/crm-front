@@ -29,6 +29,7 @@
   },
   "navigation": {
     "dashboard": "Dashboard",
+    "myDay": "Meu Dia",
     "deals": "Negócios",
     "contacts": "Contatos",
     "companies": "Empresas",
@@ -40,6 +41,50 @@
     "groupCrm": "CRM",
     "openMenu": "Abrir menu",
     "closeMenu": "Fechar menu"
+  },
+  "tasks": {
+    "widgetTitle": "Tarefas",
+    "quickAddPlaceholder": "Adicionar uma tarefa...",
+    "addTask": "Adicionar",
+    "noTasksForEntity": "Nenhuma tarefa por aqui ainda.",
+    "markDone": "Concluir",
+    "viewChecklist": "Ver checklist",
+    "addChecklistItem": "Adicionar item...",
+    "confirmDelete": "Tem certeza que deseja excluir esta tarefa?",
+    "snoozeOneDay": "Adiar 1 dia",
+    "due": {
+      "overdue": "Atrasada",
+      "today": "Hoje"
+    },
+    "groups": {
+      "overdue": "Atrasadas",
+      "today": "Hoje",
+      "future": "Próximos 7 dias"
+    },
+    "myDay": {
+      "title": "Meu Dia",
+      "empty": "Nada por aqui — sem tarefas atrasadas ou para os próximos dias."
+    },
+    "kanban": {
+      "todo": "A fazer",
+      "doing": "Fazendo",
+      "done": "Concluído"
+    },
+    "quickAdd": {
+      "placeholder": "Ligar pra @Fastcomm amanhã 15h...",
+      "hint": "Digite uma frase — @ vincula um Deal/Contato/Empresa/Ticket, e datas como \"amanhã 15h\" viram o prazo.",
+      "fabLabel": "Nova tarefa rápida (atalho: T)"
+    }
+  },
+  "notifications": {
+    "title": "Notificações",
+    "markAllRead": "Marcar todas como lidas",
+    "empty": "Nenhuma notificação por enquanto.",
+    "overdueSince": "Venceu em {date}",
+    "enableBrowserPush": "Ative para receber avisos do navegador.",
+    "enable": "Ativar",
+    "browserPushTitle": "Tarefas atrasadas",
+    "browserPushBody": "Você tem {count} nova(s) tarefa(s) atrasada(s)."
   },
   "login": {
     "title": "CRM System",
@@ -162,6 +207,7 @@
     "disabled": "Desativado",
     "ok": "OK",
     "animationActive": "Ativar animação",
+    "taskNotifyOverdue": "Avisar sobre tarefas atrasadas",
     "saveSuccess": "Parâmetros atualizados com sucesso.",
     "saveError": "Não foi possível salvar os parâmetros.",
     "loadError": "Não foi possível carregar os parâmetros."

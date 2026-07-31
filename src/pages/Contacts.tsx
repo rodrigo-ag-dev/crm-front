@@ -9,6 +9,7 @@ import { DealModal } from '../components/DealModal';
 import { TicketModal } from '../components/TicketModal';
 import { SplitViewShell, RecordListRow, CollapsibleSearchBar } from '../components/SplitViewShell';
 import { RecordPane, RecordPaneEmptyState, RelatedItem, RelatedSection } from '../components/RecordPane';
+import { TaskWidget } from '../components/TaskWidget';
 import { abbreviateNumber } from '../utils/numberUtils';
 import { getListCache, setListCache } from '../utils/listCache';
 import { useFittedPageSize } from '../hooks/useFittedPageSize';
@@ -317,6 +318,10 @@ export const Contacts: React.FC = () => {
                       />
                     ))}
                   </RelatedSection>
+                </div>
+
+                <div className={`card ${paneStyles.relatedCard}`}>
+                  <TaskWidget entityType="CONTACT" entityId={id} />
                 </div>
               </RecordPane>
             ) : (

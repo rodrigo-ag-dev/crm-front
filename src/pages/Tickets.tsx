@@ -9,6 +9,7 @@ import { ViewToggle } from '../components/ViewToggle';
 import { DetailDrawer } from '../components/DetailDrawer';
 import { SplitViewShell, RecordListRow, CollapsibleSearchBar } from '../components/SplitViewShell';
 import { RecordPane, RecordPaneEmptyState, RelatedItem, RelatedSection } from '../components/RecordPane';
+import { TaskWidget } from '../components/TaskWidget';
 import { TicketTimeline } from '../components/TicketTimeline';
 import { getTicketStages, type TicketStageOption } from '../services/ticketStageService';
 import { toFormatedDate } from '../utils/dateUtils';
@@ -181,6 +182,12 @@ export const Tickets: React.FC = () => {
           )}
         </RelatedSection>
       </div>
+
+      {id && (
+        <div className={`card ${paneStyles.relatedCard}`}>
+          <TaskWidget entityType="TICKET" entityId={id} />
+        </div>
+      )}
 
       {id && <TicketTimeline ticketId={id} ticket={detail} />}
     </RecordPane>

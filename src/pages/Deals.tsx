@@ -9,6 +9,7 @@ import { ConfirmModal } from '../components/ConfirmModal';
 import { DetailDrawer } from '../components/DetailDrawer';
 import { SplitViewShell, RecordListRow, CollapsibleSearchBar } from '../components/SplitViewShell';
 import { RecordPane, RecordPaneEmptyState, RelatedItem, RelatedSection } from '../components/RecordPane';
+import { TaskWidget } from '../components/TaskWidget';
 import { abbreviateNumber } from '../utils/numberUtils';
 import { toFormatedDate } from '../utils/dateUtils';
 import { getStoredViewMode, setStoredViewMode, type ViewMode } from '../utils/viewPreferences';
@@ -212,6 +213,12 @@ export const Deals: React.FC = () => {
           {contact && <RelatedItem to={`/contacts/${contact.id}`} primary={contact.name || ''} />}
         </RelatedSection>
       </div>
+
+      {id && (
+        <div className={`card ${paneStyles.relatedCard}`}>
+          <TaskWidget entityType="DEAL" entityId={id} />
+        </div>
+      )}
     </RecordPane>
   );
 

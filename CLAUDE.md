@@ -45,6 +45,21 @@ src/
 
 The backend issues an httpOnly session cookie — the frontend never stores a token (not in `localStorage`, not in memory as a readable string). `AuthContext` calls `GET /api/auth/me` once on mount to determine whether a session exists and populate the user object; `ProtectedRoute` in `App.tsx` renders nothing until that check resolves (`isLoading`), then redirects to `/login` if unauthenticated. `signOut()` calls `POST /api/auth/logout` before clearing local state. When adding a new authenticated API call, you don't need to attach anything — `withCredentials: true` on the shared `api` instance handles it.
 
+## Tasks / checklists (Fase 1)
+
+`services/taskService.ts` wraps `/api/tasks`. Two consumption points:
+
+- **`components/TaskWidget.tsx`** — embedded directly in the detail pane of Deals, Contacts, Companies, and Tickets (see the `<TaskWidget entityType="..." entityId={id} />` block near the end of each page's `detailPane`/`RecordPane` children). Shows that record's tasks with a small progress ring, quick-add input, and an expandable checklist per task. Reuses global classes (`card`, `btn-secondary`) plus its own `TaskWidget.module.css`.
+- **`pages/MyDay.tsx`** (route `/my-day`, nav icon `CheckSquare`) — cross-entity view grouping pending tasks into Atrasadas/Hoje/Próximos 7 dias via `utils/taskDueBucket.ts` (shared with `TaskWidget` so the overdue/today/future logic isn't duplicated). Each row completes with one click or snoozes 1 day; a quick-add bar creates unlinked tasks with an optional due date.
+
+**Fase 2 (implemented)**: `services/notificationService.ts` wraps `/api/notifications`. `components/NotificationBell.tsx` sits in `Layout.tsx`'s topbar next to the search button — polls `unread-count` every 30s (same `isCheckingRef`-guarded interval pattern as `useHealthCheck`), and when the count increases, fires a browser `Notification` (only if permission was already granted; the dropdown shows an inline "enable" banner otherwise, since permission can only be requested from a user gesture). Each item in the dropdown resolves the underlying task directly (`Concluir`/`Adiar 1 dia`, reusing `taskService`) rather than just marking the notification read. The opt-out preference (`taskNotifyOverdue`) needs no bespoke settings UI — it's a global `Parameter` seeded server-side (see `crm-api/CLAUDE.md`) and shows up automatically in the existing generic "preferences" screen (`pages/UserPreferences.tsx`), labeled via `settings.taskNotifyOverdue` in the locale files.
+
+**Fase 3 (implemented)**:
+- **`pages/TasksKanbanView.tsx`** — 3-column board (`PENDING`/`IN_PROGRESS`/`DONE`, i.e. A fazer/Fazendo/Concluído) using the same native HTML5 drag-and-drop as `TicketsKanbanView.tsx` (no DnD library), reusing `Funnel.module.css`. Toggled from `pages/MyDay.tsx` via the existing `ViewToggle` component, persisted with `getStoredViewMode('tasks')`.
+- **`utils/naturalLanguageDate.ts`** — parses relative dates/times out of free text per locale (pt-BR/en-US/es-ES: "hoje"/"amanhã"/weekday names/"em X dias" plus "15h30"/"15:30"/"3pm"), stripping the matched phrase from the returned title. Locale comes from `useLanguage()` (`LanguageContext`), so the parser switches automatically with the user's language — not hardcoded to Portuguese.
+- **`utils/entityMentionSearch.ts`** — fires the same 4 `/search` endpoints `CommandPalette.tsx` already uses (deals/contacts/companies/tickets) to resolve `@mention` candidates.
+- **`components/QuickAddTask.tsx`** — single-line capture bar (visually modeled on `CommandPalette.tsx`: `createPortal` + `modal-overlay`), opened via the global `T` keyboard shortcut (ignored while typing in any input/textarea, wired in `Layout.tsx`) or the floating action button. Live-previews the parsed due date as a chip; typing `@query` shows a dropdown of matching Deal/Contact/Company/Ticket records to link (only one entity per task, matching the backend's single `entityType`/`entityId`).
+
 ## Design system
 
 Everything routes through CSS custom properties defined once in `src/index.css` under `:root` (light) and `:root[data-theme='dark']` (dark) — colors, spacing radii, shadows. `main.tsx` applies the stored theme preference (`utils/themePreferences.ts`) before the first render. There is no Tailwind/MUI/component library: styling is plain CSS, split between:

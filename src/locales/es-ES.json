@@ -29,6 +29,7 @@
   },
   "navigation": {
     "dashboard": "Panel de Control",
+    "myDay": "Mi Día",
     "deals": "Negocios",
     "contacts": "Contactos",
     "companies": "Empresas",
@@ -40,6 +41,50 @@
     "groupCrm": "CRM",
     "openMenu": "Abrir menú",
     "closeMenu": "Cerrar menú"
+  },
+  "tasks": {
+    "widgetTitle": "Tareas",
+    "quickAddPlaceholder": "Agregar una tarea...",
+    "addTask": "Agregar",
+    "noTasksForEntity": "Todavía no hay tareas aquí.",
+    "markDone": "Completar",
+    "viewChecklist": "Ver checklist",
+    "addChecklistItem": "Agregar ítem...",
+    "confirmDelete": "¿Seguro que deseas eliminar esta tarea?",
+    "snoozeOneDay": "Posponer 1 día",
+    "due": {
+      "overdue": "Atrasada",
+      "today": "Hoy"
+    },
+    "groups": {
+      "overdue": "Atrasadas",
+      "today": "Hoy",
+      "future": "Próximos 7 días"
+    },
+    "myDay": {
+      "title": "Mi Día",
+      "empty": "Nada por aquí — sin tareas atrasadas ni próximas."
+    },
+    "kanban": {
+      "todo": "Por hacer",
+      "doing": "Haciendo",
+      "done": "Hecho"
+    },
+    "quickAdd": {
+      "placeholder": "Llamar a @Fastcomm mañana 15h...",
+      "hint": "Escribe una frase — @ vincula un Deal/Contacto/Empresa/Ticket, y fechas como \"mañana 15h\" se convierten en la fecha límite.",
+      "fabLabel": "Nueva tarea rápida (atajo: T)"
+    }
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "markAllRead": "Marcar todas como leídas",
+    "empty": "Todavía no hay notificaciones.",
+    "overdueSince": "Venció el {date}",
+    "enableBrowserPush": "Actívalas para recibir avisos del navegador.",
+    "enable": "Activar",
+    "browserPushTitle": "Tareas atrasadas",
+    "browserPushBody": "Tienes {count} tarea(s) atrasada(s) nueva(s)."
   },
   "login": {
     "title": "Sistema CRM",
@@ -162,6 +207,7 @@
     "disabled": "Desactivado",
     "ok": "OK",
     "animationActive": "Activar animación",
+    "taskNotifyOverdue": "Avisarme sobre tareas atrasadas",
     "saveSuccess": "Parámetros actualizados correctamente.",
     "saveError": "No se pudieron guardar los parámetros.",
     "loadError": "No se pudieron cargar los parámetros."

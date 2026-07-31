@@ -29,6 +29,7 @@
   },
   "navigation": {
     "dashboard": "Dashboard",
+    "myDay": "My Day",
     "deals": "Deals",
     "contacts": "Contacts",
     "companies": "Companies",
@@ -40,6 +41,50 @@
     "groupCrm": "CRM",
     "openMenu": "Open menu",
     "closeMenu": "Close menu"
+  },
+  "tasks": {
+    "widgetTitle": "Tasks",
+    "quickAddPlaceholder": "Add a task...",
+    "addTask": "Add",
+    "noTasksForEntity": "No tasks here yet.",
+    "markDone": "Complete",
+    "viewChecklist": "View checklist",
+    "addChecklistItem": "Add item...",
+    "confirmDelete": "Are you sure you want to delete this task?",
+    "snoozeOneDay": "Snooze 1 day",
+    "due": {
+      "overdue": "Overdue",
+      "today": "Today"
+    },
+    "groups": {
+      "overdue": "Overdue",
+      "today": "Today",
+      "future": "Next 7 days"
+    },
+    "myDay": {
+      "title": "My Day",
+      "empty": "Nothing here — no overdue or upcoming tasks."
+    },
+    "kanban": {
+      "todo": "To do",
+      "doing": "Doing",
+      "done": "Done"
+    },
+    "quickAdd": {
+      "placeholder": "Call @Fastcomm tomorrow 3pm...",
+      "hint": "Type a sentence — @ links a Deal/Contact/Company/Ticket, and dates like \"tomorrow 3pm\" become the due date.",
+      "fabLabel": "New quick task (shortcut: T)"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all as read",
+    "empty": "No notifications yet.",
+    "overdueSince": "Was due {date}",
+    "enableBrowserPush": "Enable to get browser alerts.",
+    "enable": "Enable",
+    "browserPushTitle": "Overdue tasks",
+    "browserPushBody": "You have {count} new overdue task(s)."
   },
   "login": {
     "title": "CRM System",
@@ -162,6 +207,7 @@
     "disabled": "Disabled",
     "ok": "OK",
     "animationActive": "Enable animation",
+    "taskNotifyOverdue": "Notify me about overdue tasks",
     "saveSuccess": "Parameters updated successfully.",
     "saveError": "Unable to save the parameters.",
     "loadError": "Unable to load the parameters."
