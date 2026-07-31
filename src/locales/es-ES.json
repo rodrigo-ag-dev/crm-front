@@ -56,11 +56,6 @@
       "overdue": "Atrasada",
       "today": "Hoy"
     },
-    "groups": {
-      "overdue": "Atrasadas",
-      "today": "Hoy",
-      "future": "Próximos 7 días"
-    },
     "myDay": {
       "title": "Mi Día",
       "empty": "Nada por aquí — sin tareas atrasadas ni próximas."

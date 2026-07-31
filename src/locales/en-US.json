@@ -56,11 +56,6 @@
       "overdue": "Overdue",
       "today": "Today"
     },
-    "groups": {
-      "overdue": "Overdue",
-      "today": "Today",
-      "future": "Next 7 days"
-    },
     "myDay": {
       "title": "My Day",
       "empty": "Nothing here — no overdue or upcoming tasks."

@@ -3,6 +3,7 @@ import { Check, ChevronDown, ChevronRight, Plus, Trash2 } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
 import { taskService, type TaskChecklistItem, type TaskEntityType, type TaskItem } from '../services/taskService';
 import { getTaskDueBucket } from '../utils/taskDueBucket';
+import { emitTaskChanged } from '../utils/taskEvents';
 import { ConfirmModal } from './ConfirmModal';
 import styles from './TaskWidget.module.css';
 
@@ -62,6 +63,7 @@ export const TaskWidget: React.FC<TaskWidgetProps> = ({ entityType, entityId }) 
     setQuickAddValue('');
     try {
       await taskService.create({ title, entityType, entityId, priority: 'MEDIUM' });
+      emitTaskChanged();
       fetchTasks();
     } catch (error) {
       console.error('Error creating task', error);
@@ -73,6 +75,7 @@ export const TaskWidget: React.FC<TaskWidgetProps> = ({ entityType, entityId }) 
     setTasks((prev) => prev.map((t) => (t.id === task.id ? { ...t, status: nextStatus } : t)));
     try {
       await taskService.changeStatus(task.id, nextStatus);
+      emitTaskChanged();
     } catch (error) {
       console.error('Error updating task status', error);
       fetchTasks();
@@ -87,6 +90,7 @@ export const TaskWidget: React.FC<TaskWidgetProps> = ({ entityType, entityId }) 
     try {
       await taskService.remove(id);
       setTasks((prev) => prev.filter((t) => t.id !== id));
+      emitTaskChanged();
     } catch (error) {
       console.error('Error deleting task', error);
     }

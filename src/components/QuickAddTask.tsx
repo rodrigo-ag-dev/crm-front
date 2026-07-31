@@ -4,6 +4,7 @@ import { Building2, Briefcase, CalendarClock, CheckSquare, Ticket, Users } from 
 import { useTranslation } from '../hooks/useTranslation';
 import { useLanguage } from '../contexts/LanguageContext';
 import { taskService, type TaskEntityType } from '../services/taskService';
+import { emitTaskChanged } from '../utils/taskEvents';
 import { parseQuickAddText } from '../utils/naturalLanguageDate';
 import { searchMentionCandidates, type MentionCandidate } from '../utils/entityMentionSearch';
 import styles from './QuickAddTask.module.css';
@@ -102,6 +103,7 @@ export const QuickAddTask: React.FC<QuickAddTaskProps> = ({ isOpen, onClose }) =
         entityType: selectedEntity?.entityType,
         entityId: selectedEntity?.entityId,
       });
+      emitTaskChanged();
       onClose();
     } catch (error) {
       console.error('Error creating task from quick add', error);

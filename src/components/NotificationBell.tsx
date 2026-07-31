@@ -3,6 +3,7 @@ import { Bell, Check, Clock } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
 import { notificationService, type TaskNotification } from '../services/notificationService';
 import { taskService } from '../services/taskService';
+import { emitTaskChanged } from '../utils/taskEvents';
 import { toFormatedDate } from '../utils/dateUtils';
 import styles from './NotificationBell.module.css';
 
@@ -115,6 +116,7 @@ export const NotificationBell: React.FC = () => {
         taskService.changeStatus(notification.taskId, 'DONE'),
         notificationService.markRead(notification.id),
       ]);
+      emitTaskChanged();
     } catch (error) {
       console.error('Error completing task from notification', error);
     }
@@ -129,6 +131,7 @@ export const NotificationBell: React.FC = () => {
         taskService.snooze(notification.taskId, base.toISOString()),
         notificationService.markRead(notification.id),
       ]);
+      emitTaskChanged();
     } catch (error) {
       console.error('Error snoozing task from notification', error);
     }
