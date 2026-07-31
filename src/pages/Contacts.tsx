@@ -12,6 +12,7 @@ import { RecordPane, RecordPaneEmptyState, RelatedItem, RelatedSection } from '.
 import { abbreviateNumber } from '../utils/numberUtils';
 import { getListCache, setListCache } from '../utils/listCache';
 import { useFittedPageSize } from '../hooks/useFittedPageSize';
+import { getTicketStages, type TicketStageOption } from '../services/ticketStageService';
 import splitStyles from '../components/SplitViewShell.module.css';
 import paneStyles from '../components/RecordPane.module.css';
 
@@ -35,12 +36,19 @@ interface RelatedDeal {
   id: string;
   title: string;
   amount: number;
+  stageId?: string;
 }
 
 interface RelatedTicket {
   id: string;
   title: string;
   companyName?: string;
+  ticketStageId?: string;
+}
+
+interface StageOption {
+  id: string;
+  description?: string;
 }
 
 export const Contacts: React.FC = () => {
@@ -69,6 +77,8 @@ export const Contacts: React.FC = () => {
   const [company, setCompany] = useState<Company | null>(null);
   const [deals, setDeals] = useState<RelatedDeal[]>([]);
   const [tickets, setTickets] = useState<RelatedTicket[]>([]);
+  const [dealStages, setDealStages] = useState<StageOption[]>([]);
+  const [ticketStages, setTicketStages] = useState<TicketStageOption[]>([]);
 
   const isFirstSearchRun = useRef(true);
   useEffect(() => {
@@ -90,6 +100,14 @@ export const Contacts: React.FC = () => {
   useEffect(() => {
     fetchDetail();
   }, [id]);
+
+  useEffect(() => {
+    api.get('/stages/search?size=200').then((res) => setDealStages(res.data.content || [])).catch(() => setDealStages([]));
+    getTicketStages().then((res) => setTicketStages(res.data || [])).catch(() => setTicketStages([]));
+  }, []);
+
+  const dealStageDescription = (stageId?: string) => dealStages.find((s) => s.id === stageId)?.description;
+  const ticketStageName = (stageId?: string) => ticketStages.find((s) => s.id === stageId)?.name;
 
   async function fetchContacts() {
     setLoading(true);
@@ -273,7 +291,13 @@ export const Contacts: React.FC = () => {
                     createLabel={t('deals.createDeal')}
                   >
                     {deals.map((deal) => (
-                      <RelatedItem key={deal.id} to={`/deals/${deal.id}`} primary={deal.title} secondary={abbreviateNumber(deal.amount)} />
+                      <RelatedItem
+                        key={deal.id}
+                        to={`/deals/${deal.id}`}
+                        primary={deal.title}
+                        secondary={abbreviateNumber(deal.amount)}
+                        description={dealStageDescription(deal.stageId)}
+                      />
                     ))}
                   </RelatedSection>
 
@@ -284,7 +308,13 @@ export const Contacts: React.FC = () => {
                     createLabel={t('tickets.createTicket')}
                   >
                     {tickets.map((ticket) => (
-                      <RelatedItem key={ticket.id} to={`/tickets/${ticket.id}`} primary={ticket.title} secondary={ticket.companyName} />
+                      <RelatedItem
+                        key={ticket.id}
+                        to={`/tickets/${ticket.id}`}
+                        primary={ticket.title}
+                        secondary={ticket.companyName}
+                        description={ticketStageName(ticket.ticketStageId)}
+                      />
                     ))}
                   </RelatedSection>
                 </div>

@@ -229,6 +229,16 @@
   white-space: nowrap;
 }
 
+.relatedItemDescription {
+  font-size: 11px;
+  color: var(--text-secondary);
+  opacity: 0.75;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
 .emptyText {
   color: var(--text-secondary);
   font-size: 12px;
