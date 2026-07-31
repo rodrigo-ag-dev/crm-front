@@ -4,6 +4,7 @@ import { useTranslation } from '../hooks/useTranslation';
 import { taskService, type TaskEntityType, type TaskItem, type TaskStatus } from '../services/taskService';
 import { getTaskDueBucket } from '../utils/taskDueBucket';
 import { subscribeTaskChanged, emitTaskChanged } from '../utils/taskEvents';
+import { toFormatedDateTime } from '../utils/dateUtils';
 import funnelStyles from './Funnel.module.css';
 
 const ENTITY_PATH: Record<TaskEntityType, string> = {
@@ -150,7 +151,8 @@ export const MyDay: React.FC = () => {
                                 fontWeight: 600,
                               }}
                             >
-                              {bucket === 'overdue' ? t('tasks.due.overdue') : bucket === 'today' ? t('tasks.due.today') : ''}
+                              {bucket === 'overdue' ? `${t('tasks.due.overdue')} · ` : bucket === 'today' ? `${t('tasks.due.today')} · ` : ''}
+                              {toFormatedDateTime(task.dueAt)}
                             </span>
                           </div>
                         )}

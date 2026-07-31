@@ -17,13 +17,17 @@ const DueBadge: React.FC<{ dueAt?: string }> = ({ dueAt }) => {
   const bucket = getTaskDueBucket(dueAt);
   if (!bucket) return null;
 
-  const label = new Date(dueAt!).toLocaleDateString(localStorage.getItem('@CRM:language') || navigator.language || 'pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-  });
+  const locale = localStorage.getItem('@CRM:language') || navigator.language || 'pt-BR';
+  const time = new Date(dueAt!).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+  const dateAndTime = new Date(dueAt!).toLocaleString(locale, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
 
   const className = bucket === 'overdue' ? styles.dueOverdue : bucket === 'today' ? styles.dueToday : styles.dueFuture;
-  const text = bucket === 'overdue' ? t('tasks.due.overdue') : bucket === 'today' ? t('tasks.due.today') : label;
+  const text =
+    bucket === 'overdue'
+      ? `${t('tasks.due.overdue')} · ${dateAndTime}`
+      : bucket === 'today'
+      ? `${t('tasks.due.today')} · ${time}`
+      : dateAndTime;
 
   return <span className={`${styles.dueBadge} ${className}`}>{text}</span>;
 };

@@ -50,18 +50,31 @@ function nextWeekday(targetDow: number): Date {
   return addDays(now, diff);
 }
 
-function parseTime(text: string): { hours: number; minutes: number; match: string } | null {
-  const hMatch = text.match(/\b(\d{1,2})h(\d{2})?\b/i);
+// Optional connector word immediately before a time (e.g. "às 15h", "at 3pm",
+// "a las 15h") is captured as part of the match so it gets stripped from the
+// title along with the time itself, instead of being left dangling. Each is
+// only consumed when directly followed by a recognized time pattern, so plain
+// uses of "as"/"at"/"a" elsewhere in a sentence are never affected.
+const TIME_CONNECTOR: Record<QuickAddLocale, string> = {
+  'pt-BR': '(?:\\b(?:às|as)\\s+)?',
+  'en-US': '(?:\\bat\\s+)?',
+  'es-ES': '(?:\\ba\\s+las\\s+|\\ba\\s+)?',
+};
+
+function parseTime(text: string, locale: QuickAddLocale): { hours: number; minutes: number; match: string } | null {
+  const connector = TIME_CONNECTOR[locale];
+
+  const hMatch = text.match(new RegExp(`${connector}\\b(\\d{1,2})h(\\d{2})?\\b`, 'i'));
   if (hMatch) {
     return { hours: parseInt(hMatch[1], 10), minutes: hMatch[2] ? parseInt(hMatch[2], 10) : 0, match: hMatch[0] };
   }
 
-  const colonMatch = text.match(/\b(\d{1,2}):(\d{2})\b/);
+  const colonMatch = text.match(new RegExp(`${connector}\\b(\\d{1,2}):(\\d{2})\\b`, 'i'));
   if (colonMatch) {
     return { hours: parseInt(colonMatch[1], 10), minutes: parseInt(colonMatch[2], 10), match: colonMatch[0] };
   }
 
-  const amPmMatch = text.match(/\b(\d{1,2})\s?(am|pm)\b/i);
+  const amPmMatch = text.match(new RegExp(`${connector}\\b(\\d{1,2})\\s?(am|pm)\\b`, 'i'));
   if (amPmMatch) {
     let hours = parseInt(amPmMatch[1], 10) % 12;
     if (amPmMatch[2].toLowerCase() === 'pm') hours += 12;
@@ -113,7 +126,7 @@ export function parseQuickAddText(rawText: string, locale: QuickAddLocale): Pars
     }
   }
 
-  const time = parseTime(text);
+  const time = parseTime(text, locale);
   if (time) {
     text = text.replace(time.match, '').trim();
   }
