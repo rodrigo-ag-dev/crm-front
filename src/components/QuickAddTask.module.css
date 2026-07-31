@@ -113,24 +113,3 @@
   white-space: nowrap;
 }
 
-.fab {
-  position: fixed;
-  right: 24px;
-  bottom: 24px;
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: var(--primary-color);
-  color: white;
-  border: none;
-  box-shadow: var(--shadow-lg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 900;
-}
-
-.fab:hover {
-  background: var(--primary-dark);
-}

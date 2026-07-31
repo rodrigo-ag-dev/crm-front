@@ -10,7 +10,6 @@ import { NotificationBell } from './NotificationBell';
 import { QuickAddTask } from './QuickAddTask';
 import { ChangePasswordGate } from './ChangePasswordGate';
 import styles from './Layout.module.css';
-import quickAddStyles from './QuickAddTask.module.css';
 import {
   LayoutDashboard,
   Users,
@@ -26,7 +25,6 @@ import {
   ArrowLeft,
   ChevronRight,
   CheckSquare,
-  Plus,
 } from 'lucide-react';
 
 type NavItem = {
@@ -336,16 +334,6 @@ export const Layout: React.FC = () => {
       <CommandPalette isOpen={commandPaletteOpen} onClose={() => setCommandPaletteOpen(false)} />
       <QuickAddTask isOpen={quickAddTaskOpen} onClose={() => setQuickAddTaskOpen(false)} />
       <ChangePasswordGate />
-
-      <button
-        type="button"
-        className={quickAddStyles.fab}
-        onClick={() => setQuickAddTaskOpen(true)}
-        title={t('tasks.quickAdd.fabLabel')}
-        aria-label={t('tasks.quickAdd.fabLabel')}
-      >
-        <Plus size={22} />
-      </button>
     </div>
   );
 };

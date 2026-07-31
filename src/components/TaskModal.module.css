@@ -1,0 +1,155 @@
+.titleFieldWrapper {
+  position: relative;
+}
+
+.mentionList {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  margin-top: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-button);
+  background: var(--surface-color);
+  box-shadow: var(--shadow-md);
+}
+
+.mentionItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border: none;
+  background: transparent;
+  border-radius: 0;
+  text-align: left;
+  cursor: pointer;
+  color: var(--text-primary);
+}
+
+.mentionItem:hover {
+  background-color: var(--surface-elevated);
+}
+
+.mentionIcon {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.mentionText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.mentionPrimary {
+  font-size: 14px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mentionSecondary {
+  font-size: 12px;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.checklistSection {
+  margin-top: 4px;
+  margin-bottom: 16px;
+}
+
+.checklistList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.checklistItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  border-radius: 5px;
+  border: 1.5px solid var(--border-color);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+}
+
+.checkboxDone {
+  background: var(--success-color);
+  border-color: var(--success-color);
+}
+
+.checklistLabel {
+  flex: 1;
+  font-size: 0.86rem;
+  color: var(--text-primary);
+}
+
+.checklistLabelDone {
+  color: var(--text-light);
+  text-decoration: line-through;
+}
+
+.removeButton {
+  background: none;
+  border: none;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 2px;
+}
+
+.removeButton:hover {
+  color: var(--danger-color);
+}
+
+.emptyText {
+  font-size: 0.84rem;
+  color: var(--text-light);
+  margin: 0;
+}
+
+.addItemRow {
+  display: flex;
+  gap: 8px;
+}
+
+.addItemInput {
+  flex: 1;
+  border-radius: var(--border-radius-button);
+  border: 1px solid var(--border-color);
+  background: var(--surface-color);
+  color: var(--text-primary);
+  padding: 7px 10px;
+  font-size: 0.86rem;
+}
+
+.footerSpacer {
+  flex: 1;
+}

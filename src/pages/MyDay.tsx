@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Pencil, Plus } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
 import { taskService, type TaskEntityType, type TaskItem, type TaskStatus } from '../services/taskService';
 import { getTaskDueBucket } from '../utils/taskDueBucket';
 import { subscribeTaskChanged, emitTaskChanged } from '../utils/taskEvents';
 import { toFormatedDateTime } from '../utils/dateUtils';
+import { TaskModal } from '../components/TaskModal';
+import { QuickAddTask } from '../components/QuickAddTask';
 import funnelStyles from './Funnel.module.css';
 
 const ENTITY_PATH: Record<TaskEntityType, string> = {
@@ -25,6 +28,8 @@ export const MyDay: React.FC = () => {
   const [tasks, setTasks] = useState<TaskItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [draggedTaskId, setDraggedTaskId] = useState<string | null>(null);
+  const [editingTask, setEditingTask] = useState<TaskItem | null>(null);
+  const [quickAddOpen, setQuickAddOpen] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -88,6 +93,12 @@ export const MyDay: React.FC = () => {
     <div className={funnelStyles.funnelContainer}>
       <div className="page-header">
         <h1 className="page-title">{t('tasks.myDay.title')}</h1>
+        <div className="toolbar-actions">
+          <button type="button" className="btn-primary" onClick={() => setQuickAddOpen(true)}>
+            <Plus size={18} />
+            {t('tasks.myDay.createTask')}
+          </button>
+        </div>
       </div>
 
       {loading ? (
@@ -122,6 +133,15 @@ export const MyDay: React.FC = () => {
                       >
                         <div className={funnelStyles.funnelCardHeader}>
                           <span className={funnelStyles.funnelCardTitle}>{task.title}</span>
+                          <button
+                            type="button"
+                            className={funnelStyles.funnelCardEditBtn}
+                            onClick={() => setEditingTask(task)}
+                            title={t('common.edit')}
+                            aria-label={t('common.edit')}
+                          >
+                            <Pencil size={14} />
+                          </button>
                         </div>
                         <div className={funnelStyles.funnelCardBody}>
                           {task.entityType && task.entityId && (
@@ -165,6 +185,9 @@ export const MyDay: React.FC = () => {
           })}
         </div>
       )}
+
+      <TaskModal isOpen={!!editingTask} task={editingTask} onClose={() => setEditingTask(null)} />
+      <QuickAddTask isOpen={quickAddOpen} onClose={() => setQuickAddOpen(false)} />
     </div>
   );
 };

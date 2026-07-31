@@ -52,13 +52,28 @@
     "addChecklistItem": "Agregar ítem...",
     "confirmDelete": "¿Seguro que deseas eliminar esta tarea?",
     "snoozeOneDay": "Posponer 1 día",
+    "editTask": "Editar tarea",
+    "errorSaving": "Error al guardar la tarea",
+    "form": {
+      "title": "Título",
+      "description": "Descripción",
+      "dueAt": "Fecha límite",
+      "priority": "Prioridad",
+      "checklist": "Checklist"
+    },
+    "priority": {
+      "low": "Baja",
+      "medium": "Media",
+      "high": "Alta"
+    },
     "due": {
       "overdue": "Atrasada",
       "today": "Hoy"
     },
     "myDay": {
       "title": "Mi Día",
-      "empty": "Nada por aquí — sin tareas atrasadas ni próximas."
+      "empty": "Nada por aquí — sin tareas atrasadas ni próximas.",
+      "createTask": "Crear tarea"
     },
     "kanban": {
       "todo": "Por hacer",

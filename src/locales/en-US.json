@@ -52,13 +52,28 @@
     "addChecklistItem": "Add item...",
     "confirmDelete": "Are you sure you want to delete this task?",
     "snoozeOneDay": "Snooze 1 day",
+    "editTask": "Edit task",
+    "errorSaving": "Error saving task",
+    "form": {
+      "title": "Title",
+      "description": "Description",
+      "dueAt": "Due date",
+      "priority": "Priority",
+      "checklist": "Checklist"
+    },
+    "priority": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    },
     "due": {
       "overdue": "Overdue",
       "today": "Today"
     },
     "myDay": {
       "title": "My Day",
-      "empty": "Nothing here — no overdue or upcoming tasks."
+      "empty": "Nothing here — no overdue or upcoming tasks.",
+      "createTask": "Create task"
     },
     "kanban": {
       "todo": "To do",
