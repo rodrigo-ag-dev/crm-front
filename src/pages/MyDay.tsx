@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Pencil, Plus } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
@@ -30,6 +30,7 @@ export const MyDay: React.FC = () => {
   const [draggedTaskId, setDraggedTaskId] = useState<string | null>(null);
   const [editingTask, setEditingTask] = useState<TaskItem | null>(null);
   const [quickAddOpen, setQuickAddOpen] = useState(false);
+  const hasLoadedRef = useRef(false);
 
   useEffect(() => {
     fetchData();
@@ -38,7 +39,11 @@ export const MyDay: React.FC = () => {
   useEffect(() => subscribeTaskChanged(fetchData), []);
 
   async function fetchData() {
-    setLoading(true);
+    // Only show the full loading skeleton on the first load. Later refetches
+    // (drag-and-drop's own emitTaskChanged, other widgets changing a task,
+    // an error retry) must not unmount/remount the board - that replays the
+    // card entrance animation for every card, not just the one that moved.
+    if (!hasLoadedRef.current) setLoading(true);
     try {
       const response = await taskService.search({ page: 0, size: 1000 });
       const items = (response.data.content || []).filter((task) => task.status !== 'CANCELED');
@@ -48,6 +53,7 @@ export const MyDay: React.FC = () => {
       setTasks([]);
     } finally {
       setLoading(false);
+      hasLoadedRef.current = true;
     }
   }
 

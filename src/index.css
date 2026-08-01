@@ -16,6 +16,7 @@
   --success-color: #22A06B;
   --warning-color: #C67A1E;
   --danger-color: #C0392B;
+  --on-success-color: #FFFFFF;
 
   /* Background & surfaces */
   --bg-color: #F1F2ED;
@@ -87,6 +88,7 @@
   --success-color: #50FA7B;
   --warning-color: #FFB86C;
   --danger-color: #FF5555;
+  --on-success-color: #103622;
 
   --bg-color: #282A36;
   --bg-gradient: linear-gradient(180deg, #2B2D3B 0%, #262832 100%);

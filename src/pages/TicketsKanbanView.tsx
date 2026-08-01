@@ -38,6 +38,7 @@ export const TicketsKanbanView: React.FC<TicketsKanbanViewProps> = ({ viewMode, 
   const boardRef = useRef<HTMLDivElement | null>(null);
   const autoScrollInterval = useRef<number | null>(null);
   const lastDirection = useRef<number>(0);
+  const hasLoadedRef = useRef(false);
 
   const EDGE_THRESHOLD = 80;
   const SCROLL_STEP = 20;
@@ -50,7 +51,10 @@ export const TicketsKanbanView: React.FC<TicketsKanbanViewProps> = ({ viewMode, 
   }, []);
 
   async function fetchData() {
-    setLoading(true);
+    // Only the first load shows the skeleton. Later refetches (drag error retry,
+    // modal save) must not unmount/remount the board, or every card replays its
+    // entrance animation instead of just the one that actually changed.
+    if (!hasLoadedRef.current) setLoading(true);
     try {
       const [ticketsRes, ticketStagesRes] = await Promise.all([
         ticketService.searchTickets<Ticket>({ canceled: false, page: 0, size: 1000 }),
@@ -65,6 +69,7 @@ export const TicketsKanbanView: React.FC<TicketsKanbanViewProps> = ({ viewMode, 
       setTicketStages([]);
     } finally {
       setLoading(false);
+      hasLoadedRef.current = true;
       requestAnimationFrame(updateIndicators);
     }
   }

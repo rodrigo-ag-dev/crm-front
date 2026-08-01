@@ -98,7 +98,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: white;
+  color: var(--on-success-color);
 }
 
 .checkboxDone {
