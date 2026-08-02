@@ -164,10 +164,14 @@ export const TicketTimeline: React.FC<TicketTimelineProps> = ({ ticketId, ticket
             }
 
             const { comment } = item;
+            const displayName =
+              comment.type === 'CONTACT_MESSAGE'
+                ? comment.contactName || comment.authorName
+                : comment.authorName;
             return (
               <div key={item.id} className={`${styles.commentBubble} ${styles[`type_${comment.type}`]}`}>
                 <div className={styles.commentHeader}>
-                  <span className={styles.commentAuthor}>{comment.authorName || commentTypeLabel(comment.type)}</span>
+                  <span className={styles.commentAuthor}>{displayName || commentTypeLabel(comment.type)}</span>
                   <span className={styles.commentTypeLabel}>{commentTypeLabel(comment.type)}</span>
                 </div>
                 <p className={styles.commentBody}>{comment.body}</p>

@@ -19,6 +19,8 @@ export interface TicketComment {
   ticketId: string;
   authorId?: string;
   authorName?: string;
+  contactId?: string;
+  contactName?: string;
   type: TicketCommentType;
   body: string;
   createdAt: string;
