@@ -45,6 +45,10 @@ src/
 
 The backend issues an httpOnly session cookie — the frontend never stores a token (not in `localStorage`, not in memory as a readable string). `AuthContext` calls `GET /api/auth/me` once on mount to determine whether a session exists and populate the user object; `ProtectedRoute` in `App.tsx` renders nothing until that check resolves (`isLoading`), then redirects to `/login` if unauthenticated. `signOut()` calls `POST /api/auth/logout` before clearing local state. When adding a new authenticated API call, you don't need to attach anything — `withCredentials: true` on the shared `api` instance handles it.
 
+## Reports (PDF)
+
+`pages/Reports.tsx` (route `/reports`, nav icon `FileText`) — a single page covering all 5 report types (Empresas, Contatos por Empresa, Tickets por Contato e Empresa, Negócios por Empresa, Agenda do Dia) via a type selector plus a filter form that swaps fields per type, reusing `CompanyCombobox`/`ContactCombobox`/`StageCombobox` and native `<input type="date">`/`<select>` (same as everywhere else — no date-picker or select library). "Gerar PDF" calls `api.get('/reports/<type>', { params, responseType: 'blob' })` and triggers a client-side download via a temporary `<a download>` + `URL.createObjectURL` — no dedicated `reportService.ts`, the page calls `api` directly like most pages do. `pages/Reports.module.css` holds the page-local layout (filter grid, type-selector row).
+
 ## Tasks / checklists
 
 `services/taskService.ts` wraps `/api/tasks`. Consumption points:

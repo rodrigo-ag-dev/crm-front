@@ -25,6 +25,7 @@ import {
   ArrowLeft,
   ChevronRight,
   CheckSquare,
+  FileText,
 } from 'lucide-react';
 
 type NavItem = {
@@ -40,6 +41,7 @@ const RAIL_ITEMS: NavItem[] = [
   { to: '/tickets', icon: Ticket, labelKey: 'navigation.tickets', end: true },
   { to: '/companies', icon: Building2, labelKey: 'navigation.companies' },
   { to: '/contacts', icon: Users, labelKey: 'navigation.contacts' },
+  { to: '/reports', icon: FileText, labelKey: 'navigation.reports' },
 ];
 
 const PAGE_TITLE_MAP: Record<string, string> = {
