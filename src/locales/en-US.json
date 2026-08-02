@@ -220,7 +220,10 @@
     "dealWon": "Won",
     "dealLost": "Lost",
     "generate": "Generate PDF",
-    "errorGenerating": "Error generating the report"
+    "errorGenerating": "Error generating the report",
+    "previewTitle": "Report preview",
+    "print": "Print",
+    "download": "Download"
   },
   "settings": {
     "title": "Settings",

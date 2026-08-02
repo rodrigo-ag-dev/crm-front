@@ -220,7 +220,10 @@
     "dealWon": "Ganado",
     "dealLost": "Perdido",
     "generate": "Generar PDF",
-    "errorGenerating": "Error al generar el informe"
+    "errorGenerating": "Error al generar el informe",
+    "previewTitle": "Vista previa del informe",
+    "print": "Imprimir",
+    "download": "Descargar"
   },
   "settings": {
     "title": "Configuración",

@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { FileDown, Loader2 } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Download, FileDown, Loader2, Printer } from 'lucide-react';
 import api from '../services/api';
 import { useTranslation } from '../hooks/useTranslation';
 import { CompanyCombobox } from '../components/CompanyCombobox';
 import { ContactCombobox } from '../components/ContactCombobox';
 import { StageCombobox } from '../components/StageCombobox';
+import { Modal } from '../components/Modal';
 import { getTicketStages, sortTicketStages, type TicketStageOption } from '../services/ticketStageService';
 import styles from './Reports.module.css';
 
@@ -17,6 +18,14 @@ export const Reports: React.FC = () => {
   const [reportType, setReportType] = useState<ReportType>('companies');
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState('');
+  const [preview, setPreview] = useState<{ url: string; filename: string } | null>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  useEffect(() => {
+    return () => {
+      if (preview) window.URL.revokeObjectURL(preview.url);
+    };
+  }, [preview]);
 
   const [ticketStages, setTicketStages] = useState<TicketStageOption[]>([]);
   useEffect(() => {
@@ -100,19 +109,35 @@ export const Reports: React.FC = () => {
       const filename = match?.[1] || `${reportType}.pdf`;
 
       const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
+      setPreview((prev) => {
+        if (prev) window.URL.revokeObjectURL(prev.url);
+        return { url, filename };
+      });
     } catch (err) {
       console.error('Error generating report', err);
       setError(t('reports.errorGenerating'));
     } finally {
       setGenerating(false);
     }
+  };
+
+  const handleClosePreview = () => {
+    if (preview) window.URL.revokeObjectURL(preview.url);
+    setPreview(null);
+  };
+
+  const handleDownload = () => {
+    if (!preview) return;
+    const link = document.createElement('a');
+    link.href = preview.url;
+    link.download = preview.filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
+
+  const handlePrint = () => {
+    iframeRef.current?.contentWindow?.print();
   };
 
   return (
@@ -244,6 +269,29 @@ export const Reports: React.FC = () => {
           </button>
         </div>
       </div>
+
+      <Modal
+        isOpen={!!preview}
+        onClose={handleClosePreview}
+        title={t('reports.previewTitle')}
+        contentClassName={styles.previewModal}
+      >
+        {preview && (
+          <>
+            <iframe ref={iframeRef} src={preview.url} title={t('reports.previewTitle')} className={styles.previewFrame} />
+            <div className={styles.previewActions}>
+              <button type="button" className="btn-secondary" onClick={handlePrint}>
+                <Printer size={18} />
+                {t('reports.print')}
+              </button>
+              <button type="button" className="btn-primary" onClick={handleDownload}>
+                <Download size={18} />
+                {t('reports.download')}
+              </button>
+            </div>
+          </>
+        )}
+      </Modal>
     </div>
   );
 };

@@ -9,9 +9,10 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   children: React.ReactNode;
+  contentClassName?: string;
 }
 
-export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
+export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, contentClassName }) => {
   const { t } = useTranslation();
   const titleId = useId();
 
@@ -35,7 +36,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }
     <div className="modal-overlay" onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div
         ref={formRef} // ref aplicado aqui
-        className="modal-content card"
+        className={`modal-content card${contentClassName ? ` ${contentClassName}` : ''}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
