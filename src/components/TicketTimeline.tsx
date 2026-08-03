@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Maximize2, Minimize2, Send } from 'lucide-react';
 import { ticketService, type TicketComment, type TicketCommentType, type TicketStageHistoryEntry } from '../services/ticketService';
 import type { Ticket } from './TicketModal';
@@ -30,13 +30,26 @@ export const TicketTimeline: React.FC<TicketTimelineProps> = ({ ticketId, ticket
   const [comments, setComments] = useState<TicketComment[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [commentType, setCommentType] = useState<TicketCommentType>('CONTACT_MESSAGE');
+  const [commentType, setCommentType] = useState<TicketCommentType>('AGENT_REPLY');
   const [commentBody, setCommentBody] = useState('');
   const [sending, setSending] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchTimelineData();
+  }, [ticketId]);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, [comments.length]);
+
+  useEffect(() => {
+    if (!ticketId) return;
+    const interval = setInterval(() => {
+      pollComments();
+    }, 5000);
+    return () => clearInterval(interval);
   }, [ticketId]);
 
   useEffect(() => {
@@ -67,6 +80,15 @@ export const TicketTimeline: React.FC<TicketTimelineProps> = ({ ticketId, ticket
     }
   }
 
+  async function pollComments() {
+    try {
+      const response = await ticketService.getTicketComments(ticketId);
+      setComments(response.data || []);
+    } catch (err) {
+      console.error('Error polling ticket comments', err);
+    }
+  }
+
   const handleSendComment = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!commentBody.trim()) return;
@@ -75,6 +97,7 @@ export const TicketTimeline: React.FC<TicketTimelineProps> = ({ ticketId, ticket
       const response = await ticketService.addTicketComment(ticketId, { type: commentType, body: commentBody.trim() });
       setComments((prev) => [...prev, response.data]);
       setCommentBody('');
+      setCommentType('AGENT_REPLY');
     } catch (err) {
       console.error('Error adding ticket comment', err);
       setError(t('tickets.timeline.errorSending'));
@@ -179,6 +202,7 @@ export const TicketTimeline: React.FC<TicketTimelineProps> = ({ ticketId, ticket
               </div>
             );
           })}
+          <div ref={bottomRef} />
         </div>
       )}
 

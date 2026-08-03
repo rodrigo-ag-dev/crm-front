@@ -27,7 +27,7 @@ export const PublicTicketChat: React.FC = () => {
   useEffect(() => {
     if (!token) return;
     fetchData();
-    const interval = setInterval(fetchComments, 15000);
+    const interval = setInterval(fetchComments, 5000);
     return () => clearInterval(interval);
   }, [token]);
 
