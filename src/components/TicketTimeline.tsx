@@ -34,14 +34,16 @@ export const TicketTimeline: React.FC<TicketTimelineProps> = ({ ticketId, ticket
   const [commentBody, setCommentBody] = useState('');
   const [sending, setSending] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const entryListRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchTimelineData();
   }, [ticketId]);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    const container = entryListRef.current;
+    if (!container) return;
+    container.scrollTop = container.scrollHeight;
   }, [comments.length]);
 
   useEffect(() => {
@@ -157,7 +159,7 @@ export const TicketTimeline: React.FC<TicketTimelineProps> = ({ ticketId, ticket
       {loading ? (
         <div className="page-loading">{t('common.loading')}</div>
       ) : (
-        <div className={styles.entryList}>
+        <div className={styles.entryList} ref={entryListRef}>
           {entries.length === 0 && <p className={styles.emptyText}>{t('tickets.timeline.empty')}</p>}
 
           {entries.map((item) => {
@@ -202,7 +204,6 @@ export const TicketTimeline: React.FC<TicketTimelineProps> = ({ ticketId, ticket
               </div>
             );
           })}
-          <div ref={bottomRef} />
         </div>
       )}
 

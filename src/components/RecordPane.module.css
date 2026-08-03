@@ -120,10 +120,6 @@
   flex-direction: column;
   gap: 4px;
   max-height: 220px;
-  overflow-y: hidden;
-}
-
-.relatedList:hover {
   overflow-y: auto;
 }
 
