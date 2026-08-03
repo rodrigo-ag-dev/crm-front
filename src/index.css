@@ -646,6 +646,10 @@ option {
   border: none;
 }
 
+.selector-box--compact .selector-options {
+  margin-left: auto;
+}
+
 .selector-icon--sidebar {
   color: var(--sidebar-text);
 }
