@@ -52,3 +52,25 @@
   gap: 8px;
   margin-top: 12px;
 }
+
+.previewUnavailable {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 24px;
+}
+
+.previewUnavailable p {
+  max-width: 320px;
+  margin: 0;
+}
+
+.previewUnavailable .previewActions {
+  justify-content: center;
+  margin-top: 8px;
+}

@@ -223,7 +223,9 @@
     "errorGenerating": "Error generating the report",
     "previewTitle": "Report preview",
     "print": "Print",
-    "download": "Download"
+    "download": "Download",
+    "previewUnavailable": "Your browser can't display the PDF preview here. Use one of the buttons below.",
+    "openInNewTab": "Open in new tab"
   },
   "settings": {
     "title": "Settings",

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Download, FileDown, Loader2, Printer } from 'lucide-react';
+import { Download, ExternalLink, FileDown, FileWarning, Loader2, Printer } from 'lucide-react';
 import api from '../services/api';
 import { useTranslation } from '../hooks/useTranslation';
 import { CompanyCombobox } from '../components/CompanyCombobox';
@@ -13,6 +13,18 @@ type ReportType = 'companies' | 'contacts' | 'tickets' | 'deals' | 'agenda';
 
 const today = () => new Date().toISOString().slice(0, 10);
 
+// Most mobile browsers have no built-in PDF viewer available inside an <iframe> — instead of
+// rendering the PDF they show it as raw text/binary with a native "open" fallback. Detect that
+// up front (rather than reacting to a broken render) and skip straight to a Download/Open UI.
+const supportsInlinePdf = (): boolean => {
+  if (typeof navigator === 'undefined') return true;
+  const nav = navigator as Navigator & { pdfViewerEnabled?: boolean };
+  if (typeof nav.pdfViewerEnabled === 'boolean') {
+    return nav.pdfViewerEnabled;
+  }
+  return !/Android|iPhone|iPad|iPod|Mobile/i.test(nav.userAgent || '');
+};
+
 export const Reports: React.FC = () => {
   const { t } = useTranslation();
   const [reportType, setReportType] = useState<ReportType>('companies');
@@ -20,6 +32,7 @@ export const Reports: React.FC = () => {
   const [error, setError] = useState('');
   const [preview, setPreview] = useState<{ url: string; filename: string } | null>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [canPreviewInline] = useState(() => supportsInlinePdf());
 
   useEffect(() => {
     return () => {
@@ -138,6 +151,11 @@ export const Reports: React.FC = () => {
 
   const handlePrint = () => {
     iframeRef.current?.contentWindow?.print();
+  };
+
+  const handleOpenInNewTab = () => {
+    if (!preview) return;
+    window.open(preview.url, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -276,7 +294,7 @@ export const Reports: React.FC = () => {
         title={t('reports.previewTitle')}
         contentClassName={styles.previewModal}
       >
-        {preview && (
+        {preview && canPreviewInline && (
           <>
             <iframe ref={iframeRef} src={preview.url} title={t('reports.previewTitle')} className={styles.previewFrame} />
             <div className={styles.previewActions}>
@@ -290,6 +308,23 @@ export const Reports: React.FC = () => {
               </button>
             </div>
           </>
+        )}
+
+        {preview && !canPreviewInline && (
+          <div className={styles.previewUnavailable}>
+            <FileWarning size={40} />
+            <p>{t('reports.previewUnavailable')}</p>
+            <div className={styles.previewActions}>
+              <button type="button" className="btn-secondary" onClick={handleOpenInNewTab}>
+                <ExternalLink size={18} />
+                {t('reports.openInNewTab')}
+              </button>
+              <button type="button" className="btn-primary" onClick={handleDownload}>
+                <Download size={18} />
+                {t('reports.download')}
+              </button>
+            </div>
+          </div>
         )}
       </Modal>
     </div>

@@ -223,7 +223,9 @@
     "errorGenerating": "Erro ao gerar o relatório",
     "previewTitle": "Pré-visualização do relatório",
     "print": "Imprimir",
-    "download": "Baixar"
+    "download": "Baixar",
+    "previewUnavailable": "Seu navegador não consegue exibir a pré-visualização do PDF aqui. Use um dos botões abaixo.",
+    "openInNewTab": "Abrir em nova aba"
   },
   "settings": {
     "title": "Configurações",

@@ -47,7 +47,13 @@ The backend issues an httpOnly session cookie — the frontend never stores a to
 
 ## Reports (PDF)
 
-`pages/Reports.tsx` (route `/reports`, nav icon `FileText`) — a single page covering all 5 report types (Empresas, Contatos por Empresa, Tickets por Contato e Empresa, Negócios por Empresa, Agenda do Dia) via a type selector plus a filter form that swaps fields per type, reusing `CompanyCombobox`/`ContactCombobox`/`StageCombobox` and native `<input type="date">`/`<select>` (same as everywhere else — no date-picker or select library). "Gerar PDF" calls `api.get('/reports/<type>', { params, responseType: 'blob' })` and triggers a client-side download via a temporary `<a download>` + `URL.createObjectURL` — no dedicated `reportService.ts`, the page calls `api` directly like most pages do. `pages/Reports.module.css` holds the page-local layout (filter grid, type-selector row).
+`pages/Reports.tsx` (route `/reports`, nav icon `FileText`) — a single page covering all 5 report types (Empresas, Contatos por Empresa, Tickets por Contato e Empresa, Negócios por Empresa, Agenda do Dia) via a type selector plus a filter form that swaps fields per type, reusing `CompanyCombobox`/`ContactCombobox`/`StageCombobox` and native `<input type="date">`/`<select>` (same as everywhere else — no date-picker or select library). No dedicated `reportService.ts` — the page calls `api` directly like most pages do.
+
+"Gerar PDF" calls `api.get('/reports/<type>', { params, responseType: 'blob' })`, builds an object URL, and opens it in a preview `Modal` (`contentClassName` — `Modal.tsx` grew this optional prop specifically so this one modal could be wider/taller than the default 500px) instead of downloading immediately. Only on the actual download/print action does it touch the filesystem:
+- **Desktop** (or any browser reporting `navigator.pdfViewerEnabled === true`): an `<iframe src={blobUrl}>` renders the PDF inline, with "Imprimir" (`iframe.contentWindow.print()`) and "Baixar" (`<a download>`) buttons.
+- **Mobile fallback (gotcha)**: most mobile browsers have no PDF viewer registered for `<iframe>` content — instead of the PDF, the user sees raw bytes as text with the browser's own generic "open" fallback. `supportsInlinePdf()` in `Reports.tsx` detects this *before* rendering the iframe (via `navigator.pdfViewerEnabled` where available — Chrome/Edge/Firefox — otherwise a mobile-UA regex fallback for Safari/older browsers) and swaps in a `previewUnavailable` message with "Abrir em nova aba" (`window.open(blobUrl)`) and "Baixar" buttons instead. Don't try to reactively detect a broken render (no reliable error event fires for "wrong content type") — the proactive check is the only thing that works here.
+
+`pages/Reports.module.css` holds the page-local layout (filter grid, type-selector row, `.previewModal`/`.previewFrame`/`.previewUnavailable`).
 
 ## Tasks / checklists
 

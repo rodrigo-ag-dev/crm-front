@@ -223,7 +223,9 @@
     "errorGenerating": "Error al generar el informe",
     "previewTitle": "Vista previa del informe",
     "print": "Imprimir",
-    "download": "Descargar"
+    "download": "Descargar",
+    "previewUnavailable": "Tu navegador no puede mostrar la vista previa del PDF aquí. Usa uno de los botones de abajo.",
+    "openInNewTab": "Abrir en una nueva pestaña"
   },
   "settings": {
     "title": "Configuración",
