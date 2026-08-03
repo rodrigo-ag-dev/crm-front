@@ -345,9 +345,7 @@
   align-items: center;
   gap: 10px;
   padding: 10px 10px 12px;
-  border-bottom: 1px solid var(--surface-border);
   color: var(--text-primary);
-  margin-bottom: 2px;
 }
 
 .topbarAccountName {
@@ -378,6 +376,8 @@
   color: var(--text-primary);
   font-size: 13.5px;
   font-weight: 600;
+  border-top: 1px solid var(--surface-border);
+  margin-top: 2px;
   transition: background-color 0.18s ease, color 0.18s ease;
 }
 
@@ -400,6 +400,7 @@
 .topbarAccountTheme {
   padding-top: 4px;
   border-top: 1px solid var(--surface-border);
+  margin-top: 2px;
 }
 
 .topbarAccountLogout {

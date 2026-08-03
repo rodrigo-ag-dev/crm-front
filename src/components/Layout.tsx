@@ -302,6 +302,10 @@ export const Layout: React.FC = () => {
                     </div>
                   </div>
 
+                  <div className={styles.topbarAccountTheme}>
+                    <ThemeSelector variant="compact" label={t('settings.appearanceTitle')} />
+                  </div>
+
                   <NavLink
                     to="/settings"
                     onClick={closeAccountMenu}
@@ -313,9 +317,6 @@ export const Layout: React.FC = () => {
 
                   <div className={styles.topbarAccountLanguage}>
                     <LanguageSelector />
-                  </div>
-                  <div className={styles.topbarAccountTheme}>
-                    <ThemeSelector variant="compact" label={t('settings.appearanceTitle')} />
                   </div>
 
                   <button type="button" onClick={handleLogout} className={styles.topbarAccountLogout}>
