@@ -75,13 +75,13 @@
 }
 
 .bubbleContact {
-  align-self: flex-start;
-}
-
-.bubbleAgent {
   align-self: flex-end;
   background-color: color-mix(in srgb, var(--primary-color) 12%, var(--surface-elevated));
   border-color: color-mix(in srgb, var(--primary-color) 35%, var(--border-color));
+}
+
+.bubbleAgent {
+  align-self: flex-start;
 }
 
 .bubbleBody {
