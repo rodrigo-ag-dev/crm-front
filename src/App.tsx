@@ -13,6 +13,7 @@ import { Tickets } from './pages/Tickets';
 import { MyDay } from './pages/MyDay';
 import { Reports } from './pages/Reports';
 import { UserSettings } from './pages/UserSettings';
+import { PublicTicketChat } from './pages/PublicTicketChat';
 import { parameterService } from './services/parameterService';
 import { applyAnimationPreference } from './utils/animationPreferences';
 
@@ -80,6 +81,14 @@ const AppRoutes = () => {
       isMounted = false;
     };
   }, [user?.id]);
+
+  if (window.location.pathname.startsWith('/share/')) {
+    return (
+      <Routes>
+        <Route path="/share/:token" element={<PublicTicketChat />} />
+      </Routes>
+    );
+  }
 
   if (isLoading) {
     return null;

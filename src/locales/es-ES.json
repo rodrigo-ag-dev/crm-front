@@ -334,7 +334,27 @@
         "AGENT_REPLY": "Tú",
         "INTERNAL_NOTE": "Nota interna"
       }
+    },
+    "shareLink": {
+      "title": "Enlace público para el contacto",
+      "generate": "Generar enlace",
+      "regenerate": "Generar nuevo enlace",
+      "revoke": "Revocar enlace",
+      "revokeConfirm": "¿Seguro que deseas revocar este enlace? Quien ya lo tenga perderá el acceso.",
+      "expiresHint": "Expira el {date}",
+      "copied": "¡Enlace copiado!",
+      "errorLoading": "Error al cargar el enlace de compartición",
+      "errorGenerating": "Error al generar el enlace de compartición",
+      "errorRevoking": "Error al revocar el enlace de compartición"
     }
+  },
+  "publicChat": {
+    "notFound": "Este enlace no existe, caducó o fue revocado.",
+    "empty": "Aún no hay mensajes.",
+    "composerPlaceholder": "Escribe tu mensaje...",
+    "send": "Enviar",
+    "closed": "Este ticket ha sido cerrado. Ya no es posible enviar mensajes.",
+    "errorSending": "Error al enviar el mensaje"
   },
   "modals": {
     "confirmTitle": "Confirmación",

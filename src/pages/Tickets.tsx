@@ -11,6 +11,7 @@ import { SplitViewShell, RecordListRow, CollapsibleSearchBar } from '../componen
 import { RecordPane, RecordPaneEmptyState, RelatedItem, RelatedSection } from '../components/RecordPane';
 import { TaskWidget } from '../components/TaskWidget';
 import { TicketTimeline } from '../components/TicketTimeline';
+import { TicketShareLinkPanel } from '../components/TicketShareLinkPanel';
 import { getTicketStages, type TicketStageOption } from '../services/ticketStageService';
 import { toFormatedDate } from '../utils/dateUtils';
 import { getStoredViewMode, setStoredViewMode, type ViewMode } from '../utils/viewPreferences';
@@ -188,6 +189,8 @@ export const Tickets: React.FC = () => {
           <TaskWidget entityType="TICKET" entityId={id} />
         </div>
       )}
+
+      {id && <TicketShareLinkPanel ticketId={id} />}
 
       {id && <TicketTimeline ticketId={id} ticket={detail} />}
     </RecordPane>

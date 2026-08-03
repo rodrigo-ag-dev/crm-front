@@ -71,6 +71,14 @@ The backend issues an httpOnly session cookie — the frontend never stores a to
 - **`utils/entityMentionSearch.ts`** — fires the same 4 `/search` endpoints `CommandPalette.tsx` already uses (deals/contacts/companies/tickets) to resolve `@mention` candidates.
 - **`components/QuickAddTask.tsx`** — single-line capture bar (visually modeled on `CommandPalette.tsx`: `createPortal` + `modal-overlay`), opened via the global `T` keyboard shortcut (ignored while typing in any input/textarea, wired in `Layout.tsx`) or the floating action button (`quickAddStyles.fab`, rendered fixed bottom-right in `Layout.tsx` — this is the *only* way to create an unlinked/global task from the UI now, `MyDay.tsx` has no form of its own). Live-previews the parsed due date as a chip; typing `@query` shows a dropdown of matching Deal/Contact/Company/Ticket records to link (only one entity per task, matching the backend's single `entityType`/`entityId`).
 
+## Public ticket share chat
+
+`pages/PublicTicketChat.tsx` (route `/share/:token`) is a standalone, unauthenticated page — a contact opens the link an agent generated and sees/sends only `CONTACT_MESSAGE`/`AGENT_REPLY` ticket comments (never `INTERNAL_NOTE`, never the rest of the CRM). It's mounted in `App.tsx` **outside** `ProtectedRoute`/`Layout`, and checked via `window.location.pathname` *before* the `isLoading` gate so it doesn't wait on the authenticated `/api/auth/me` check that every other route depends on.
+
+- `services/publicTicketService.ts` — a separate `axios` instance (no `withCredentials`, no `Authorization` interceptor) hitting `/api/public/tickets/{token}[/comments]`, deliberately not reusing the shared `api` instance from `services/api.ts` so an agent's own session cookie is never implicated on this page.
+- `services/ticketShareLinkService.ts` + `components/TicketShareLinkPanel.tsx` — the authenticated side, rendered in `pages/Tickets.tsx`'s detail pane above `TicketTimeline`. Lets an agent generate/copy/revoke the link (`GET/POST/DELETE /api/tickets/{id}/share-link`); generating replaces any existing active link.
+- The chat page polls `GET .../comments` every 15s (no websockets) and force-closes the composer once the ticket is closed/canceled.
+
 ## Design system
 
 Everything routes through CSS custom properties defined once in `src/index.css` under `:root` (light) and `:root[data-theme='dark']` (dark) — colors, spacing radii, shadows. `main.tsx` applies the stored theme preference (`utils/themePreferences.ts`) before the first render. There is no Tailwind/MUI/component library: styling is plain CSS, split between:
