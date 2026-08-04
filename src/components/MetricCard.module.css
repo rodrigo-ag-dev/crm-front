@@ -4,6 +4,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .clickable {
@@ -65,6 +66,9 @@
   color: var(--text-primary);
   line-height: 1;
   letter-spacing: -0.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .skeleton {
