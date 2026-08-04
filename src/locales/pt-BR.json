@@ -493,7 +493,18 @@
     "income": "Receita",
     "expense": "Despesa",
     "noCategories": "Nenhuma categoria encontrada",
-    "deleteConfirm": "Tem certeza que deseja excluir esta categoria?"
+    "deleteConfirm": "Tem certeza que deseja excluir esta categoria?",
+    "originalAmount": "Valor original",
+    "interestAmount": "Juros/Multa (+)",
+    "discountAmount": "Desconto (-)",
+    "totalToPay": "Total a pagar",
+    "editEntry": "Editar lançamento",
+    "reversePayment": "Estornar pagamento",
+    "reverseConfirm": "Tem certeza que deseja estornar este pagamento? A parcela voltará para pendente.",
+    "errorReverse": "Erro ao estornar o pagamento",
+    "tabDetails": "Dados",
+    "tabInstallments": "Parcelas",
+    "regenerateBlocked": "Este lançamento já possui parcela(s) paga(s). Estorne o pagamento para poder alterar valor, parcelas ou datas."
   },
   "changePassword": {
     "title": "Trocar senha",

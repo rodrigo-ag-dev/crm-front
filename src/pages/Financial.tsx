@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { CheckSquare, XCircle } from 'lucide-react';
+import { CheckSquare, Edit2, RotateCcw, XCircle } from 'lucide-react';
 import api from '../services/api';
 import { useTranslation } from '../hooks/useTranslation';
 import { DataTablePage } from '../components/DataTablePage';
 import { FinancialEntryModal } from '../components/FinancialEntryModal';
 import { FinancialPaymentModal } from '../components/FinancialPaymentModal';
 import { FinancialTypeToggle } from '../components/FinancialTypeToggle';
+import { ConfirmModal } from '../components/ConfirmModal';
 import { abbreviateNumber } from '../utils/numberUtils';
 import { toFormatedDate } from '../utils/dateUtils';
 
@@ -46,7 +47,9 @@ export const Financial: React.FC = () => {
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const [isEntryModalOpen, setIsEntryModalOpen] = useState(false);
+  const [editingEntryId, setEditingEntryId] = useState<string | null>(null);
   const [paymentTarget, setPaymentTarget] = useState<{ id: string; amount: number }[] | null>(null);
+  const [reverseTargetId, setReverseTargetId] = useState<string | null>(null);
 
   useEffect(() => {
     setPage(0);
@@ -90,6 +93,24 @@ export const Financial: React.FC = () => {
       console.error('Error canceling installment', err);
       setError(t('financial.errorCanceling'));
     }
+  };
+
+  const handleReverse = async (confirmed: boolean) => {
+    const targetId = reverseTargetId;
+    setReverseTargetId(null);
+    if (!confirmed || !targetId) return;
+    try {
+      await api.post(`/financial/installments/${targetId}/reverse`);
+      fetchInstallments();
+    } catch (err) {
+      console.error('Error reversing installment payment', err);
+      setError(t('financial.errorReverse'));
+    }
+  };
+
+  const handleEntrySaved = () => {
+    setEditingEntryId(null);
+    fetchInstallments();
   };
 
   const selectedInstallments = installments.filter(i => selected.has(i.id)).map(i => ({ id: i.id, amount: i.amount }));
@@ -172,10 +193,18 @@ export const Financial: React.FC = () => {
                     <button onClick={() => setPaymentTarget([{ id: installment.id, amount: installment.amount }])} className="btn-icon" title={t('financial.markAsPaid')}>
                       <CheckSquare size={18} />
                     </button>
+                    <button onClick={() => setEditingEntryId(installment.entryId)} className="btn-icon" title={t('financial.editEntry')}>
+                      <Edit2 size={18} />
+                    </button>
                     <button onClick={() => handleCancel(installment.id)} className="btn-icon-danger" title={t('common.cancel')}>
                       <XCircle size={18} />
                     </button>
                   </>
+                )}
+                {installment.status === 'PAID' && (
+                  <button onClick={() => setReverseTargetId(installment.id)} className="btn-icon" title={t('financial.reversePayment')}>
+                    <RotateCcw size={18} />
+                  </button>
                 )}
               </div>
             </td>
@@ -195,6 +224,14 @@ export const Financial: React.FC = () => {
         onSaved={fetchInstallments}
       />
 
+      <FinancialEntryModal
+        isOpen={editingEntryId != null}
+        type={type}
+        entryId={editingEntryId}
+        onClose={() => setEditingEntryId(null)}
+        onSaved={handleEntrySaved}
+      />
+
       <FinancialPaymentModal
         isOpen={paymentTarget != null}
         installments={paymentTarget || []}
@@ -203,6 +240,14 @@ export const Financial: React.FC = () => {
           setSelected(new Set());
           fetchInstallments();
         }}
+      />
+
+      <ConfirmModal
+        isOpen={reverseTargetId != null}
+        message={t('financial.reverseConfirm')}
+        onConfirm={handleReverse}
+        confirmText={t('modals.yes')}
+        isDangerous={true}
       />
     </>
   );

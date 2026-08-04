@@ -493,7 +493,18 @@
     "income": "Income",
     "expense": "Expense",
     "noCategories": "No categories found",
-    "deleteConfirm": "Are you sure you want to delete this category?"
+    "deleteConfirm": "Are you sure you want to delete this category?",
+    "originalAmount": "Original amount",
+    "interestAmount": "Interest/Fine (+)",
+    "discountAmount": "Discount (-)",
+    "totalToPay": "Total to pay",
+    "editEntry": "Edit entry",
+    "reversePayment": "Reverse payment",
+    "reverseConfirm": "Are you sure you want to reverse this payment? The installment will go back to pending.",
+    "errorReverse": "Error reversing the payment",
+    "tabDetails": "Details",
+    "tabInstallments": "Installments",
+    "regenerateBlocked": "This entry already has paid installment(s). Reverse the payment to change the amount, installments, or dates."
   },
   "changePassword": {
     "title": "Change password",

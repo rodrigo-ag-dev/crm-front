@@ -493,7 +493,18 @@
     "income": "Ingreso",
     "expense": "Gasto",
     "noCategories": "No se encontraron categorías",
-    "deleteConfirm": "¿Está seguro de que desea eliminar esta categoría?"
+    "deleteConfirm": "¿Está seguro de que desea eliminar esta categoría?",
+    "originalAmount": "Monto original",
+    "interestAmount": "Intereses/Multa (+)",
+    "discountAmount": "Descuento (-)",
+    "totalToPay": "Total a pagar",
+    "editEntry": "Editar registro",
+    "reversePayment": "Revertir pago",
+    "reverseConfirm": "¿Está seguro de que desea revertir este pago? La cuota volverá a estar pendiente.",
+    "errorReverse": "Error al revertir el pago",
+    "tabDetails": "Datos",
+    "tabInstallments": "Cuotas",
+    "regenerateBlocked": "Este registro ya tiene cuota(s) pagada(s). Revierte el pago para poder cambiar el monto, las cuotas o las fechas."
   },
   "changePassword": {
     "title": "Cambiar contraseña",
