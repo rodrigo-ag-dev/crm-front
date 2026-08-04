@@ -258,6 +258,12 @@ export const Layout: React.FC = () => {
           </div>
 
           <div className={styles.layoutShell}>
+            {user?.tenantName && (
+              <div className={styles.tenantBadge} title={user.tenantName}>
+                <Building2 size={14} />
+                <span>{user.tenantName}</span>
+              </div>
+            )}
             <button
               type="button"
               className={styles.topbarSearchButton}

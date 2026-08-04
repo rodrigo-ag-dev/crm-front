@@ -95,6 +95,10 @@ The backend issues an httpOnly session cookie — the frontend never stores a to
 - `services/ticketShareLinkService.ts` + `components/TicketShareLinkPanel.tsx` — the authenticated side, rendered in `pages/Tickets.tsx`'s detail pane above `TicketTimeline`. Lets an agent generate/copy/revoke the link (`GET/POST/DELETE /api/tickets/{id}/share-link`); generating replaces any existing active link.
 - The chat page polls `GET .../comments` every 15s (no websockets) and force-closes the composer once the ticket is closed/canceled.
 
+## Tenant badge
+
+`components/Layout.tsx`'s topbar shows the current tenant name (`user.tenantName`, already returned by `GET /auth/me` via `Data/Users/UserDtos.cs`'s `TenantName`) as an always-visible pill (`.tenantBadge`, `Building2` icon) between the breadcrumb and the search button — not just inside the account dropdown (which already showed it, but only after a click). On narrow screens (`@media max-width: 640px`, same breakpoint the search/account buttons already collapse at) the label text hides and only the icon remains, consistent with the other topbar controls.
+
 ## Design system
 
 Everything routes through CSS custom properties defined once in `src/index.css` under `:root` (light) and `:root[data-theme='dark']` (dark) — colors, spacing radii, shadows. `main.tsx` applies the stored theme preference (`utils/themePreferences.ts`) before the first render. There is no Tailwind/MUI/component library: styling is plain CSS, split between:
