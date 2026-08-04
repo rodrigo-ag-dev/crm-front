@@ -26,6 +26,7 @@ import {
   ChevronRight,
   CheckSquare,
   FileText,
+  Wallet,
 } from 'lucide-react';
 
 type NavItem = {
@@ -38,6 +39,7 @@ type NavItem = {
 const RAIL_ITEMS: NavItem[] = [
   { to: '/my-day', icon: CheckSquare, labelKey: 'navigation.myDay', end: true },
   { to: '/deals', icon: Briefcase, labelKey: 'navigation.deals' },
+  { to: '/financial', icon: Wallet, labelKey: 'navigation.financial' },
   { to: '/tickets', icon: Ticket, labelKey: 'navigation.tickets', end: true },
   { to: '/companies', icon: Building2, labelKey: 'navigation.companies' },
   { to: '/contacts', icon: Users, labelKey: 'navigation.contacts' },
@@ -48,6 +50,7 @@ const PAGE_TITLE_MAP: Record<string, string> = {
   '/': 'navigation.dashboard',
   '/my-day': 'navigation.myDay',
   '/deals': 'navigation.deals',
+  '/financial': 'navigation.financial',
   '/companies': 'navigation.companies',
   '/contacts': 'navigation.contacts',
   '/tickets': 'navigation.tickets',

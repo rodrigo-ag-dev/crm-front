@@ -5,9 +5,10 @@ import { UserPreferences } from './UserPreferences';
 import { Stages } from './Stages';
 import { Users } from './Users';
 import { Tenants } from './Tenants';
+import { FinancialCategories } from './FinancialCategories';
 import styles from './UserSettings.module.css';
 
-type SettingsTab = 'preferences' | 'stages' | 'users' | 'tenants';
+type SettingsTab = 'preferences' | 'stages' | 'financialCategories' | 'users' | 'tenants';
 
 export const UserSettings: React.FC = () => {
   const { user } = useAuth();
@@ -40,6 +41,14 @@ export const UserSettings: React.FC = () => {
         >
           {t('settings.tabStages')}
         </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('financialCategories')}
+          className={`selector-button selector-button--surface ${activeTab === 'financialCategories' ? 'selector-button--active' : 'selector-button--inactive'}`}
+          aria-pressed={activeTab === 'financialCategories'}
+        >
+          {t('settings.tabFinancialCategories')}
+        </button>
         {isAdmin && (
           <button
             type="button"
@@ -65,6 +74,7 @@ export const UserSettings: React.FC = () => {
       <div className={styles.tabContent}>
         {activeTab === 'preferences' && <UserPreferences />}
         {activeTab === 'stages' && <Stages />}
+        {activeTab === 'financialCategories' && <FinancialCategories />}
         {activeTab === 'users' && isAdmin && <Users />}
         {activeTab === 'tenants' && isPlatformAdmin && <Tenants />}
       </div>

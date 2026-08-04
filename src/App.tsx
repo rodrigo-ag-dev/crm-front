@@ -12,6 +12,7 @@ import { Companies } from './pages/Companies';
 import { Tickets } from './pages/Tickets';
 import { MyDay } from './pages/MyDay';
 import { Reports } from './pages/Reports';
+import { Financial } from './pages/Financial';
 import { UserSettings } from './pages/UserSettings';
 import { PublicTicketChat } from './pages/PublicTicketChat';
 import { parameterService } from './services/parameterService';
@@ -113,6 +114,7 @@ const AppRoutes = () => {
         <Route path="tickets/funnel" element={<Navigate to="/tickets" replace />} />
         <Route path="tickets/:id" element={<Tickets />} />
         <Route path="reports" element={<Reports />} />
+        <Route path="financial" element={<Financial />} />
         <Route path="stages" element={<Navigate to="/settings" replace />} />
         <Route path="settings" element={<UserSettings />} />
         <Route path="users" element={<Navigate to="/settings" replace />} />
