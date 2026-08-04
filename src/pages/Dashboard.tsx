@@ -165,7 +165,7 @@ export const Dashboard: React.FC = () => {
         <MetricCard
           icon={TrendingUp}
           colorVar="--success-color"
-          href="/financial"
+          href="/financial?type=INCOME"
           label={t('dashboard.receivableThisMonth')}
           value={abbreviateNumber(financialSummary.receivableThisMonth)}
           loading={loadingFinancial}
@@ -173,7 +173,7 @@ export const Dashboard: React.FC = () => {
         <MetricCard
           icon={TrendingDown}
           colorVar="--warning-color"
-          href="/financial"
+          href="/financial?type=EXPENSE"
           label={t('dashboard.payableThisMonth')}
           value={abbreviateNumber(financialSummary.payableThisMonth)}
           loading={loadingFinancial}

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { AlertTriangle, CalendarClock, CheckSquare, CircleDollarSign, Edit2, RotateCcw, Wallet, XCircle } from 'lucide-react';
 import api from '../services/api';
 import { useTranslation } from '../hooks/useTranslation';
@@ -57,9 +58,13 @@ const emptyTotals: Totals = {
   paidThisMonthAmount: 0
 };
 
+const readTypeParam = (searchParams: URLSearchParams): EntryType =>
+  searchParams.get('type') === 'INCOME' ? 'INCOME' : 'EXPENSE';
+
 export const Financial: React.FC = () => {
   const { t } = useTranslation();
-  const [type, setType] = useState<EntryType>('EXPENSE');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [type, setTypeState] = useState<EntryType>(() => readTypeParam(searchParams));
   const [status, setStatus] = useState<StatusFilter>('');
   const [installments, setInstallments] = useState<Installment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -77,6 +82,23 @@ export const Financial: React.FC = () => {
 
   const [totals, setTotals] = useState<Totals>(emptyTotals);
   const [loadingTotals, setLoadingTotals] = useState(true);
+
+  // Keeps `type` in sync with the URL: reacts to navigation with a
+  // different ?type= (e.g. the Dashboard's totals cards) even while this
+  // page is already mounted, since a lazy useState initializer alone would
+  // only run once on first mount.
+  useEffect(() => {
+    setTypeState(readTypeParam(searchParams));
+  }, [searchParams]);
+
+  const setType = (value: EntryType) => {
+    setTypeState(value);
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev);
+      next.set('type', value);
+      return next;
+    }, { replace: true });
+  };
 
   useEffect(() => {
     setPage(0);
