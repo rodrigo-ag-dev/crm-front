@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AlertTriangle, CalendarClock, CheckSquare, CircleDollarSign, Edit2, RotateCcw, Wallet, XCircle } from 'lucide-react';
 import api from '../services/api';
 import { useTranslation } from '../hooks/useTranslation';
+import { useFittedPageSize } from '../hooks/useFittedPageSize';
 import { DataTablePage } from '../components/DataTablePage';
 import { FinancialEntryModal } from '../components/FinancialEntryModal';
 import { FinancialPaymentModal } from '../components/FinancialPaymentModal';
@@ -64,7 +65,8 @@ export const Financial: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const size = 15;
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const { size } = useFittedPageSize(scrollAreaRef, installments.length, 15);
   const [error, setError] = useState('');
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
@@ -84,7 +86,7 @@ export const Financial: React.FC = () => {
   useEffect(() => {
     fetchInstallments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [type, status, page]);
+  }, [type, status, page, size]);
 
   useEffect(() => {
     fetchTotals();
@@ -97,8 +99,10 @@ export const Financial: React.FC = () => {
       const params = new URLSearchParams({ type, page: page.toString(), size: size.toString() });
       if (status) params.append('status', status);
       const response = await api.get(`/financial/installments/search?${params.toString()}`);
+      const total = response.data.totalPages || 0;
       setInstallments(response.data.content || []);
-      setTotalPages(response.data.totalPages || 0);
+      setTotalPages(total);
+      if (page > 0 && page >= total) setPage(Math.max(0, total - 1));
     } catch (err) {
       console.error('Error fetching installments', err);
       setInstallments([]);
@@ -165,144 +169,146 @@ export const Financial: React.FC = () => {
 
   return (
     <>
-      <div className={styles.totalsGrid}>
-        <MetricCard
-          icon={AlertTriangle}
-          colorVar="--danger-color"
-          label={t('financial.overdueTotalLabel')}
-          value={`${abbreviateNumber(totals.overdueAmount)} (${totals.overdueCount})`}
-          loading={loadingTotals}
-          onClick={() => setStatus('OVERDUE')}
-          active={status === 'OVERDUE'}
-        />
-        <MetricCard
-          icon={CalendarClock}
-          colorVar="--warning-color"
-          label={t('financial.upcomingTotalLabel')}
-          value={`${abbreviateNumber(totals.upcomingAmount)} (${totals.upcomingCount})`}
-          loading={loadingTotals}
-          onClick={() => setStatus('PENDING')}
-          active={status === 'PENDING'}
-        />
-        <MetricCard
-          icon={Wallet}
-          colorVar="--secondary-color"
-          label={t('financial.openTotalLabel')}
-          value={`${abbreviateNumber(totals.openAmount)} (${totals.openCount})`}
-          loading={loadingTotals}
-          onClick={() => setStatus('')}
-          active={status === ''}
-        />
-        <MetricCard
-          icon={CircleDollarSign}
-          colorVar="--success-color"
-          label={t('financial.paidThisMonthLabel')}
-          value={abbreviateNumber(totals.paidThisMonthAmount)}
-          loading={loadingTotals}
-          onClick={() => setStatus('PAID')}
-          active={status === 'PAID'}
-        />
-      </div>
+      <div className={styles.pageRoot}>
+        <div className={styles.totalsGrid}>
+          <MetricCard
+            icon={AlertTriangle}
+            colorVar="--danger-color"
+            label={t('financial.overdueTotalLabel')}
+            value={`${abbreviateNumber(totals.overdueAmount)} (${totals.overdueCount})`}
+            loading={loadingTotals}
+            onClick={() => setStatus('OVERDUE')}
+            active={status === 'OVERDUE'}
+          />
+          <MetricCard
+            icon={CalendarClock}
+            colorVar="--warning-color"
+            label={t('financial.upcomingTotalLabel')}
+            value={`${abbreviateNumber(totals.upcomingAmount)} (${totals.upcomingCount})`}
+            loading={loadingTotals}
+            onClick={() => setStatus('PENDING')}
+            active={status === 'PENDING'}
+          />
+          <MetricCard
+            icon={Wallet}
+            colorVar="--secondary-color"
+            label={t('financial.openTotalLabel')}
+            value={`${abbreviateNumber(totals.openAmount)} (${totals.openCount})`}
+            loading={loadingTotals}
+            onClick={() => setStatus('')}
+            active={status === ''}
+          />
+          <MetricCard
+            icon={CircleDollarSign}
+            colorVar="--success-color"
+            label={t('financial.paidThisMonthLabel')}
+            value={abbreviateNumber(totals.paidThisMonthAmount)}
+            loading={loadingTotals}
+            onClick={() => setStatus('PAID')}
+            active={status === 'PAID'}
+          />
+        </div>
 
-      <DataTablePage
-        title={t('financial.title')}
-        primaryActionText={type === 'INCOME' ? t('financial.newIncome') : t('financial.newExpense')}
-        onPrimaryAction={() => setIsEntryModalOpen(true)}
-        loading={loading}
-        page={page}
-        totalPages={totalPages}
-        setPage={setPage}
-        error={error}
-        titleActions={<FinancialTypeToggle value={type} onChange={setType} />}
-        tableHeaders={
-          <>
-            <th></th>
-            <th>{t('financial.description')}</th>
-            <th>{t('financial.category')}</th>
-            <th>{t('financial.installment')}</th>
-            <th>{t('financial.dueDate')}</th>
-            <th className="table-header-actions--right">{t('financial.amount')}</th>
-            <th>{t('financial.status')}</th>
-            <th className="table-header-actions">{t('common.actions')}</th>
-          </>
-        }
-      >
-        <tr>
-          <td colSpan={8} style={{ padding: 0 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 16px' }}>
-              <select className="input-field" style={{ maxWidth: 200 }} value={status} onChange={e => setStatus(e.target.value as StatusFilter)}>
-                <option value="">{t('financial.allStatuses')}</option>
-                <option value="PENDING">{t('financial.pending')}</option>
-                <option value="OVERDUE">{t('financial.overdue')}</option>
-                <option value="PAID">{t('financial.paid')}</option>
-                <option value="CANCELED">{t('financial.canceled')}</option>
-              </select>
-              {selected.size > 0 && (
-                <button type="button" className="btn-primary" onClick={() => setPaymentTarget(selectedInstallments)}>
-                  <CheckSquare size={16} />
-                  {t('financial.markSelectedAsPaid')} ({selected.size})
-                </button>
-              )}
-            </div>
-          </td>
-        </tr>
-
-        {installments.map(installment => (
-          <tr key={installment.id}>
-            <td>
-              {installment.status !== 'PAID' && installment.status !== 'CANCELED' && (
-                <input
-                  type="checkbox"
-                  checked={selected.has(installment.id)}
-                  onChange={() => toggleSelected(installment.id)}
-                />
-              )}
-            </td>
-            <td>
-              <strong>{installment.description}</strong>
-              {(installment.companyName || installment.contactName) && (
-                <div className="text-secondary"><small>{installment.companyName || installment.contactName}</small></div>
-              )}
-            </td>
-            <td>{installment.categoryName || '-'}</td>
-            <td>{installment.installmentNumber}/{installment.totalInstallments}</td>
-            <td>{toFormatedDate(installment.dueDate)}</td>
-            <td className="table-cell-right">{abbreviateNumber(installment.amount)}</td>
-            <td>
-              <span className="badge" style={{ color: STATUS_COLORS[installment.status], borderColor: STATUS_COLORS[installment.status] }}>
-                {t(`financial.${installment.status.toLowerCase()}`)}
-              </span>
-            </td>
-            <td>
-              <div className="row-actions">
-                {installment.status !== 'PAID' && installment.status !== 'CANCELED' && (
-                  <>
-                    <button onClick={() => setPaymentTarget([{ id: installment.id, amount: installment.amount }])} className="btn-icon" title={t('financial.markAsPaid')}>
-                      <CheckSquare size={18} />
-                    </button>
-                    <button onClick={() => setEditingEntryId(installment.entryId)} className="btn-icon" title={t('financial.editEntry')}>
-                      <Edit2 size={18} />
-                    </button>
-                    <button onClick={() => handleCancel(installment.id)} className="btn-icon-danger" title={t('common.cancel')}>
-                      <XCircle size={18} />
-                    </button>
-                  </>
-                )}
-                {installment.status === 'PAID' && (
-                  <button onClick={() => setReverseTargetId(installment.id)} className="btn-icon" title={t('financial.reversePayment')}>
-                    <RotateCcw size={18} />
+        <div className={styles.tableWrapper}>
+          <DataTablePage
+            title={t('financial.title')}
+            primaryActionText={type === 'INCOME' ? t('financial.newIncome') : t('financial.newExpense')}
+            onPrimaryAction={() => setIsEntryModalOpen(true)}
+            loading={loading}
+            page={page}
+            totalPages={totalPages}
+            setPage={setPage}
+            error={error}
+            scrollAreaRef={scrollAreaRef}
+            titleActions={
+              <>
+                <FinancialTypeToggle value={type} onChange={setType} />
+                <select className="input-field" style={{ maxWidth: 180 }} value={status} onChange={e => setStatus(e.target.value as StatusFilter)}>
+                  <option value="">{t('financial.allStatuses')}</option>
+                  <option value="PENDING">{t('financial.pending')}</option>
+                  <option value="OVERDUE">{t('financial.overdue')}</option>
+                  <option value="PAID">{t('financial.paid')}</option>
+                  <option value="CANCELED">{t('financial.canceled')}</option>
+                </select>
+                {selected.size > 0 && (
+                  <button type="button" className="btn-primary" onClick={() => setPaymentTarget(selectedInstallments)}>
+                    <CheckSquare size={16} />
+                    {t('financial.markSelectedAsPaid')} ({selected.size})
                   </button>
                 )}
-              </div>
-            </td>
-          </tr>
-        ))}
-        {!loading && installments.length === 0 && (
-          <tr>
-            <td colSpan={8} className="empty-state">{t('financial.noInstallments')}</td>
-          </tr>
-        )}
-      </DataTablePage>
+              </>
+            }
+            tableHeaders={
+              <>
+                <th></th>
+                <th>{t('financial.description')}</th>
+                <th>{t('financial.category')}</th>
+                <th>{t('financial.installment')}</th>
+                <th>{t('financial.dueDate')}</th>
+                <th className="table-header-actions--right">{t('financial.amount')}</th>
+                <th>{t('financial.status')}</th>
+                <th className="table-header-actions">{t('common.actions')}</th>
+              </>
+            }
+          >
+            {installments.map(installment => (
+              <tr key={installment.id} data-record-row>
+                <td>
+                  {installment.status !== 'PAID' && installment.status !== 'CANCELED' && (
+                    <input
+                      type="checkbox"
+                      checked={selected.has(installment.id)}
+                      onChange={() => toggleSelected(installment.id)}
+                    />
+                  )}
+                </td>
+                <td>
+                  <strong>{installment.description}</strong>
+                  {(installment.companyName || installment.contactName) && (
+                    <div className="text-secondary"><small>{installment.companyName || installment.contactName}</small></div>
+                  )}
+                </td>
+                <td>{installment.categoryName || '-'}</td>
+                <td>{installment.installmentNumber}/{installment.totalInstallments}</td>
+                <td>{toFormatedDate(installment.dueDate)}</td>
+                <td className="table-cell-right">{abbreviateNumber(installment.amount)}</td>
+                <td>
+                  <span className="badge" style={{ color: STATUS_COLORS[installment.status], borderColor: STATUS_COLORS[installment.status] }}>
+                    {t(`financial.${installment.status.toLowerCase()}`)}
+                  </span>
+                </td>
+                <td>
+                  <div className="row-actions">
+                    {installment.status !== 'PAID' && installment.status !== 'CANCELED' && (
+                      <>
+                        <button onClick={() => setPaymentTarget([{ id: installment.id, amount: installment.amount }])} className="btn-icon" title={t('financial.markAsPaid')}>
+                          <CheckSquare size={18} />
+                        </button>
+                        <button onClick={() => setEditingEntryId(installment.entryId)} className="btn-icon" title={t('financial.editEntry')}>
+                          <Edit2 size={18} />
+                        </button>
+                        <button onClick={() => handleCancel(installment.id)} className="btn-icon-danger" title={t('common.cancel')}>
+                          <XCircle size={18} />
+                        </button>
+                      </>
+                    )}
+                    {installment.status === 'PAID' && (
+                      <button onClick={() => setReverseTargetId(installment.id)} className="btn-icon" title={t('financial.reversePayment')}>
+                        <RotateCcw size={18} />
+                      </button>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+            {!loading && installments.length === 0 && (
+              <tr>
+                <td colSpan={8} className="empty-state">{t('financial.noInstallments')}</td>
+              </tr>
+            )}
+          </DataTablePage>
+        </div>
+      </div>
 
       <FinancialEntryModal
         isOpen={isEntryModalOpen}

@@ -19,6 +19,7 @@ interface DataTablePageProps {
   searchPlaceholder?: string;
   error?: string;
   titleActions?: React.ReactNode;
+  scrollAreaRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 export const DataTablePage: React.FC<DataTablePageProps> = ({
@@ -35,7 +36,8 @@ export const DataTablePage: React.FC<DataTablePageProps> = ({
   onSearchChange,
   searchPlaceholder,
   error,
-  titleActions
+  titleActions,
+  scrollAreaRef
 }) => {
   const { t } = useTranslation();
   const [searchOpen, setSearchOpen] = useState(Boolean(searchTerm));
@@ -97,7 +99,7 @@ export const DataTablePage: React.FC<DataTablePageProps> = ({
             </button>
           </div>
         )}
-        <div className={`${styles.tableScrollArea}${loading ? ` ${styles.tableScrollAreaLoading}` : ''}`}>
+        <div ref={scrollAreaRef} className={`${styles.tableScrollArea}${loading ? ` ${styles.tableScrollAreaLoading}` : ''}`}>
           <table className="data-table">
             <thead>
               <tr>
