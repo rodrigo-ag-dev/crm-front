@@ -29,7 +29,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ value, onChange, label
   const [isOpen, setIsOpen] = useState(false);
   const [customColor, setCustomColor] = useState(value || '#0E6B52');
   const [recentColors, setRecentColors] = useState<string[]>([]);
-  const [position, setPosition] = useState<{ top: number; left: number; buttonWidth: number } | null>(null);
+  const [position, setPosition] = useState<{ top?: number; bottom?: number; left: number; buttonWidth: number; maxHeight: number } | null>(null);
 
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -46,33 +46,35 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ value, onChange, label
       if (!isOpen || !buttonRef.current) return;
 
       const rect = buttonRef.current.getBoundingClientRect();
-      const dropdownHeight = 380; // Altura do dropdown (incluindo padding)
+      const preferredHeight = 380; // Altura ideal do dropdown (incluindo padding)
+      const minHeight = 160; // Abaixo disso preferimos abrir do lado com mais espaço, ainda que role
       const viewportHeight = window.innerHeight;
       const viewportWidth = window.innerWidth;
       const gap = 8; // Espaço entre botão e dropdown
       const padding = 8; // Padding da borda
 
-      // Determina posição vertical
-      const spaceBelow = viewportHeight - rect.bottom;
-      const spaceAbove = rect.top;
+      // Espaço realmente disponível de cada lado do botão.
+      const spaceBelow = viewportHeight - rect.bottom - gap - padding;
+      const spaceAbove = rect.top - gap - padding;
 
-      let top: number;
+      // Sempre ancora no lado com mais espaço, nunca "pula" para longe do
+      // botão - quando nenhum lado comporta a altura ideal, o dropdown some
+      // com um maxHeight menor (a CSS já tem overflow-y: auto para isso).
+      const openBelow = spaceBelow >= spaceAbove;
+      const availableSpace = Math.max(minHeight, openBelow ? spaceBelow : spaceAbove);
+      const maxHeight = Math.min(preferredHeight, availableSpace);
 
-      // Se tem espaço abaixo, coloca lá
-      if (spaceBelow > dropdownHeight + gap) {
+      // Ao abrir para cima, ancora pela borda inferior (bottom) em vez do
+      // topo: como o conteúdo real quase sempre é mais baixo que maxHeight,
+      // ancorar pelo topo deixava um vão entre o dropdown e o botão. Usando
+      // bottom, o dropdown cresce para cima a partir do botão, do tamanho
+      // que precisar, sem depender de adivinhar a altura final.
+      let top: number | undefined;
+      let bottom: number | undefined;
+      if (openBelow) {
         top = rect.bottom + gap;
-      }
-      // Se tem espaço acima, coloca lá
-      else if (spaceAbove > dropdownHeight + gap) {
-        top = rect.top - dropdownHeight - gap;
-      }
-      // Caso contrário, coloca onde tem mais espaço
-      else {
-        if (spaceBelow > spaceAbove) {
-          top = rect.bottom + gap;
-        } else {
-          top = Math.max(padding, rect.top - dropdownHeight - gap);
-        }
+      } else {
+        bottom = Math.max(padding, viewportHeight - rect.top + gap);
       }
 
       // Determina posição horizontal - alinha com o botão
@@ -90,9 +92,11 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ value, onChange, label
       }
 
       setPosition({
-        top: Math.max(padding, top),
+        top: top !== undefined ? Math.max(padding, top) : undefined,
+        bottom,
         left: Math.max(padding, left),
-        buttonWidth: rect.width
+        buttonWidth: rect.width,
+        maxHeight
       });
     };
 
@@ -207,10 +211,11 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ value, onChange, label
           className={styles.dropdown}
           style={{
             position: 'fixed',
-            top: `${position.top}px`,
+            ...(position.top !== undefined ? { top: `${position.top}px` } : { bottom: `${position.bottom}px` }),
             left: `${position.left}px`,
             minWidth: `${position.buttonWidth}px`,
             maxWidth: '350px',
+            maxHeight: `${position.maxHeight}px`,
             zIndex: 1000010,
           }}
         >
