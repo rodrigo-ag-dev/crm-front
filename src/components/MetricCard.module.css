@@ -1,0 +1,96 @@
+.card {
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.clickable {
+  cursor: pointer;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.clickable:hover {
+  box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.08));
+  transform: translateY(-1px);
+}
+
+.active {
+  outline: 2px solid var(--primary-color);
+  outline-offset: -2px;
+}
+
+.bar {
+  height: 3px;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.body {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 20px 16px;
+  flex: 1;
+}
+
+.iconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 4px;
+}
+
+.value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+  letter-spacing: -0.5px;
+}
+
+.skeleton {
+  height: 28px;
+  width: 72px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--border-color) 60%, transparent);
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 8px 16px 12px;
+  color: var(--text-light);
+  font-size: 12px;
+  transition: color 0.18s ease;
+  text-decoration: none;
+}
+
+.link:hover {
+  color: var(--secondary-color);
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 1; }
+}

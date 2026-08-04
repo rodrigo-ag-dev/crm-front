@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTranslation } from '../hooks/useTranslation';
-import { BarChart3, Users, Building2, Briefcase, ArrowRight } from 'lucide-react';
-import { NavLink } from 'react-router-dom';
+import { BarChart3, Users, Building2, Briefcase, TrendingDown, TrendingUp, AlertTriangle, Scale } from 'lucide-react';
 import api from '../services/api';
 import { abbreviateNumber } from '../utils/numberUtils';
 import { toFormatedDate } from '../utils/dateUtils';
 import { getTimeGreeting } from '../utils/greetingUtils';
 import { RelatedItem, RelatedSection } from '../components/RecordPane';
+import { MetricCard } from '../components/MetricCard';
 import styles from './Dashboard.module.css';
 
 interface StaleDeal {
@@ -29,6 +29,22 @@ const daysSince = (date: string) =>
   Math.floor((Date.now() - new Date(date).getTime()) / (1000 * 3600 * 24));
 
 const isOverdue = (dueDate: string) => new Date(dueDate).getTime() < Date.now();
+
+interface FinancialSummary {
+  receivableThisMonth: number;
+  payableThisMonth: number;
+  overdueReceivable: number;
+  overduePayable: number;
+  projectedBalance: number;
+}
+
+const emptyFinancialSummary: FinancialSummary = {
+  receivableThisMonth: 0,
+  payableThisMonth: 0,
+  overdueReceivable: 0,
+  overduePayable: 0,
+  projectedBalance: 0,
+};
 
 type MetricConfig = {
   key: keyof typeof initialTotals;
@@ -57,6 +73,8 @@ export const Dashboard: React.FC = () => {
   const [staleDeals, setStaleDeals] = useState<StaleDeal[]>([]);
   const [pendingTickets, setPendingTickets] = useState<PendingTicket[]>([]);
   const [loadingActionable, setLoadingActionable] = useState(true);
+  const [financialSummary, setFinancialSummary] = useState<FinancialSummary>(emptyFinancialSummary);
+  const [loadingFinancial, setLoadingFinancial] = useState(true);
 
   useEffect(() => {
     const fetchTotals = async () => {
@@ -100,6 +118,20 @@ export const Dashboard: React.FC = () => {
     fetchActionable();
   }, []);
 
+  useEffect(() => {
+    const fetchFinancialSummary = async () => {
+      try {
+        const response = await api.get('/financial/summary');
+        setFinancialSummary(response.data || emptyFinancialSummary);
+      } catch {
+        // intentional no-op — keep zeros on error
+      } finally {
+        setLoadingFinancial(false);
+      }
+    };
+    fetchFinancialSummary();
+  }, []);
+
   const formatValue = (key: keyof typeof initialTotals, value: number) =>
     key === 'revenueRes' ? abbreviateNumber(value) : String(value);
 
@@ -115,27 +147,53 @@ export const Dashboard: React.FC = () => {
       </div>
 
       <div className={styles.metricsGrid}>
-        {metrics.map(({ key, labelKey, icon: Icon, colorVar, href }) => (
-          <div key={key} className={`card ${styles.metricCard}`}>
-            <div className={styles.metricCardBar} style={{ background: `var(${colorVar})` }} />
-            <div className={styles.metricCardBody}>
-              <div className={styles.metricIconWrap} style={{ color: `var(${colorVar})`, background: `color-mix(in srgb, var(${colorVar}) 12%, transparent)` }}>
-                <Icon size={22} />
-              </div>
-              <div className={styles.metricInfo}>
-                <p className={styles.metricLabel}>{t(labelKey)}</p>
-                {loading ? (
-                  <div className={styles.metricSkeleton} />
-                ) : (
-                  <h2 className={styles.metricValue}>{formatValue(key, totals[key])}</h2>
-                )}
-              </div>
-            </div>
-            <NavLink to={href} className={styles.metricLink}>
-              <ArrowRight size={14} />
-            </NavLink>
-          </div>
+        {metrics.map(({ key, labelKey, icon, colorVar, href }) => (
+          <MetricCard
+            key={key}
+            icon={icon}
+            colorVar={colorVar}
+            href={href}
+            label={t(labelKey)}
+            value={formatValue(key, totals[key])}
+            loading={loading}
+          />
         ))}
+      </div>
+
+      <h2 className={styles.sectionTitle}>{t('dashboard.financialHealth')}</h2>
+      <div className={styles.metricsGrid}>
+        <MetricCard
+          icon={TrendingUp}
+          colorVar="--success-color"
+          href="/financial"
+          label={t('dashboard.receivableThisMonth')}
+          value={abbreviateNumber(financialSummary.receivableThisMonth)}
+          loading={loadingFinancial}
+        />
+        <MetricCard
+          icon={TrendingDown}
+          colorVar="--warning-color"
+          href="/financial"
+          label={t('dashboard.payableThisMonth')}
+          value={abbreviateNumber(financialSummary.payableThisMonth)}
+          loading={loadingFinancial}
+        />
+        <MetricCard
+          icon={AlertTriangle}
+          colorVar="--danger-color"
+          href="/financial"
+          label={t('dashboard.overdueTotal')}
+          value={abbreviateNumber(financialSummary.overdueReceivable + financialSummary.overduePayable)}
+          loading={loadingFinancial}
+        />
+        <MetricCard
+          icon={Scale}
+          colorVar="--accent-color"
+          href="/financial"
+          label={t('dashboard.projectedBalance')}
+          value={abbreviateNumber(financialSummary.projectedBalance)}
+          loading={loadingFinancial}
+        />
       </div>
 
       <div className={styles.actionableGrid}>

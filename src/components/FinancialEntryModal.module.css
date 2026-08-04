@@ -7,6 +7,17 @@
   margin-bottom: 16px;
 }
 
+.fieldRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  align-items: start;
+}
+
+.tabPanelScroll {
+  overflow-y: auto;
+}
+
 .readonlyNotice {
   margin: 0 0 16px;
   padding: 10px 14px;

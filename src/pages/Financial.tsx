@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CheckSquare, Edit2, RotateCcw, XCircle } from 'lucide-react';
+import { AlertTriangle, CalendarClock, CheckSquare, CircleDollarSign, Edit2, RotateCcw, Wallet, XCircle } from 'lucide-react';
 import api from '../services/api';
 import { useTranslation } from '../hooks/useTranslation';
 import { DataTablePage } from '../components/DataTablePage';
@@ -7,8 +7,10 @@ import { FinancialEntryModal } from '../components/FinancialEntryModal';
 import { FinancialPaymentModal } from '../components/FinancialPaymentModal';
 import { FinancialTypeToggle } from '../components/FinancialTypeToggle';
 import { ConfirmModal } from '../components/ConfirmModal';
+import { MetricCard } from '../components/MetricCard';
 import { abbreviateNumber } from '../utils/numberUtils';
 import { toFormatedDate } from '../utils/dateUtils';
+import styles from './Financial.module.css';
 
 type EntryType = 'INCOME' | 'EXPENSE';
 type StatusFilter = '' | 'PENDING' | 'OVERDUE' | 'PAID' | 'CANCELED';
@@ -29,9 +31,29 @@ interface Installment {
 
 const STATUS_COLORS: Record<string, string> = {
   PENDING: 'var(--text-secondary)',
-  OVERDUE: 'var(--danger-color, #e5484d)',
+  OVERDUE: 'var(--danger-color)',
   PAID: 'var(--primary-color)',
   CANCELED: 'var(--text-light)'
+};
+
+interface Totals {
+  overdueCount: number;
+  overdueAmount: number;
+  upcomingCount: number;
+  upcomingAmount: number;
+  openCount: number;
+  openAmount: number;
+  paidThisMonthAmount: number;
+}
+
+const emptyTotals: Totals = {
+  overdueCount: 0,
+  overdueAmount: 0,
+  upcomingCount: 0,
+  upcomingAmount: 0,
+  openCount: 0,
+  openAmount: 0,
+  paidThisMonthAmount: 0
 };
 
 export const Financial: React.FC = () => {
@@ -51,6 +73,9 @@ export const Financial: React.FC = () => {
   const [paymentTarget, setPaymentTarget] = useState<{ id: string; amount: number }[] | null>(null);
   const [reverseTargetId, setReverseTargetId] = useState<string | null>(null);
 
+  const [totals, setTotals] = useState<Totals>(emptyTotals);
+  const [loadingTotals, setLoadingTotals] = useState(true);
+
   useEffect(() => {
     setPage(0);
     setSelected(new Set());
@@ -60,6 +85,11 @@ export const Financial: React.FC = () => {
     fetchInstallments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type, status, page]);
+
+  useEffect(() => {
+    fetchTotals();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [type]);
 
   const fetchInstallments = async () => {
     setLoading(true);
@@ -77,6 +107,24 @@ export const Financial: React.FC = () => {
     }
   };
 
+  const fetchTotals = async () => {
+    setLoadingTotals(true);
+    try {
+      const response = await api.get(`/financial/installments/totals?type=${type}`);
+      setTotals(response.data || emptyTotals);
+    } catch (err) {
+      console.error('Error fetching totals', err);
+      setTotals(emptyTotals);
+    } finally {
+      setLoadingTotals(false);
+    }
+  };
+
+  const refresh = () => {
+    fetchInstallments();
+    fetchTotals();
+  };
+
   const toggleSelected = (id: string) => {
     setSelected(prev => {
       const next = new Set(prev);
@@ -88,7 +136,7 @@ export const Financial: React.FC = () => {
   const handleCancel = async (id: string) => {
     try {
       await api.post(`/financial/installments/${id}/cancel`);
-      fetchInstallments();
+      refresh();
     } catch (err) {
       console.error('Error canceling installment', err);
       setError(t('financial.errorCanceling'));
@@ -101,7 +149,7 @@ export const Financial: React.FC = () => {
     if (!confirmed || !targetId) return;
     try {
       await api.post(`/financial/installments/${targetId}/reverse`);
-      fetchInstallments();
+      refresh();
     } catch (err) {
       console.error('Error reversing installment payment', err);
       setError(t('financial.errorReverse'));
@@ -110,13 +158,52 @@ export const Financial: React.FC = () => {
 
   const handleEntrySaved = () => {
     setEditingEntryId(null);
-    fetchInstallments();
+    refresh();
   };
 
   const selectedInstallments = installments.filter(i => selected.has(i.id)).map(i => ({ id: i.id, amount: i.amount }));
 
   return (
     <>
+      <div className={styles.totalsGrid}>
+        <MetricCard
+          icon={AlertTriangle}
+          colorVar="--danger-color"
+          label={t('financial.overdueTotalLabel')}
+          value={`${abbreviateNumber(totals.overdueAmount)} (${totals.overdueCount})`}
+          loading={loadingTotals}
+          onClick={() => setStatus('OVERDUE')}
+          active={status === 'OVERDUE'}
+        />
+        <MetricCard
+          icon={CalendarClock}
+          colorVar="--warning-color"
+          label={t('financial.upcomingTotalLabel')}
+          value={`${abbreviateNumber(totals.upcomingAmount)} (${totals.upcomingCount})`}
+          loading={loadingTotals}
+          onClick={() => setStatus('PENDING')}
+          active={status === 'PENDING'}
+        />
+        <MetricCard
+          icon={Wallet}
+          colorVar="--secondary-color"
+          label={t('financial.openTotalLabel')}
+          value={`${abbreviateNumber(totals.openAmount)} (${totals.openCount})`}
+          loading={loadingTotals}
+          onClick={() => setStatus('')}
+          active={status === ''}
+        />
+        <MetricCard
+          icon={CircleDollarSign}
+          colorVar="--success-color"
+          label={t('financial.paidThisMonthLabel')}
+          value={abbreviateNumber(totals.paidThisMonthAmount)}
+          loading={loadingTotals}
+          onClick={() => setStatus('PAID')}
+          active={status === 'PAID'}
+        />
+      </div>
+
       <DataTablePage
         title={t('financial.title')}
         primaryActionText={type === 'INCOME' ? t('financial.newIncome') : t('financial.newExpense')}
@@ -221,7 +308,7 @@ export const Financial: React.FC = () => {
         isOpen={isEntryModalOpen}
         type={type}
         onClose={() => setIsEntryModalOpen(false)}
-        onSaved={fetchInstallments}
+        onSaved={refresh}
       />
 
       <FinancialEntryModal
@@ -238,7 +325,7 @@ export const Financial: React.FC = () => {
         onClose={() => setPaymentTarget(null)}
         onSaved={() => {
           setSelected(new Set());
-          fetchInstallments();
+          refresh();
         }}
       />
 

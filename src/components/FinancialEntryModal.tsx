@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import api from '../services/api';
 import { useTranslation } from '../hooks/useTranslation';
 import { Modal } from './Modal';
@@ -7,6 +7,7 @@ import Textarea from './Textarea';
 import { CompanyCombobox } from './CompanyCombobox';
 import { ContactCombobox } from './ContactCombobox';
 import { SimpleDropdown } from './SimpleDropdown';
+import { CurrencyInput } from './CurrencyInput';
 import styles from './FinancialEntryModal.module.css';
 
 interface Category {
@@ -47,7 +48,7 @@ export const FinancialEntryModal: React.FC<FinancialEntryModalProps> = ({ isOpen
   const [categories, setCategories] = useState<Category[]>([]);
   const [companyId, setCompanyId] = useState('');
   const [contactId, setContactId] = useState('');
-  const [totalAmount, setTotalAmount] = useState('');
+  const [totalAmount, setTotalAmount] = useState(0);
   const [installmentCount, setInstallmentCount] = useState('1');
   const [firstInstallmentDate, setFirstInstallmentDate] = useState(todayIso());
   const [recurrence, setRecurrence] = useState<'MONTHLY' | 'WEEKLY'>('MONTHLY');
@@ -57,11 +58,15 @@ export const FinancialEntryModal: React.FC<FinancialEntryModalProps> = ({ isOpen
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
 
+  const tabContentRef = useRef<HTMLDivElement>(null);
+  const [tabHeight, setTabHeight] = useState<number | undefined>(undefined);
+
   useEffect(() => {
     if (!isOpen) return;
     setActiveTab('details');
     setError('');
     setCanRegenerate(true);
+    setTabHeight(undefined);
 
     api.get(`/financial/categories?type=${type}`)
       .then(res => setCategories(res.data || []))
@@ -76,7 +81,7 @@ export const FinancialEntryModal: React.FC<FinancialEntryModalProps> = ({ isOpen
           setCategoryId(data.categoryId || '');
           setCompanyId(data.companyId || '');
           setContactId(data.contactId || '');
-          setTotalAmount(String(data.totalAmount ?? ''));
+          setTotalAmount(Number(data.totalAmount) || 0);
           setInstallmentCount(String(data.installmentCount ?? 1));
           setFirstInstallmentDate(data.firstInstallmentDate ? data.firstInstallmentDate.slice(0, 10) : todayIso());
           setRecurrence((data.recurrence as 'MONTHLY' | 'WEEKLY') || 'MONTHLY');
@@ -103,7 +108,7 @@ export const FinancialEntryModal: React.FC<FinancialEntryModalProps> = ({ isOpen
       setCategoryId('');
       setCompanyId('');
       setContactId('');
-      setTotalAmount('');
+      setTotalAmount(0);
       setInstallmentCount('1');
       setFirstInstallmentDate(todayIso());
       setRecurrence('MONTHLY');
@@ -114,15 +119,14 @@ export const FinancialEntryModal: React.FC<FinancialEntryModalProps> = ({ isOpen
   }, [isOpen, type, entryId]);
 
   const generatePreview = async () => {
-    const amount = parseFloat(totalAmount.replace(',', '.'));
     const count = parseInt(installmentCount, 10) || 1;
-    if (!amount || amount <= 0 || !firstInstallmentDate) {
+    if (!totalAmount || totalAmount <= 0 || !firstInstallmentDate) {
       setInstallments([]);
       return;
     }
     try {
       const response = await api.post('/financial/entries/preview', {
-        totalAmount: amount,
+        totalAmount,
         installmentCount: count,
         firstInstallmentDate,
         recurrence: recurrence || null
@@ -139,10 +143,20 @@ export const FinancialEntryModal: React.FC<FinancialEntryModalProps> = ({ isOpen
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [totalAmount, installmentCount, firstInstallmentDate, recurrence, isOpen, loadingEntry, canRegenerate]);
 
-  const updateInstallment = (index: number, field: 'dueDate' | 'amount', value: string) => {
-    setInstallments(prev => prev.map((i, idx) => idx === index
-      ? { ...i, [field]: field === 'amount' ? parseFloat(value) || 0 : value }
-      : i));
+  // Locks the "Parcelas" tab to the natural height of the "Dados" tab, so
+  // switching tabs never resizes the modal - only the installments table
+  // scrolls internally if it would otherwise be taller than that.
+  useLayoutEffect(() => {
+    if (!isOpen || activeTab !== 'details' || loadingEntry || !tabContentRef.current) return;
+    setTabHeight(tabContentRef.current.offsetHeight);
+  }, [isOpen, activeTab, loadingEntry, categories, isEdit, canRegenerate]);
+
+  const updateInstallmentDate = (index: number, value: string) => {
+    setInstallments(prev => prev.map((i, idx) => idx === index ? { ...i, dueDate: value } : i));
+  };
+
+  const updateInstallmentAmount = (index: number, value: number) => {
+    setInstallments(prev => prev.map((i, idx) => idx === index ? { ...i, amount: value } : i));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -177,7 +191,7 @@ export const FinancialEntryModal: React.FC<FinancialEntryModalProps> = ({ isOpen
           categoryId: categoryId || null,
           companyId: companyId || null,
           contactId: contactId || null,
-          totalAmount: parseFloat(totalAmount.replace(',', '.')) || 0,
+          totalAmount,
           installmentCount: parseInt(installmentCount, 10) || 1,
           firstInstallmentDate,
           recurrence: recurrence || null,
@@ -239,85 +253,88 @@ export const FinancialEntryModal: React.FC<FinancialEntryModalProps> = ({ isOpen
             </button>
           </div>
 
-          {activeTab === 'details' && (
-            <>
-              <Input required label={t('financial.description')} value={description} onChange={e => setDescription(e.target.value)} />
+          <div
+            ref={tabContentRef}
+            className={activeTab === 'installments' ? styles.tabPanelScroll : undefined}
+            style={activeTab === 'installments' && tabHeight ? { height: tabHeight } : undefined}
+          >
+            {activeTab === 'details' && (
+              <>
+                <Input required label={t('financial.description')} value={description} onChange={e => setDescription(e.target.value)} />
 
-              <SimpleDropdown
-                label={t('financial.category')}
-                value={categoryId}
-                onChange={setCategoryId}
-                placeholder={t('financial.noCategory')}
-                options={[{ id: '', name: t('financial.noCategory') }, ...categories.map(c => ({ id: c.id, name: c.name }))]}
-              />
+                <SimpleDropdown
+                  label={t('financial.category')}
+                  value={categoryId}
+                  onChange={setCategoryId}
+                  placeholder={t('financial.noCategory')}
+                  options={[{ id: '', name: t('financial.noCategory') }, ...categories.map(c => ({ id: c.id, name: c.name }))]}
+                />
 
-              <CompanyCombobox value={companyId} onChange={setCompanyId} />
-              <ContactCombobox value={contactId} onChange={setContactId} companyId={companyId} />
+                <div className={styles.fieldRow}>
+                  <CompanyCombobox value={companyId} onChange={setCompanyId} />
+                  <ContactCombobox value={contactId} onChange={setContactId} companyId={companyId} />
+                </div>
 
-              <Input required disabled={!canRegenerate} label={t('financial.totalAmount')} type="number" step="0.01" min="0" value={totalAmount} onChange={e => setTotalAmount(e.target.value)} />
-              <Input required disabled={!canRegenerate} label={t('financial.installmentCount')} type="number" min="1" max="360" value={installmentCount} onChange={e => setInstallmentCount(e.target.value)} />
-              <Input required disabled={!canRegenerate} label={t('financial.firstInstallmentDate')} type="date" value={firstInstallmentDate} onChange={e => setFirstInstallmentDate(e.target.value)} />
+                <div className={styles.fieldRow}>
+                  <CurrencyInput required disabled={!canRegenerate} label={t('financial.totalAmount')} value={totalAmount} onChange={setTotalAmount} />
+                  <Input required disabled={!canRegenerate} label={t('financial.installmentCount')} type="number" min="1" max="360" value={installmentCount} onChange={e => setInstallmentCount(e.target.value)} />
+                  <Input required disabled={!canRegenerate} label={t('financial.firstInstallmentDate')} type="date" value={firstInstallmentDate} onChange={e => setFirstInstallmentDate(e.target.value)} />
+                  <SimpleDropdown
+                    label={t('financial.recurrence')}
+                    value={recurrence}
+                    onChange={value => setRecurrence(value as 'MONTHLY' | 'WEEKLY')}
+                    options={[
+                      { id: 'MONTHLY', name: t('financial.monthly') },
+                      { id: 'WEEKLY', name: t('financial.weekly') }
+                    ]}
+                  />
+                </div>
 
-              <SimpleDropdown
-                label={t('financial.recurrence')}
-                value={recurrence}
-                onChange={value => setRecurrence(value as 'MONTHLY' | 'WEEKLY')}
-                options={[
-                  { id: 'MONTHLY', name: t('financial.monthly') },
-                  { id: 'WEEKLY', name: t('financial.weekly') }
-                ]}
-              />
+                <Textarea label={t('financial.notes')} value={notes} onChange={e => setNotes(e.target.value)} />
+              </>
+            )}
 
-              <Textarea label={t('financial.notes')} value={notes} onChange={e => setNotes(e.target.value)} />
-            </>
-          )}
-
-          {activeTab === 'installments' && (
-            <div style={{ overflowX: 'auto' }}>
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>{t('financial.dueDate')}</th>
-                    <th>{t('financial.amount')}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {installments.map((i, index) => (
-                    <tr key={index}>
-                      <td>{i.installmentNumber}/{installments.length}</td>
-                      <td>
-                        {canRegenerate ? (
-                          <input
-                            type="date"
-                            className="input-field"
-                            value={i.dueDate.slice(0, 10)}
-                            onChange={e => updateInstallment(index, 'dueDate', e.target.value)}
-                          />
-                        ) : i.dueDate.slice(0, 10)}
-                      </td>
-                      <td>
-                        {canRegenerate ? (
-                          <input
-                            type="number"
-                            step="0.01"
-                            className="input-field"
-                            value={i.amount}
-                            onChange={e => updateInstallment(index, 'amount', e.target.value)}
-                          />
-                        ) : i.amount}
-                      </td>
-                    </tr>
-                  ))}
-                  {installments.length === 0 && (
+            {activeTab === 'installments' && (
+              <div style={{ overflowX: 'auto' }}>
+                <table className="data-table">
+                  <thead>
                     <tr>
-                      <td colSpan={3} className="empty-state">{t('financial.noInstallments')}</td>
+                      <th>#</th>
+                      <th>{t('financial.dueDate')}</th>
+                      <th>{t('financial.amount')}</th>
                     </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          )}
+                  </thead>
+                  <tbody>
+                    {installments.map((i, index) => (
+                      <tr key={index}>
+                        <td>{i.installmentNumber}/{installments.length}</td>
+                        <td>
+                          {canRegenerate ? (
+                            <input
+                              type="date"
+                              className="input-field"
+                              value={i.dueDate.slice(0, 10)}
+                              onChange={e => updateInstallmentDate(index, e.target.value)}
+                            />
+                          ) : i.dueDate.slice(0, 10)}
+                        </td>
+                        <td>
+                          {canRegenerate ? (
+                            <CurrencyInput value={i.amount} onChange={value => updateInstallmentAmount(index, value)} />
+                          ) : new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(i.amount)}
+                        </td>
+                      </tr>
+                    ))}
+                    {installments.length === 0 && (
+                      <tr>
+                        <td colSpan={3} className="empty-state">{t('financial.noInstallments')}</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
 
           {error && <div className="form-feedback">{error}</div>}
 

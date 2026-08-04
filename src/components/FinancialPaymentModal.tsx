@@ -3,6 +3,7 @@ import api from '../services/api';
 import { useTranslation } from '../hooks/useTranslation';
 import { Modal } from './Modal';
 import Input from './Input';
+import { CurrencyInput } from './CurrencyInput';
 import { abbreviateNumber } from '../utils/numberUtils';
 
 interface InstallmentTarget {
@@ -22,8 +23,8 @@ const todayIso = () => new Date().toISOString().slice(0, 10);
 export const FinancialPaymentModal: React.FC<FinancialPaymentModalProps> = ({ isOpen, installments, onClose, onSaved }) => {
   const { t } = useTranslation();
   const [paymentDate, setPaymentDate] = useState(todayIso());
-  const [interestAmount, setInterestAmount] = useState('0');
-  const [discountAmount, setDiscountAmount] = useState('0');
+  const [interestAmount, setInterestAmount] = useState(0);
+  const [discountAmount, setDiscountAmount] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState('');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
@@ -33,15 +34,13 @@ export const FinancialPaymentModal: React.FC<FinancialPaymentModalProps> = ({ is
   useEffect(() => {
     if (!isOpen) return;
     setPaymentDate(todayIso());
-    setInterestAmount('0');
-    setDiscountAmount('0');
+    setInterestAmount(0);
+    setDiscountAmount(0);
     setPaymentMethod('');
     setError('');
   }, [isOpen, installments]);
 
-  const interest = parseFloat(interestAmount.replace(',', '.')) || 0;
-  const discount = parseFloat(discountAmount.replace(',', '.')) || 0;
-  const totalToPay = isSingle ? installments[0].amount + interest - discount : 0;
+  const totalToPay = isSingle ? installments[0].amount + interestAmount - discountAmount : 0;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,8 +50,8 @@ export const FinancialPaymentModal: React.FC<FinancialPaymentModalProps> = ({ is
       if (isSingle) {
         await api.post(`/financial/installments/${installments[0].id}/pay`, {
           paymentDate,
-          interestAmount: interest,
-          discountAmount: discount,
+          interestAmount,
+          discountAmount,
           paymentMethod: paymentMethod || null
         });
       } else {
@@ -87,8 +86,8 @@ export const FinancialPaymentModal: React.FC<FinancialPaymentModalProps> = ({ is
               <label className="form-label">{t('financial.originalAmount')}</label>
               <div className="input-field" style={{ background: 'var(--bg-color)' }}>{abbreviateNumber(installments[0].amount)}</div>
             </div>
-            <Input label={t('financial.interestAmount')} type="number" step="0.01" min="0" value={interestAmount} onChange={e => setInterestAmount(e.target.value)} />
-            <Input label={t('financial.discountAmount')} type="number" step="0.01" min="0" value={discountAmount} onChange={e => setDiscountAmount(e.target.value)} />
+            <CurrencyInput label={t('financial.interestAmount')} value={interestAmount} onChange={setInterestAmount} />
+            <CurrencyInput label={t('financial.discountAmount')} value={discountAmount} onChange={setDiscountAmount} />
             <div className="form-group">
               <label className="form-label">{t('financial.totalToPay')}</label>
               <div className="input-field" style={{ background: 'var(--bg-color)', fontWeight: 600 }}>{abbreviateNumber(totalToPay)}</div>

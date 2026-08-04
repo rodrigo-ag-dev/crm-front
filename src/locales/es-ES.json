@@ -130,7 +130,12 @@
     "staleDealsAgo": "{company} · {days} días sin actualizar",
     "pendingTickets": "Tickets pendientes",
     "noPendingTickets": "Ningún ticket pendiente",
-    "overdue": "Vencido el"
+    "overdue": "Vencido el",
+    "financialHealth": "Salud financiera",
+    "receivableThisMonth": "Por cobrar este mes",
+    "payableThisMonth": "Por pagar este mes",
+    "overdueTotal": "Total vencido",
+    "projectedBalance": "Saldo previsto"
   },
   "deals": {
     "title": "Negocios",
@@ -504,6 +509,10 @@
     "errorReverse": "Error al revertir el pago",
     "tabDetails": "Datos",
     "tabInstallments": "Cuotas",
+    "overdueTotalLabel": "Vencido",
+    "upcomingTotalLabel": "Por vencer",
+    "openTotalLabel": "Total abierto",
+    "paidThisMonthLabel": "Pagado este mes",
     "regenerateBlocked": "Este registro ya tiene cuota(s) pagada(s). Revierte el pago para poder cambiar el monto, las cuotas o las fechas."
   },
   "changePassword": {

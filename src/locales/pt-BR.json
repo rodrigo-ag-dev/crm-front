@@ -130,7 +130,12 @@
     "staleDealsAgo": "{company} · {days} dias sem atualização",
     "pendingTickets": "Tickets pendentes",
     "noPendingTickets": "Nenhum ticket pendente",
-    "overdue": "Vencido em"
+    "overdue": "Vencido em",
+    "financialHealth": "Saúde financeira",
+    "receivableThisMonth": "A receber no mês",
+    "payableThisMonth": "A pagar no mês",
+    "overdueTotal": "Total em atraso",
+    "projectedBalance": "Saldo previsto"
   },
   "deals": {
     "title": "Negócios",
@@ -504,6 +509,10 @@
     "errorReverse": "Erro ao estornar o pagamento",
     "tabDetails": "Dados",
     "tabInstallments": "Parcelas",
+    "overdueTotalLabel": "Vencido",
+    "upcomingTotalLabel": "A vencer",
+    "openTotalLabel": "Total em aberto",
+    "paidThisMonthLabel": "Pago no mês",
     "regenerateBlocked": "Este lançamento já possui parcela(s) paga(s). Estorne o pagamento para poder alterar valor, parcelas ou datas."
   },
   "changePassword": {

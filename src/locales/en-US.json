@@ -130,7 +130,12 @@
     "staleDealsAgo": "{company} · {days} days without updates",
     "pendingTickets": "Pending tickets",
     "noPendingTickets": "No pending tickets",
-    "overdue": "Overdue on"
+    "overdue": "Overdue on",
+    "financialHealth": "Financial health",
+    "receivableThisMonth": "Receivable this month",
+    "payableThisMonth": "Payable this month",
+    "overdueTotal": "Total overdue",
+    "projectedBalance": "Projected balance"
   },
   "deals": {
     "title": "Deals",
@@ -504,6 +509,10 @@
     "errorReverse": "Error reversing the payment",
     "tabDetails": "Details",
     "tabInstallments": "Installments",
+    "overdueTotalLabel": "Overdue",
+    "upcomingTotalLabel": "Upcoming",
+    "openTotalLabel": "Total open",
+    "paidThisMonthLabel": "Paid this month",
     "regenerateBlocked": "This entry already has paid installment(s). Reverse the payment to change the amount, installments, or dates."
   },
   "changePassword": {
