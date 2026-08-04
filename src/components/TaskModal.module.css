@@ -148,6 +148,12 @@
   color: var(--text-primary);
   padding: 7px 10px;
   font-size: 0.86rem;
+  transition: border-color 0.15s ease;
+}
+
+.addItemInput:focus {
+  outline: none;
+  border-color: var(--primary-color);
 }
 
 .footerSpacer {

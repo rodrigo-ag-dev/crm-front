@@ -305,8 +305,8 @@ button:disabled {
 .input-field {
   width: 100%;
   padding: 9px 13px;
-  border: 2px solid var(--border-color);
-  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-button);
   font-size: 13px;
   font-family: inherit;
   color: var(--text-primary);
@@ -332,7 +332,6 @@ option {
 .input-field:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 4px var(--focus-ring-color);
 }
 
 /* Only flag a field as invalid once the user has actually interacted with it —
@@ -344,7 +343,6 @@ option {
 .input-field:user-invalid:focus {
   outline: none;
   border-color: var(--danger-color);
-  box-shadow: 0 0 0 4px rgba(192, 57, 43, 0.14);
 }
 
 .input-field:disabled {

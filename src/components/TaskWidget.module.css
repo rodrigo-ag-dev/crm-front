@@ -71,11 +71,12 @@
   color: var(--text-primary);
   padding: 8px 12px;
   font-size: 0.88rem;
+  transition: border-color 0.15s ease;
 }
 
 .quickAddInput:focus {
-  outline: 2px solid var(--focus-ring-color);
-  outline-offset: 1px;
+  outline: none;
+  border-color: var(--primary-color);
 }
 
 .list {
@@ -237,6 +238,12 @@
   color: var(--text-primary);
   font-size: 0.8rem;
   padding: 4px 8px;
+  transition: border-color 0.15s ease;
+}
+
+.checklistAddInput:focus {
+  outline: none;
+  border-color: var(--primary-color);
 }
 
 .emptyState {
