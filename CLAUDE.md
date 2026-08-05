@@ -113,6 +113,10 @@ The backend issues an httpOnly session cookie — the frontend never stores a to
 
 `components/Layout.tsx`'s topbar shows the current tenant name (`user.tenantName`, already returned by `GET /auth/me` via `Data/Users/UserDtos.cs`'s `TenantName`) as an always-visible pill (`.tenantBadge`, `Building2` icon) between the breadcrumb and the search button — not just inside the account dropdown (which already showed it, but only after a click). On narrow screens (`@media max-width: 640px`, same breakpoint the search/account buttons already collapse at) the label text hides and only the icon remains, consistent with the other topbar controls.
 
+## Clipboard copy (secure-context gotcha)
+
+`utils/clipboard.ts`'s `copyToClipboard(text)` backs both `TicketShareLinkPanel.tsx` (copy the public share link) and `Users.tsx` (copy a reset temporary password). `navigator.clipboard` only exists in secure contexts (HTTPS, or `http://localhost`) — accessing the app over a plain-HTTP LAN IP throws a synchronous `TypeError` on `navigator.clipboard.writeText(...)` (`navigator.clipboard` itself is `undefined`), which silently aborted the whole click handler before either call site had any try/catch. `copyToClipboard` checks `window.isSecureContext` first and falls back to the legacy `document.execCommand('copy')` (via a hidden, off-screen `<textarea>`) when the Clipboard API isn't available or its promise rejects. Returns a `boolean` so callers can show an error instead of assuming success — `TicketShareLinkPanel.tsx` does; `Users.tsx`'s copy button has no existing success/error UI, so it currently ignores the return value.
+
 ## Design system
 
 Everything routes through CSS custom properties defined once in `src/index.css` under `:root` (light) and `:root[data-theme='dark']` (dark) — colors, spacing radii, shadows. `main.tsx` applies the stored theme preference (`utils/themePreferences.ts`) before the first render. There is no Tailwind/MUI/component library: styling is plain CSS, split between:

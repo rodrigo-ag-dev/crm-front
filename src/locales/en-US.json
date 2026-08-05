@@ -354,7 +354,8 @@
       "copied": "Link copied!",
       "errorLoading": "Error loading the share link",
       "errorGenerating": "Error generating the share link",
-      "errorRevoking": "Error revoking the share link"
+      "errorRevoking": "Error revoking the share link",
+      "errorCopying": "Couldn't copy the link. Select and copy it manually."
     }
   },
   "publicChat": {

@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { userService, type UserRecord, type UserRole } from '../services/userService';
 import api from '../services/api';
 import { getInitials, getAvatarStyle } from '../utils/avatarUtils';
+import { copyToClipboard } from '../utils/clipboard';
 import { Modal } from '../components/Modal';
 import { ConfirmModal } from '../components/ConfirmModal';
 import Input from '../components/Input';
@@ -427,7 +428,7 @@ export const Users: React.FC = () => {
             title={t('common.copy')}
             aria-label={t('common.copy')}
             onClick={() => {
-              if (resetPasswordResult) navigator.clipboard.writeText(resetPasswordResult.temporaryPassword);
+              if (resetPasswordResult) copyToClipboard(resetPasswordResult.temporaryPassword);
             }}
           >
             <Copy size={16} />

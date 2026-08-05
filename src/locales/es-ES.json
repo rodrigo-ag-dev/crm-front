@@ -354,7 +354,8 @@
       "copied": "¡Enlace copiado!",
       "errorLoading": "Error al cargar el enlace de compartición",
       "errorGenerating": "Error al generar el enlace de compartición",
-      "errorRevoking": "Error al revocar el enlace de compartición"
+      "errorRevoking": "Error al revocar el enlace de compartición",
+      "errorCopying": "No se pudo copiar el enlace. Selecciónalo y cópialo manualmente."
     }
   },
   "publicChat": {

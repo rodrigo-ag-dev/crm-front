@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Copy, Link2, RotateCw, Trash2 } from 'lucide-react';
 import { ticketShareLinkService, type TicketShareLink } from '../services/ticketShareLinkService';
 import { useTranslation } from '../hooks/useTranslation';
+import { copyToClipboard } from '../utils/clipboard';
 import styles from './TicketShareLinkPanel.module.css';
 
 interface TicketShareLinkPanelProps {
@@ -65,11 +66,15 @@ export const TicketShareLinkPanel: React.FC<TicketShareLinkPanelProps> = ({ tick
     }
   };
 
-  const handleCopy = () => {
+  const handleCopy = async () => {
     if (!link) return;
-    navigator.clipboard.writeText(buildShareUrl(link.token));
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    const success = await copyToClipboard(buildShareUrl(link.token));
+    if (success) {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } else {
+      setError(t('tickets.shareLink.errorCopying'));
+    }
   };
 
   return (
