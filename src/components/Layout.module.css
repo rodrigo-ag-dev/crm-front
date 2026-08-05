@@ -19,6 +19,22 @@
   box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.04);
   position: relative;
   z-index: 100;
+  /* !important: a global `body *` rule (see THEME TRANSITION in index.css)
+     forces transition-property to a fixed color/background/shadow list with
+     !important, specifically so every element gets a smooth light/dark theme
+     switch without having to opt in one by one. That rule wins over any
+     non-important transition here, silently dropping width/padding/opacity/
+     max-width from the animated properties (a bare snap, no animation) - so
+     every custom transition added for the expand/collapse rail must also be
+     !important and restate any color transitions it still wants, since the
+     whole transition-property list is replaced, not merged. */
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), padding 0.25s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.25s ease !important;
+}
+
+.rail.railExpanded {
+  width: 216px;
+  align-items: stretch;
+  padding: 18px 12px;
 }
 
 .rail::after {
@@ -38,8 +54,35 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 10px;
   flex-shrink: 0;
   border: 1px solid rgba(11, 106, 82, 0.16);
+  overflow: hidden;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), padding 0.25s ease, background-color 0.25s ease, color 0.25s ease !important;
+}
+
+.railExpanded .railBrand {
+  width: 100%;
+  justify-content: flex-start;
+  padding-left: 8px;
+}
+
+.railBrandLabel {
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  white-space: nowrap;
+  opacity: 0;
+  max-width: 0;
+  overflow: hidden;
+  transition: opacity 0.15s ease, max-width 0.2s ease !important;
+}
+
+.railExpanded .railBrandLabel {
+  opacity: 1;
+  max-width: 160px;
+  transition-delay: 0.08s;
 }
 
 .railNav {
@@ -51,11 +94,22 @@
   width: 100%;
 }
 
+.railExpanded .railNav {
+  align-items: stretch;
+}
+
 .railDivider {
   width: 28px;
   height: 1px;
   background: var(--border-color);
   margin: 6px 0;
+  transition: width 0.25s ease, background-color 0.25s ease !important;
+  align-self: center;
+}
+
+.railExpanded .railDivider {
+  width: 100%;
+  align-self: stretch;
 }
 
 .railItem {
@@ -66,8 +120,10 @@
   height: 42px;
   border-radius: 10px;
   color: var(--text-secondary);
-  transition: background-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+  transition: background-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease, width 0.25s cubic-bezier(0.4, 0, 0.2, 1), padding 0.25s ease !important;
   position: relative;
+  flex-shrink: 0;
+  gap: 12px;
 }
 
 .railItem:hover {
@@ -79,6 +135,61 @@
   background: var(--sidebar-active);
   color: var(--sidebar-active-accent);
   box-shadow: inset 0 0 0 1px rgba(14, 107, 82, 0.08);
+}
+
+.railItemIcon {
+  flex-shrink: 0;
+}
+
+.railExpanded .railItem {
+  width: 100%;
+  justify-content: flex-start;
+  padding: 0 11px;
+}
+
+.railLabel {
+  font-size: 13.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  max-width: 0;
+  overflow: hidden;
+  transition: opacity 0.15s ease, max-width 0.2s ease !important;
+}
+
+.railExpanded .railLabel {
+  opacity: 1;
+  max-width: 160px;
+  transition-delay: 0.08s;
+}
+
+.railToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  flex-shrink: 0;
+  margin-top: auto;
+  align-self: center;
+  gap: 12px;
+  transition: background-color 0.18s ease, color 0.18s ease, width 0.25s cubic-bezier(0.4, 0, 0.2, 1), padding 0.25s ease !important;
+}
+
+.railToggle:hover {
+  background-color: var(--sidebar-hover);
+  color: var(--text-primary);
+}
+
+.railExpanded .railToggle {
+  width: 100%;
+  justify-content: flex-start;
+  padding: 0 11px;
+  align-self: stretch;
 }
 
 .railTooltip {
@@ -106,6 +217,10 @@
   opacity: 1;
   visibility: visible;
   transform: translate(2px, -50%);
+}
+
+.railExpanded .railTooltip {
+  display: none;
 }
 
 .railTooltipArrow,
@@ -463,7 +578,9 @@
     inset: 0 auto 0 0;
     height: 100vh;
     transform: translateX(-100%);
-    transition: transform 0.2s ease;
+    /* Same !important requirement as the base .rail rule above - transform
+       isn't in the global theme-transition allowlist either. */
+    transition: transform 0.2s ease !important;
     z-index: 100050;
   }
 

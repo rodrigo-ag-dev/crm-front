@@ -42,7 +42,9 @@
     "groupSupport": "Soporte",
     "groupCrm": "CRM",
     "openMenu": "Abrir menú",
-    "closeMenu": "Cerrar menú"
+    "closeMenu": "Cerrar menú",
+    "expandMenu": "Expandir menú",
+    "collapseMenu": "Contraer menú"
   },
   "tasks": {
     "widgetTitle": "Tareas",

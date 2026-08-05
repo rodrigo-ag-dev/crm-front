@@ -9,6 +9,7 @@ import { CommandPalette } from './CommandPalette';
 import { NotificationBell } from './NotificationBell';
 import { QuickAddTask } from './QuickAddTask';
 import { ChangePasswordGate } from './ChangePasswordGate';
+import { getStoredSidebarExpanded, setStoredSidebarExpanded } from '../utils/sidebarPreferences';
 import styles from './Layout.module.css';
 import {
   LayoutDashboard,
@@ -23,6 +24,7 @@ import {
   Menu,
   X,
   ArrowLeft,
+  ChevronLeft,
   ChevronRight,
   CheckSquare,
   FileText,
@@ -86,7 +88,8 @@ const RailLink: React.FC<RailLinkProps> = ({ to, icon: Icon, label, end, onClick
     onClick={onClick}
     className={({ isActive }) => `${styles.railItem} ${isActive ? styles.active : ''}`}
   >
-    <Icon size={20} />
+    <Icon size={20} className={styles.railItemIcon} />
+    <span className={styles.railLabel}>{label}</span>
     <span className={styles.railTooltip}>
       {label}
       <span className={styles.railTooltipBorder} />
@@ -105,6 +108,7 @@ export const Layout: React.FC = () => {
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [quickAddTaskOpen, setQuickAddTaskOpen] = useState(false);
   const [railOpen, setRailOpen] = useState(false);
+  const [railExpanded, setRailExpanded] = useState(() => getStoredSidebarExpanded());
   const accountMenuRef = useRef<HTMLDivElement | null>(null);
   const railRef = useRef<HTMLElement | null>(null);
 
@@ -126,6 +130,13 @@ export const Layout: React.FC = () => {
 
   const closeAccountMenu = () => setAccountMenuOpen(false);
   const closeRail = () => setRailOpen(false);
+  const toggleRailExpanded = () => {
+    setRailExpanded((prev) => {
+      const next = !prev;
+      setStoredSidebarExpanded(next);
+      return next;
+    });
+  };
 
   useEffect(() => {
     if (!accountMenuOpen) return;
@@ -201,9 +212,13 @@ export const Layout: React.FC = () => {
     <div className={styles.appContainer}>
       {railOpen && <div className={styles.railOverlay} onClick={closeRail} />}
 
-      <aside ref={railRef} className={`${styles.rail}${railOpen ? ` ${styles.railOpen}` : ''}`}>
+      <aside
+        ref={railRef}
+        className={`${styles.rail}${railOpen ? ` ${styles.railOpen}` : ''}${railExpanded ? ` ${styles.railExpanded}` : ''}`}
+      >
         <div className={styles.railBrand} title={t('navigation.crmPro')}>
-          <Briefcase size={18} color="white" />
+          <Briefcase size={18} color="white" className={styles.railItemIcon} />
+          <span className={styles.railBrandLabel}>{t('navigation.crmPro')}</span>
         </div>
 
         <nav className={styles.railNav}>
@@ -215,6 +230,17 @@ export const Layout: React.FC = () => {
             <RailLink key={item.to} to={item.to} end={item.end} icon={item.icon} label={t(item.labelKey)} onClick={closeRail} />
           ))}
         </nav>
+
+        <button
+          type="button"
+          className={styles.railToggle}
+          onClick={toggleRailExpanded}
+          aria-label={railExpanded ? t('navigation.collapseMenu') : t('navigation.expandMenu')}
+          title={railExpanded ? t('navigation.collapseMenu') : t('navigation.expandMenu')}
+        >
+          {railExpanded ? <ChevronLeft size={18} className={styles.railItemIcon} /> : <ChevronRight size={18} className={styles.railItemIcon} />}
+          <span className={styles.railLabel}>{t('navigation.collapseMenu')}</span>
+        </button>
       </aside>
 
       <main className={styles.mainContent}>

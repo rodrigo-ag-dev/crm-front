@@ -42,7 +42,9 @@
     "groupSupport": "Suporte",
     "groupCrm": "CRM",
     "openMenu": "Abrir menu",
-    "closeMenu": "Fechar menu"
+    "closeMenu": "Fechar menu",
+    "expandMenu": "Expandir menu",
+    "collapseMenu": "Retrair menu"
   },
   "tasks": {
     "widgetTitle": "Tarefas",
