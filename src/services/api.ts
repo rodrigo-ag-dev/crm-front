@@ -9,7 +9,7 @@ const getStoredToken = () => {
   }
 };
 
-const getApiBaseUrl = () => {
+export const getApiBaseUrl = () => {
   const envUrl = import.meta.env.VITE_API_URL;
   if (envUrl) {
     return envUrl;

@@ -1,8 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Maximize2, Minimize2, Send } from 'lucide-react';
 import { ticketService, type TicketComment, type TicketCommentType, type TicketStageHistoryEntry } from '../services/ticketService';
+import { getApiBaseUrl } from '../services/api';
 import type { Ticket } from './TicketModal';
 import { useTranslation } from '../hooks/useTranslation';
+import { useTicketCommentsStream } from '../hooks/useTicketCommentsStream';
 import { SimpleDropdown } from './SimpleDropdown';
 import styles from './TicketTimeline.module.css';
 
@@ -46,13 +48,17 @@ export const TicketTimeline: React.FC<TicketTimelineProps> = ({ ticketId, ticket
     container.scrollTop = container.scrollHeight;
   }, [comments.length]);
 
-  useEffect(() => {
-    if (!ticketId) return;
-    const interval = setInterval(() => {
-      pollComments();
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [ticketId]);
+  useTicketCommentsStream<TicketComment>({
+    url: ticketId ? `${getApiBaseUrl()}/tickets/${ticketId}/comments/stream` : null,
+    onComment: (comment) => {
+      setComments((prev) => (
+        prev.some((c) => c.id === comment.id)
+          ? prev.map((c) => (c.id === comment.id ? comment : c))
+          : [...prev, comment]
+      ));
+    },
+    fallbackPoll: pollComments,
+  });
 
   useEffect(() => {
     if (!isFullscreen) return;

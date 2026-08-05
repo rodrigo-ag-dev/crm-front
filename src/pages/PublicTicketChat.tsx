@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Send } from 'lucide-react';
-import { publicTicketService, type PublicTicket, type PublicTicketComment } from '../services/publicTicketService';
+import { publicTicketService, getApiBaseUrl, type PublicTicket, type PublicTicketComment } from '../services/publicTicketService';
 import { useTranslation } from '../hooks/useTranslation';
+import { useTicketCommentsStream } from '../hooks/useTicketCommentsStream';
 import styles from './PublicTicketChat.module.css';
 
 const formatDateTime = (value?: string): string => {
@@ -27,13 +28,24 @@ export const PublicTicketChat: React.FC = () => {
   useEffect(() => {
     if (!token) return;
     fetchData();
-    const interval = setInterval(fetchComments, 5000);
-    return () => clearInterval(interval);
   }, [token]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [comments.length]);
+
+  useTicketCommentsStream<PublicTicketComment>({
+    url: token ? `${getApiBaseUrl()}/public/tickets/${token}/comments/stream` : null,
+    onComment: (comment) => {
+      setComments((prev) => (
+        prev.some((c) => c.id === comment.id)
+          ? prev.map((c) => (c.id === comment.id ? comment : c))
+          : [...prev, comment]
+      ));
+    },
+    onRevoked: () => setNotFound(true),
+    fallbackPoll: fetchComments,
+  });
 
   async function fetchData() {
     if (!token) return;
