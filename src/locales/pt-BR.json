@@ -37,7 +37,7 @@
     "tickets": "Tickets",
     "reports": "Relatórios",
     "settings": "Configurações",
-    "crmPro": "CRM Pro",
+    "crmPro": "Nexo CRM",
     "groupCommercial": "Comercial",
     "groupSupport": "Suporte",
     "groupCrm": "CRM",
@@ -101,7 +101,7 @@
     "browserPushBody": "Você tem {count} nova(s) tarefa(s) atrasada(s)."
   },
   "login": {
-    "title": "CRM System",
+    "title": "Nexo CRM",
     "subtitle": "Entre com sua conta corporativa",
     "email": "E-mail",
     "password": "Senha",

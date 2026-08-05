@@ -37,7 +37,7 @@
     "tickets": "Tickets",
     "reports": "Reports",
     "settings": "Settings",
-    "crmPro": "CRM Pro",
+    "crmPro": "Nexo CRM",
     "groupCommercial": "Commercial",
     "groupSupport": "Support",
     "groupCrm": "CRM",
@@ -101,7 +101,7 @@
     "browserPushBody": "You have {count} new overdue task(s)."
   },
   "login": {
-    "title": "CRM System",
+    "title": "Nexo CRM",
     "subtitle": "Sign in with your work account",
     "email": "Email",
     "password": "Password",
