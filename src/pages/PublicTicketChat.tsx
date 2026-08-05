@@ -82,7 +82,13 @@ export const PublicTicketChat: React.FC = () => {
     setError('');
     try {
       const response = await publicTicketService.addComment(token, body.trim());
-      setComments((prev) => [...prev, response.data]);
+      // The backend publishes to the SSE stream before this request even
+      // resolves, so the live-pushed echo of this exact comment can beat
+      // this response back to the browser - dedupe by id instead of a bare
+      // append, or a fast SSE echo + this optimistic append both land.
+      setComments((prev) => (
+        prev.some((c) => c.id === response.data.id) ? prev : [...prev, response.data]
+      ));
       setBody('');
     } catch (err) {
       console.error('Error sending public ticket message', err);

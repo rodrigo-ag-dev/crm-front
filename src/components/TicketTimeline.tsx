@@ -103,7 +103,12 @@ export const TicketTimeline: React.FC<TicketTimelineProps> = ({ ticketId, ticket
     setSending(true);
     try {
       const response = await ticketService.addTicketComment(ticketId, { type: commentType, body: commentBody.trim() });
-      setComments((prev) => [...prev, response.data]);
+      // Same race as PublicTicketChat.tsx: the backend broadcasts to the SSE
+      // stream before this request resolves, so its echo can beat this
+      // response back - dedupe by id instead of a bare append.
+      setComments((prev) => (
+        prev.some((c) => c.id === response.data.id) ? prev : [...prev, response.data]
+      ));
       setCommentBody('');
       setCommentType('AGENT_REPLY');
     } catch (err) {
