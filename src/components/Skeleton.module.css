@@ -1,0 +1,11 @@
+.bar {
+  display: inline-block;
+  background: linear-gradient(90deg, var(--surface-elevated) 0%, var(--surface-color) 50%, var(--surface-elevated) 100%);
+  background-size: 1000px 100%;
+  animation: skeletonShimmer 1.6s infinite;
+}
+
+@keyframes skeletonShimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}

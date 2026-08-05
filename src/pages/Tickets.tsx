@@ -7,7 +7,7 @@ import { useTranslation } from '../hooks/useTranslation';
 import { TicketModal, type Ticket } from '../components/TicketModal';
 import { ViewToggle } from '../components/ViewToggle';
 import { DetailDrawer } from '../components/DetailDrawer';
-import { SplitViewShell, RecordListRow, CollapsibleSearchBar } from '../components/SplitViewShell';
+import { SplitViewShell, RecordListRow, RecordListRowsSkeleton, CollapsibleSearchBar } from '../components/SplitViewShell';
 import { RecordPane, RecordPaneEmptyState, RelatedItem, RelatedSection } from '../components/RecordPane';
 import { TaskWidget } from '../components/TaskWidget';
 import { TicketTimeline } from '../components/TicketTimeline';
@@ -256,18 +256,24 @@ export const Tickets: React.FC = () => {
                     </button>
                   </div>
                 )}
-                {tickets.map((ticket) => (
-                  <RecordListRow
-                    key={ticket.id}
-                    to={`/tickets/${ticket.id}`}
-                    isActive={ticket.id === id}
-                    primary={ticket.title}
-                    secondary={ticket.companyName || ticket.contactName}
-                    meta={stageLabelById(ticket.ticketStageId, ticketStages)}
-                  />
-                ))}
-                {!loading && tickets.length === 0 && (
-                  <p className="empty-state">{t('tickets.noTickets')}</p>
+                {loading && tickets.length === 0 ? (
+                  <RecordListRowsSkeleton />
+                ) : (
+                  <>
+                    {tickets.map((ticket) => (
+                      <RecordListRow
+                        key={ticket.id}
+                        to={`/tickets/${ticket.id}`}
+                        isActive={ticket.id === id}
+                        primary={ticket.title}
+                        secondary={ticket.companyName || ticket.contactName}
+                        meta={stageLabelById(ticket.ticketStageId, ticketStages)}
+                      />
+                    ))}
+                    {tickets.length === 0 && (
+                      <p className="empty-state">{t('tickets.noTickets')}</p>
+                    )}
+                  </>
                 )}
               </div>
 

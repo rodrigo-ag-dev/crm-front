@@ -4,6 +4,7 @@ import { useTranslation } from '../hooks/useTranslation';
 import { tenantService, type TenantRecord } from '../services/tenantService';
 import { Modal } from '../components/Modal';
 import Input from '../components/Input';
+import { SkeletonTableRows } from '../components/Skeleton';
 import splitStyles from '../components/SplitViewShell.module.css';
 import styles from './Tenants.module.css';
 
@@ -93,21 +94,27 @@ export const Tenants: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {tenants.map((tenant) => (
-              <tr key={tenant.id}>
-                <td><strong>{tenant.name}</strong></td>
-                <td><span className={styles.slugCell}>{tenant.slug}</span></td>
-                <td>
-                  <span className={`badge ${tenant.active ? styles.badgeActive : styles.badgeInactive}`}>
-                    {tenant.active ? t('users.statusActive') : t('users.statusInactive')}
-                  </span>
-                </td>
-              </tr>
-            ))}
-            {!loading && tenants.length === 0 && (
-              <tr>
-                <td colSpan={3} className="empty-state">{t('tenants.noTenants')}</td>
-              </tr>
+            {loading && tenants.length === 0 ? (
+              <SkeletonTableRows columns={3} />
+            ) : (
+              <>
+                {tenants.map((tenant) => (
+                  <tr key={tenant.id}>
+                    <td><strong>{tenant.name}</strong></td>
+                    <td><span className={styles.slugCell}>{tenant.slug}</span></td>
+                    <td>
+                      <span className={`badge ${tenant.active ? styles.badgeActive : styles.badgeInactive}`}>
+                        {tenant.active ? t('users.statusActive') : t('users.statusInactive')}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+                {tenants.length === 0 && (
+                  <tr>
+                    <td colSpan={3} className="empty-state">{t('tenants.noTenants')}</td>
+                  </tr>
+                )}
+              </>
             )}
           </tbody>
         </table>

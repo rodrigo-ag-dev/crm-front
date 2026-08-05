@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, Plus, Search, X } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
 import Input from './Input';
+import { SkeletonTableRows } from './Skeleton';
 import styles from './DataTablePage.module.css';
 
 interface DataTablePageProps {
@@ -20,6 +21,7 @@ interface DataTablePageProps {
   error?: string;
   titleActions?: React.ReactNode;
   scrollAreaRef?: React.RefObject<HTMLDivElement | null>;
+  skeletonColumns?: number;
 }
 
 export const DataTablePage: React.FC<DataTablePageProps> = ({
@@ -37,11 +39,13 @@ export const DataTablePage: React.FC<DataTablePageProps> = ({
   searchPlaceholder,
   error,
   titleActions,
-  scrollAreaRef
+  scrollAreaRef,
+  skeletonColumns = 5
 }) => {
   const { t } = useTranslation();
   const [searchOpen, setSearchOpen] = useState(Boolean(searchTerm));
   const searchBarRef = useRef<HTMLDivElement>(null);
+  const hasRows = React.Children.count(children) > 0;
 
   useEffect(() => {
     if (searchOpen) {
@@ -107,7 +111,7 @@ export const DataTablePage: React.FC<DataTablePageProps> = ({
               </tr>
             </thead>
             <tbody>
-              {children}
+              {loading && !hasRows ? <SkeletonTableRows columns={skeletonColumns} /> : children}
             </tbody>
           </table>
         </div>

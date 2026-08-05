@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Search, X } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
 import { getInitials, getAvatarStyle } from '../utils/avatarUtils';
+import { SkeletonBar } from './Skeleton';
 import styles from './SplitViewShell.module.css';
 
 interface SplitViewShellProps {
@@ -51,6 +52,24 @@ export const RecordListRow: React.FC<RecordListRowProps> = ({ to, isActive, prim
     </div>
   );
 };
+
+export const RecordListRowSkeleton: React.FC = () => (
+  <div className={styles.row} aria-hidden="true">
+    <SkeletonBar className={styles.rowAvatar} width={30} height={30} radius={9} />
+    <span className={styles.rowText}>
+      <SkeletonBar width="65%" height={11} />
+      <SkeletonBar width="40%" height={9} style={{ marginTop: 4 }} />
+    </span>
+  </div>
+);
+
+export const RecordListRowsSkeleton: React.FC<{ count?: number }> = ({ count = 6 }) => (
+  <>
+    {Array.from({ length: count }).map((_, i) => (
+      <RecordListRowSkeleton key={i} />
+    ))}
+  </>
+);
 
 interface CollapsibleSearchBarProps {
   value: string;

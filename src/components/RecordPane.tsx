@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ChevronRight, Edit2, Plus, Trash2 } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
 import { getInitials, getAvatarStyle } from '../utils/avatarUtils';
+import { SkeletonBar } from './Skeleton';
 import styles from './RecordPane.module.css';
 
 interface RecordPaneProps {
@@ -52,10 +53,34 @@ export const RecordPane: React.FC<RecordPaneProps> = ({
 
       {error && <div className="status-message status-message--error">{error}</div>}
 
-      {loading ? <div className="page-loading">{t('common.loading')}</div> : children}
+      {loading ? <RecordPaneSkeleton /> : children}
     </div>
   );
 };
+
+const RecordPaneSkeleton: React.FC = () => (
+  <>
+    <div className={`card ${styles.relatedCard}`} aria-hidden="true">
+      <div className={styles.infoGrid}>
+        {[0, 1, 2].map((i) => (
+          <div key={i} className={styles.infoField}>
+            <SkeletonBar width={i === 0 ? '30%' : '45%'} height={10} />
+            <SkeletonBar width={i === 1 ? '55%' : '70%'} height={13} style={{ marginTop: 5 }} />
+          </div>
+        ))}
+      </div>
+    </div>
+    <div className={styles.relatedGrid} aria-hidden="true">
+      {[0, 1, 2].map((i) => (
+        <div key={i} className={`card ${styles.relatedCard}`}>
+          <SkeletonBar width="35%" height={13} style={{ marginBottom: 12 }} />
+          <SkeletonBar width="80%" height={11} style={{ marginBottom: 8 }} />
+          <SkeletonBar width="60%" height={11} />
+        </div>
+      ))}
+    </div>
+  </>
+);
 
 interface RecordPaneEmptyStateProps {
   text: string;

@@ -272,6 +272,7 @@ export const Financial: React.FC = () => {
                 <th className="table-header-actions">{t('common.actions')}</th>
               </>
             }
+            skeletonColumns={8}
           >
             {installments.map(installment => (
               <tr key={installment.id} data-record-row>

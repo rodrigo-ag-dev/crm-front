@@ -8,7 +8,7 @@ import { ConfirmModal } from '../components/ConfirmModal';
 import { ContactModal } from '../components/ContactModal';
 import { DealModal } from '../components/DealModal';
 import { TicketModal } from '../components/TicketModal';
-import { SplitViewShell, RecordListRow, CollapsibleSearchBar } from '../components/SplitViewShell';
+import { SplitViewShell, RecordListRow, RecordListRowsSkeleton, CollapsibleSearchBar } from '../components/SplitViewShell';
 import { RecordPane, RecordPaneEmptyState, RelatedItem, RelatedSection } from '../components/RecordPane';
 import { TaskWidget } from '../components/TaskWidget';
 import Input from '../components/Input';
@@ -251,17 +251,23 @@ export const Companies: React.FC = () => {
                     </button>
                   </div>
                 )}
-                {companies.map((company) => (
-                  <RecordListRow
-                    key={company.id}
-                    to={`/companies/${company.id}`}
-                    isActive={company.id === id}
-                    primary={company.name}
-                    secondary={company.email || company.alias}
-                  />
-                ))}
-                {!loading && companies.length === 0 && (
-                  <p className="empty-state">{t('companies.noCompanies')}</p>
+                {loading && companies.length === 0 ? (
+                  <RecordListRowsSkeleton />
+                ) : (
+                  <>
+                    {companies.map((company) => (
+                      <RecordListRow
+                        key={company.id}
+                        to={`/companies/${company.id}`}
+                        isActive={company.id === id}
+                        primary={company.name}
+                        secondary={company.email || company.alias}
+                      />
+                    ))}
+                    {companies.length === 0 && (
+                      <p className="empty-state">{t('companies.noCompanies')}</p>
+                    )}
+                  </>
                 )}
               </div>
 

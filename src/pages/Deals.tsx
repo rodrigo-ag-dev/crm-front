@@ -7,7 +7,7 @@ import { DealModal } from '../components/DealModal';
 import { ViewToggle } from '../components/ViewToggle';
 import { ConfirmModal } from '../components/ConfirmModal';
 import { DetailDrawer } from '../components/DetailDrawer';
-import { SplitViewShell, RecordListRow, CollapsibleSearchBar } from '../components/SplitViewShell';
+import { SplitViewShell, RecordListRow, RecordListRowsSkeleton, CollapsibleSearchBar } from '../components/SplitViewShell';
 import { RecordPane, RecordPaneEmptyState, RelatedItem, RelatedSection } from '../components/RecordPane';
 import { TaskWidget } from '../components/TaskWidget';
 import { abbreviateNumber } from '../utils/numberUtils';
@@ -293,18 +293,24 @@ export const Deals: React.FC = () => {
                     </button>
                   </div>
                 )}
-                {deals.map((deal) => (
-                  <RecordListRow
-                    key={deal.id}
-                    to={`/deals/${deal.id}`}
-                    isActive={deal.id === id}
-                    primary={deal.title}
-                    secondary={deal.stageName}
-                    meta={abbreviateNumber(deal.amount)}
-                  />
-                ))}
-                {!loading && deals.length === 0 && (
-                  <p className="empty-state">{t('deals.noDeals')}</p>
+                {loading && deals.length === 0 ? (
+                  <RecordListRowsSkeleton />
+                ) : (
+                  <>
+                    {deals.map((deal) => (
+                      <RecordListRow
+                        key={deal.id}
+                        to={`/deals/${deal.id}`}
+                        isActive={deal.id === id}
+                        primary={deal.title}
+                        secondary={deal.stageName}
+                        meta={abbreviateNumber(deal.amount)}
+                      />
+                    ))}
+                    {deals.length === 0 && (
+                      <p className="empty-state">{t('deals.noDeals')}</p>
+                    )}
+                  </>
                 )}
               </div>
 

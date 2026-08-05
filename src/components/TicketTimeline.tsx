@@ -6,6 +6,7 @@ import type { Ticket } from './TicketModal';
 import { useTranslation } from '../hooks/useTranslation';
 import { useTicketCommentsStream } from '../hooks/useTicketCommentsStream';
 import { SimpleDropdown } from './SimpleDropdown';
+import { SkeletonBar } from './Skeleton';
 import styles from './TicketTimeline.module.css';
 
 interface TicketTimelineProps {
@@ -168,7 +169,14 @@ export const TicketTimeline: React.FC<TicketTimelineProps> = ({ ticketId, ticket
         {error && <div className="status-message status-message--error">{error}</div>}
 
       {loading ? (
-        <div className="page-loading">{t('common.loading')}</div>
+        <div className={styles.entryList} aria-hidden="true">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 6, padding: '10px 0' }}>
+              <SkeletonBar width={i % 2 === 0 ? '55%' : '40%'} height={11} />
+              <SkeletonBar width={i % 2 === 0 ? '35%' : '25%'} height={9} />
+            </div>
+          ))}
+        </div>
       ) : (
         <div className={styles.entryList} ref={entryListRef}>
           {entries.length === 0 && <p className={styles.emptyText}>{t('tickets.timeline.empty')}</p>}

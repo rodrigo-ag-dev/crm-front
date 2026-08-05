@@ -137,6 +137,7 @@ export const Stages: React.FC = () => {
             <th className="table-header-actions">{t('common.actions')}</th>
           </>
         }
+        skeletonColumns={5}
       >
         {stages.map(stage => (
           <tr key={stage.id}>

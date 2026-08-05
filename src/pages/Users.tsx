@@ -10,6 +10,7 @@ import { Modal } from '../components/Modal';
 import { ConfirmModal } from '../components/ConfirmModal';
 import Input from '../components/Input';
 import { TenantCombobox } from '../components/TenantCombobox';
+import { SkeletonTableRows } from '../components/Skeleton';
 import splitStyles from '../components/SplitViewShell.module.css';
 import styles from './Users.module.css';
 
@@ -244,6 +245,10 @@ export const Users: React.FC = () => {
             </tr>
           </thead>
           <tbody>
+            {loading && visibleUsers.length === 0 ? (
+              <SkeletonTableRows columns={6} />
+            ) : (
+              <>
             {visibleUsers.map((u, index) => (
               <React.Fragment key={u.id}>
                 {isPlatformAdmin && (index === 0 || visibleUsers[index - 1].tenantId !== u.tenantId) && (
@@ -320,10 +325,12 @@ export const Users: React.FC = () => {
                 </tr>
               </React.Fragment>
             ))}
-            {!loading && users.length === 0 && (
+            {users.length === 0 && (
               <tr>
                 <td colSpan={6} className="empty-state">{t('users.noUsers')}</td>
               </tr>
+            )}
+              </>
             )}
           </tbody>
         </table>

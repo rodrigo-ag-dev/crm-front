@@ -7,7 +7,7 @@ import { ConfirmModal } from '../components/ConfirmModal';
 import { ContactModal } from '../components/ContactModal';
 import { DealModal } from '../components/DealModal';
 import { TicketModal } from '../components/TicketModal';
-import { SplitViewShell, RecordListRow, CollapsibleSearchBar } from '../components/SplitViewShell';
+import { SplitViewShell, RecordListRow, RecordListRowsSkeleton, CollapsibleSearchBar } from '../components/SplitViewShell';
 import { RecordPane, RecordPaneEmptyState, RelatedItem, RelatedSection } from '../components/RecordPane';
 import { TaskWidget } from '../components/TaskWidget';
 import { abbreviateNumber } from '../utils/numberUtils';
@@ -230,6 +230,10 @@ export const Contacts: React.FC = () => {
                     </button>
                   </div>
                 )}
+                {loading && contacts.length === 0 ? (
+                  <RecordListRowsSkeleton />
+                ) : (
+                  <>
                 {contacts.map((contact) => (
                   <RecordListRow
                     key={contact.id}
@@ -239,8 +243,10 @@ export const Contacts: React.FC = () => {
                     secondary={contact.email || contact.alias}
                   />
                 ))}
-                {!loading && contacts.length === 0 && (
+                {contacts.length === 0 && (
                   <p className="empty-state">{t('contacts.noContacts')}</p>
+                )}
+                  </>
                 )}
               </div>
 

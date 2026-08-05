@@ -5,6 +5,7 @@ import { taskService, type TaskChecklistItem, type TaskEntityType, type TaskItem
 import { getTaskDueBucket } from '../utils/taskDueBucket';
 import { emitTaskChanged } from '../utils/taskEvents';
 import { ConfirmModal } from './ConfirmModal';
+import { SkeletonBar } from './Skeleton';
 import styles from './TaskWidget.module.css';
 
 interface TaskWidgetProps {
@@ -191,7 +192,14 @@ export const TaskWidget: React.FC<TaskWidgetProps> = ({ entityType, entityId }) 
       </form>
 
       {loading ? (
-        <div className="page-loading">{t('common.loading')}</div>
+        <div className={styles.list} aria-hidden="true">
+          {[0, 1, 2].map((i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 0' }}>
+              <SkeletonBar width={16} height={16} radius={4} />
+              <SkeletonBar width={i === 1 ? '50%' : '75%'} height={11} />
+            </div>
+          ))}
+        </div>
       ) : tasks.length === 0 ? (
         <p className={styles.emptyState}>{t('tasks.noTasksForEntity')}</p>
       ) : (
