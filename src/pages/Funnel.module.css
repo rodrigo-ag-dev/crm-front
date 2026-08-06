@@ -92,20 +92,34 @@
   position: absolute;
   top: 50%;
   z-index: 99999;
-  background: var(--primary-color);
-  color: #fff;
-  border: none;
+  /* Kept deliberately translucent at rest (background-only, via color-mix -
+     not a whole-element `opacity`) so a card sitting behind the button stays
+     visible through it, same intent as the original 0.3 opacity. What was
+     actually broken is the icon: at low background opacity the circle reads
+     mostly as the page/card color showing through, not the brand color - so
+     a fixed white icon (or one paired against the brand color) could go
+     invisible against light-theme's light backdrop. --text-primary is the
+     color already tuned per theme for exactly this (legible text against
+     the app's own background), so it holds up here at rest regardless of
+     what's showing through. On hover the background goes fully opaque with
+     --primary-dark (meaningfully darker than --primary-color in both
+     themes - dark mode's --primary-color is a bright mint green too close
+     to white to pair with a white icon), where a plain white icon reads
+     clearly against that solid, saturated color. */
+  background: color-mix(in srgb, var(--primary-dark) 50%, transparent);
+  color: var(--text-primary);
+  border: 1px solid color-mix(in srgb, var(--primary-dark) 65%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.24);
-  opacity: 0.3;
-  transition: opacity 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .funnelScroll:hover {
-  opacity: 1;
+  background: var(--primary-dark);
+  color: #fff;
 }
 
 .funnelScrollLeft {
