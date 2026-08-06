@@ -1,13 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Bell, Check, Clock } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
-import { notificationService, type TaskNotification } from '../services/notificationService';
+import { useEventStream } from '../hooks/useEventStream';
+import {
+  notificationService,
+  type NotificationStreamEvent,
+  type TaskNotification,
+} from '../services/notificationService';
 import { taskService } from '../services/taskService';
-import { emitTaskChanged } from '../utils/taskEvents';
+import { emitTaskChanged, subscribeTaskChanged } from '../utils/taskEvents';
 import { toFormatedDate } from '../utils/dateUtils';
 import styles from './NotificationBell.module.css';
 
-const POLL_INTERVAL_MS = 30000;
+// The badge is driven by the SSE stream below, not by polling - this is only a
+// safety net for a silently stalled connection (backgrounded tab, a proxy that
+// drops the connection without firing EventSource.onerror), same role and
+// interval as the ticket comment streams' fallback.
+const FALLBACK_POLL_INTERVAL_MS = 60000;
 
 export const NotificationBell: React.FC = () => {
   const { t } = useTranslation();
@@ -22,12 +31,22 @@ export const NotificationBell: React.FC = () => {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const previousCountRef = useRef(0);
   const isCheckingRef = useRef(false);
+  // Read from the mount-only taskChanged subscription below, which can't close
+  // over `open` without resubscribing on every toggle.
+  const openRef = useRef(false);
+  useEffect(() => {
+    openRef.current = open;
+  }, [open]);
 
-  const fireBrowserNotification = (count: number) => {
+  const streamUrl = notificationService.getStreamUrl();
+
+  const fireBrowserNotification = (count: number, taskTitle?: string) => {
     if (permission !== 'granted' || typeof Notification === 'undefined') return;
     try {
       new Notification(t('notifications.browserPushTitle'), {
-        body: t('notifications.browserPushBody', { count }),
+        // A pushed notification knows exactly which task it is, so show that
+        // instead of the generic "you have N overdue tasks" the poll path uses.
+        body: taskTitle || t('notifications.browserPushBody', { count }),
       });
     } catch {
       // Some browsers disallow direct construction in certain contexts; safe to ignore.
@@ -52,11 +71,52 @@ export const NotificationBell: React.FC = () => {
     }
   };
 
+  const fetchList = async () => {
+    setLoading(true);
+    try {
+      const response = await notificationService.getList(20);
+      setNotifications(response.data || []);
+    } catch (error) {
+      console.error('Error fetching notifications', error);
+      setNotifications([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     checkUnreadCount();
-    const timer = setInterval(checkUnreadCount, POLL_INTERVAL_MS);
-    return () => clearInterval(timer);
-  }, [permission]);
+    // Completing/snoozing/deleting a task anywhere else in the app (Meu Dia's
+    // Kanban, a TaskWidget, the quick-add bar) can invalidate this user's own
+    // notifications. The backend only purges those lazily, on read - so re-read
+    // here to drop the badge immediately instead of waiting for the fallback poll.
+    return subscribeTaskChanged(() => {
+      checkUnreadCount();
+      if (openRef.current) fetchList();
+    });
+  }, []);
+
+  // Live push: the server sends this user's authoritative unread count (plus the
+  // new notification itself, when there is one) the moment anything changes, so
+  // the bell updates instantly rather than up to a poll interval later.
+  useEventStream<NotificationStreamEvent>({
+    url: streamUrl,
+    eventName: 'notification',
+    onEvent: (event) => {
+      const count = event.unreadCount ?? 0;
+
+      if (event.notification) {
+        fireBrowserNotification(1, event.notification.taskTitle);
+        // Only when the dropdown is already open - otherwise toggleOpen fetches it.
+        if (open) fetchList();
+      }
+
+      previousCountRef.current = count;
+      setUnreadCount(count);
+    },
+    fallbackPoll: checkUnreadCount,
+    fallbackIntervalMs: FALLBACK_POLL_INTERVAL_MS,
+  });
 
   useEffect(() => {
     if (!open) return;
@@ -77,19 +137,6 @@ export const NotificationBell: React.FC = () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [open]);
-
-  const fetchList = async () => {
-    setLoading(true);
-    try {
-      const response = await notificationService.getList(20);
-      setNotifications(response.data || []);
-    } catch (error) {
-      console.error('Error fetching notifications', error);
-      setNotifications([]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const toggleOpen = () => {
     const next = !open;
