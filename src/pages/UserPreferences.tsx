@@ -12,6 +12,7 @@ import styles from './UserSettings.module.css';
 
 interface ParameterOption {
   parameterId: string;
+  parameterName?: string;
   value: string;
 }
 
@@ -31,9 +32,22 @@ export const UserPreferences: React.FC = () => {
   const resolveParameterId = (parameter: ParameterDefinition | UserParameterOverride) =>
     parameter.parameterId ?? parameter.id ?? parameter.name ?? '';
 
-  const getParameterLabel = (parameterId: string) => {
-    const translatedLabel = t(`settings.${parameterId}`);
-    return translatedLabel === `settings.${parameterId}` ? parameterId : translatedLabel;
+  const resolveParameterName = (parameter: ParameterDefinition | UserParameterOverride) =>
+    parameter.name?.trim() || '';
+
+  const getParameterLabel = (parameterId: string, parameterName?: string) => {
+    const candidates = [parameterName, parameterId].filter(
+      (candidate): candidate is string => Boolean(candidate?.trim())
+    );
+
+    for (const candidate of candidates) {
+      const translatedLabel = t(`settings.${candidate}`);
+      if (translatedLabel !== `settings.${candidate}`) {
+        return translatedLabel;
+      }
+    }
+
+    return candidates[0] ?? parameterId;
   };
 
   const fetchParameters = async () => {
@@ -61,8 +75,10 @@ export const UserPreferences: React.FC = () => {
 
       const nextParameters = globalParameters.map((parameter) => {
         const parameterId = resolveParameterId(parameter);
+        const parameterName = resolveParameterName(parameter);
         return {
           parameterId,
+          parameterName,
           value: userOverrides[parameterId] ?? parameter.value ?? 'false',
         };
       });
@@ -188,7 +204,7 @@ export const UserPreferences: React.FC = () => {
                   />
                   <div>
                     <div className={styles.settingsOptionTitle}>
-                      {getParameterLabel(parameter.parameterId)}
+                      {getParameterLabel(parameter.parameterId, parameter.parameterName)}
                     </div>
                     <div className={styles.settingsOptionSubtitle}>
                       {isSelected ? t('settings.enabled') : t('settings.disabled')}
