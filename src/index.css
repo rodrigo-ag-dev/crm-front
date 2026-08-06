@@ -771,6 +771,13 @@ option {
   color: var(--text-primary);
 }
 
+.combobox-trigger-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
 .combobox-trigger-placeholder {
   color: var(--text-light);
 }

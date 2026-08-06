@@ -251,6 +251,20 @@ export const Companies: React.FC = () => {
         <div className="page-header">
           <h1 className="page-title">{t('companies.title')}</h1>
           <div className="toolbar-actions">
+            <SimpleDropdown
+              wrapperClassName={styles.statusFilter}
+              value={statusFilter}
+              onChange={handleStatusFilterChange}
+              placeholder={t('companies.allStatuses')}
+              options={[
+                { id: '', name: t('companies.allStatuses') },
+                { id: 'LEAD', name: t('companies.statusLead') },
+                { id: 'PROSPECT', name: t('companies.statusProspect') },
+                { id: 'CLIENT', name: t('companies.statusClient') },
+                { id: 'LOST', name: t('companies.statusLost') },
+                { id: 'INACTIVE', name: t('companies.statusInactive') },
+              ]}
+            />
             <button className="btn-primary" onClick={() => handleOpenModal()}>
               <Plus size={18} />
               {t('companies.createCompany')}
@@ -264,20 +278,6 @@ export const Companies: React.FC = () => {
             <>
               <div className={splitStyles.listPaneHeader}>
                 <span className={splitStyles.listPaneTitle}>{t('companies.title')}</span>
-                <SimpleDropdown
-                  wrapperClassName={styles.statusFilter}
-                  value={statusFilter}
-                  onChange={handleStatusFilterChange}
-                  placeholder={t('companies.allStatuses')}
-                  options={[
-                    { id: '', name: t('companies.allStatuses') },
-                    { id: 'LEAD', name: t('companies.statusLead') },
-                    { id: 'PROSPECT', name: t('companies.statusProspect') },
-                    { id: 'CLIENT', name: t('companies.statusClient') },
-                    { id: 'LOST', name: t('companies.statusLost') },
-                    { id: 'INACTIVE', name: t('companies.statusInactive') },
-                  ]}
-                />
                 <CollapsibleSearchBar
                   value={searchTerm}
                   onChange={setSearchTerm}
@@ -296,7 +296,10 @@ export const Companies: React.FC = () => {
                     <button
                       type="button"
                       className={splitStyles.notInPageBannerButton}
-                      onClick={() => setSearchTerm(detail.name)}
+                      onClick={() => {
+                        if (statusFilter) handleStatusFilterChange('');
+                        setSearchTerm(detail.name);
+                      }}
                     >
                       {t('buttons.locate')}
                     </button>

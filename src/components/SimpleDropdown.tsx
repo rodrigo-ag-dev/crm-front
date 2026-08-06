@@ -41,7 +41,7 @@ export const SimpleDropdown: React.FC<SimpleDropdownProps> = ({ label, value, on
         className="input-field combobox-trigger"
         onClick={() => setIsOpen((current) => !current)}
       >
-        <span className={selected ? undefined : 'combobox-trigger-placeholder'}>
+        <span className={`combobox-trigger-text${selected ? '' : ' combobox-trigger-placeholder'}`}>
           {selected?.name || placeholder || ''}
         </span>
         <ChevronDown size={16} className={`combobox-trigger-icon${isOpen ? ' combobox-trigger-icon-open' : ''}`} />
