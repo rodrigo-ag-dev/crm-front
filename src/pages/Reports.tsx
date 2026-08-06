@@ -210,14 +210,17 @@ export const Reports: React.FC = () => {
                 <label className="form-label">{t('contacts.name')}</label>
                 <input className="input-field" value={contactFilter.name} onChange={(e) => setContactFilter({ ...contactFilter, name: e.target.value })} />
               </div>
-              <div className="form-group">
-                <label className="form-label">{t('reports.status')}</label>
-                <select className="input-field" value={contactFilter.active} onChange={(e) => setContactFilter({ ...contactFilter, active: e.target.value })}>
-                  <option value="">{t('reports.statusAll')}</option>
-                  <option value="true">{t('reports.statusActive')}</option>
-                  <option value="false">{t('reports.statusInactive')}</option>
-                </select>
-              </div>
+              <SimpleDropdown
+                label={t('reports.status')}
+                value={contactFilter.active}
+                onChange={(value) => setContactFilter({ ...contactFilter, active: value })}
+                placeholder={t('reports.statusAll')}
+                options={[
+                  { id: '', name: t('reports.statusAll') },
+                  { id: 'true', name: t('reports.statusActive') },
+                  { id: 'false', name: t('reports.statusInactive') },
+                ]}
+              />
             </>
           )}
 
@@ -225,23 +228,27 @@ export const Reports: React.FC = () => {
             <>
               <CompanyCombobox value={ticketFilter.companyId} onChange={(id) => setTicketFilter({ ...ticketFilter, companyId: id, contactId: '' })} />
               <ContactCombobox value={ticketFilter.contactId} onChange={(id) => setTicketFilter({ ...ticketFilter, contactId: id })} companyId={ticketFilter.companyId} />
-              <div className="form-group">
-                <label className="form-label">{t('tickets.stage')}</label>
-                <select className="input-field" value={ticketFilter.ticketStageId} onChange={(e) => setTicketFilter({ ...ticketFilter, ticketStageId: e.target.value })}>
-                  <option value="">{t('reports.statusAll')}</option>
-                  {ticketStages.map((stage) => (
-                    <option key={stage.id} value={stage.id}>{stage.name}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="form-group">
-                <label className="form-label">{t('tickets.canceled')}</label>
-                <select className="input-field" value={ticketFilter.canceled} onChange={(e) => setTicketFilter({ ...ticketFilter, canceled: e.target.value })}>
-                  <option value="">{t('reports.statusAll')}</option>
-                  <option value="false">{t('reports.notCanceled')}</option>
-                  <option value="true">{t('reports.canceled')}</option>
-                </select>
-              </div>
+              <SimpleDropdown
+                label={t('tickets.stage')}
+                value={ticketFilter.ticketStageId}
+                onChange={(value) => setTicketFilter({ ...ticketFilter, ticketStageId: value })}
+                placeholder={t('reports.statusAll')}
+                options={[
+                  { id: '', name: t('reports.statusAll') },
+                  ...ticketStages.map((stage) => ({ id: stage.id, name: stage.name })),
+                ]}
+              />
+              <SimpleDropdown
+                label={t('tickets.canceled')}
+                value={ticketFilter.canceled}
+                onChange={(value) => setTicketFilter({ ...ticketFilter, canceled: value })}
+                placeholder={t('reports.statusAll')}
+                options={[
+                  { id: '', name: t('reports.statusAll') },
+                  { id: 'false', name: t('reports.notCanceled') },
+                  { id: 'true', name: t('reports.canceled') },
+                ]}
+              />
               <div className="form-group">
                 <label className="form-label">{t('reports.dueFrom')}</label>
                 <input className="input-field" type="date" value={ticketFilter.dueFrom} onChange={(e) => setTicketFilter({ ...ticketFilter, dueFrom: e.target.value })} />
@@ -257,15 +264,18 @@ export const Reports: React.FC = () => {
             <>
               <CompanyCombobox value={dealFilter.companyId} onChange={(id) => setDealFilter({ ...dealFilter, companyId: id })} />
               <StageCombobox value={dealFilter.stageId} onChange={(id) => setDealFilter({ ...dealFilter, stageId: id })} />
-              <div className="form-group">
-                <label className="form-label">{t('reports.status')}</label>
-                <select className="input-field" value={dealFilter.status} onChange={(e) => setDealFilter({ ...dealFilter, status: e.target.value })}>
-                  <option value="">{t('reports.statusAll')}</option>
-                  <option value="Open">{t('reports.dealOpen')}</option>
-                  <option value="Won">{t('reports.dealWon')}</option>
-                  <option value="Lost">{t('reports.dealLost')}</option>
-                </select>
-              </div>
+              <SimpleDropdown
+                label={t('reports.status')}
+                value={dealFilter.status}
+                onChange={(value) => setDealFilter({ ...dealFilter, status: value })}
+                placeholder={t('reports.statusAll')}
+                options={[
+                  { id: '', name: t('reports.statusAll') },
+                  { id: 'Open', name: t('reports.dealOpen') },
+                  { id: 'Won', name: t('reports.dealWon') },
+                  { id: 'Lost', name: t('reports.dealLost') },
+                ]}
+              />
               <div className="form-group">
                 <label className="form-label">{t('reports.closeDateFrom')}</label>
                 <input className="input-field" type="date" value={dealFilter.closeDateFrom} onChange={(e) => setDealFilter({ ...dealFilter, closeDateFrom: e.target.value })} />

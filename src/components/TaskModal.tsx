@@ -12,6 +12,7 @@ import { emitTaskChanged } from '../utils/taskEvents';
 import { searchMentionCandidates, type MentionCandidate } from '../utils/entityMentionSearch';
 import { Modal } from './Modal';
 import { ConfirmModal } from './ConfirmModal';
+import { SimpleDropdown } from './SimpleDropdown';
 import Input from './Input';
 import Textarea from './Textarea';
 import styles from './TaskModal.module.css';
@@ -265,18 +266,16 @@ export const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, task, onS
             onChange={(e) => setDueAt(e.target.value)}
           />
 
-          <div className="form-group">
-            <label className="form-label">{t('tasks.form.priority')}</label>
-            <select
-              className="input-field"
-              value={priority}
-              onChange={(e) => setPriority(e.target.value as TaskPriority)}
-            >
-              <option value="LOW">{t('tasks.priority.low')}</option>
-              <option value="MEDIUM">{t('tasks.priority.medium')}</option>
-              <option value="HIGH">{t('tasks.priority.high')}</option>
-            </select>
-          </div>
+          <SimpleDropdown
+            label={t('tasks.form.priority')}
+            value={priority}
+            onChange={(value) => setPriority(value as TaskPriority)}
+            options={[
+              { id: 'LOW', name: t('tasks.priority.low') },
+              { id: 'MEDIUM', name: t('tasks.priority.medium') },
+              { id: 'HIGH', name: t('tasks.priority.high') },
+            ]}
+          />
         </div>
 
         <div className={styles.checklistSection}>
