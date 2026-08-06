@@ -3,6 +3,7 @@ import { Copy, Link2, RotateCw, Trash2 } from 'lucide-react';
 import { ticketShareLinkService, type TicketShareLink } from '../services/ticketShareLinkService';
 import { useTranslation } from '../hooks/useTranslation';
 import { copyToClipboard } from '../utils/clipboard';
+import { ConfirmModal } from './ConfirmModal';
 import styles from './TicketShareLinkPanel.module.css';
 
 interface TicketShareLinkPanelProps {
@@ -17,6 +18,7 @@ export const TicketShareLinkPanel: React.FC<TicketShareLinkPanelProps> = ({ tick
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
+  const [confirmRevokeOpen, setConfirmRevokeOpen] = useState(false);
 
   useEffect(() => {
     fetchActiveLink();
@@ -52,7 +54,13 @@ export const TicketShareLinkPanel: React.FC<TicketShareLinkPanelProps> = ({ tick
   };
 
   const handleRevoke = async () => {
-    if (!window.confirm(t('tickets.shareLink.revokeConfirm'))) return;
+    setConfirmRevokeOpen(true);
+  };
+
+  const handleConfirmRevoke = async (confirmed: boolean) => {
+    setConfirmRevokeOpen(false);
+    if (!confirmed) return;
+
     setLoading(true);
     setError('');
     try {
@@ -124,6 +132,15 @@ export const TicketShareLinkPanel: React.FC<TicketShareLinkPanelProps> = ({ tick
 
       {link && <p className={styles.hint}>{t('tickets.shareLink.expiresHint', { date: new Date(link.expiresAt).toLocaleDateString() })}</p>}
       {copied && <p className={styles.copiedHint}>{t('tickets.shareLink.copied')}</p>}
+
+      <ConfirmModal
+        isOpen={confirmRevokeOpen}
+        message={t('tickets.shareLink.revokeConfirm')}
+        onConfirm={handleConfirmRevoke}
+        confirmText={t('tickets.shareLink.revoke')}
+        cancelText={t('common.cancel')}
+        isDangerous
+      />
     </div>
   );
 };
