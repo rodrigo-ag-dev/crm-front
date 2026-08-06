@@ -10,6 +10,7 @@ import { FinancialPaymentModal } from '../components/FinancialPaymentModal';
 import { FinancialTypeToggle } from '../components/FinancialTypeToggle';
 import { ConfirmModal } from '../components/ConfirmModal';
 import { MetricCard } from '../components/MetricCard';
+import { SimpleDropdown } from '../components/SimpleDropdown';
 import { abbreviateNumber } from '../utils/numberUtils';
 import { toFormatedDate } from '../utils/dateUtils';
 import styles from './Financial.module.css';
@@ -245,13 +246,19 @@ export const Financial: React.FC = () => {
             titleActions={
               <>
                 <FinancialTypeToggle value={type} onChange={setType} />
-                <select className="input-field" style={{ maxWidth: 180 }} value={status} onChange={e => setStatus(e.target.value as StatusFilter)}>
-                  <option value="">{t('financial.allStatuses')}</option>
-                  <option value="PENDING">{t('financial.pending')}</option>
-                  <option value="OVERDUE">{t('financial.overdue')}</option>
-                  <option value="PAID">{t('financial.paid')}</option>
-                  <option value="CANCELED">{t('financial.canceled')}</option>
-                </select>
+                <SimpleDropdown
+                  wrapperClassName={styles.statusFilter}
+                  value={status}
+                  onChange={(id) => setStatus(id as StatusFilter)}
+                  placeholder={t('financial.allStatuses')}
+                  options={[
+                    { id: '', name: t('financial.allStatuses') },
+                    { id: 'PENDING', name: t('financial.pending') },
+                    { id: 'OVERDUE', name: t('financial.overdue') },
+                    { id: 'PAID', name: t('financial.paid') },
+                    { id: 'CANCELED', name: t('financial.canceled') },
+                  ]}
+                />
                 {selected.size > 0 && (
                   <button type="button" className="btn-primary" onClick={() => setPaymentTarget(selectedInstallments)}>
                     <CheckSquare size={16} />
