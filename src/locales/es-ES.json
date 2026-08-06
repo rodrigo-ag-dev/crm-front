@@ -189,7 +189,14 @@
     "noCompanies": "No se encontraron empresas",
     "deleteConfirm": "¿Está seguro de que desea eliminar esta empresa?",
     "errorDeleting": "Error al eliminar empresa",
-    "errorSaving": "Error al guardar empresa"
+    "errorSaving": "Error al guardar empresa",
+    "status": "Estado",
+    "allStatuses": "Todos los estados",
+    "statusLead": "Lead",
+    "statusProspect": "Prospección",
+    "statusClient": "Cliente",
+    "statusLost": "Perdida",
+    "statusInactive": "Inactiva"
   },
   "stages": {
     "title": "Etapas",

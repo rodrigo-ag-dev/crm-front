@@ -13,14 +13,18 @@ import { RecordPane, RecordPaneEmptyState, RelatedItem, RelatedSection } from '.
 import { TaskWidget } from '../components/TaskWidget';
 import Input from '../components/Input';
 import Textarea from '../components/Textarea';
+import { SimpleDropdown } from '../components/SimpleDropdown';
 import { abbreviateNumber } from '../utils/numberUtils';
 import { getListCache, setListCache } from '../utils/listCache';
 import { useFittedPageSize } from '../hooks/useFittedPageSize';
 import { getTicketStages, type TicketStageOption } from '../services/ticketStageService';
 import splitStyles from '../components/SplitViewShell.module.css';
 import paneStyles from '../components/RecordPane.module.css';
+import styles from './Companies.module.css';
 
 const LIST_CACHE_KEY = 'companies';
+
+export type CompanyStatus = 'LEAD' | 'PROSPECT' | 'CLIENT' | 'LOST' | 'INACTIVE';
 
 interface Company {
   id?: string;
@@ -30,6 +34,7 @@ interface Company {
   phone: string;
   description: string;
   idRegional: string;
+  status: CompanyStatus;
 }
 
 interface RelatedContact {
@@ -57,7 +62,32 @@ interface StageOption {
   description?: string;
 }
 
-const emptyCompany: Company = { name: '', alias: '', email: '', phone: '', description: '', idRegional: '' };
+const emptyCompany: Company = { name: '', alias: '', email: '', phone: '', description: '', idRegional: '', status: 'LEAD' };
+
+const STATUS_BADGE_CLASS: Record<CompanyStatus, string> = {
+  LEAD: styles.statusLead,
+  PROSPECT: styles.statusProspect,
+  CLIENT: styles.statusClient,
+  LOST: styles.statusLost,
+  INACTIVE: styles.statusInactive,
+};
+
+const STATUS_LABEL_KEY: Record<CompanyStatus, string> = {
+  LEAD: 'companies.statusLead',
+  PROSPECT: 'companies.statusProspect',
+  CLIENT: 'companies.statusClient',
+  LOST: 'companies.statusLost',
+  INACTIVE: 'companies.statusInactive',
+};
+
+const StatusBadge: React.FC<{ status: CompanyStatus }> = ({ status }) => {
+  const { t } = useTranslation();
+  return (
+    <span className={`${styles.statusBadge} ${STATUS_BADGE_CLASS[status]}`}>
+      {t(STATUS_LABEL_KEY[status])}
+    </span>
+  );
+};
 
 export const Companies: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -73,6 +103,7 @@ export const Companies: React.FC = () => {
   const { size, rowHeight } = useFittedPageSize(listBodyRef, companies.length, cached?.size ?? 10);
   const [searchTerm, setSearchTerm] = useState(cached?.searchTerm ?? '');
   const [debouncedSearch, setDebouncedSearch] = useState(cached?.debouncedSearch ?? '');
+  const [statusFilter, setStatusFilter] = useState<CompanyStatus | ''>('');
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCompany, setEditingCompany] = useState<Company | null>(null);
@@ -105,7 +136,12 @@ export const Companies: React.FC = () => {
 
   useEffect(() => {
     fetchCompanies();
-  }, [page, debouncedSearch, size]);
+  }, [page, debouncedSearch, statusFilter, size]);
+
+  const handleStatusFilterChange = (value: string) => {
+    setStatusFilter(value as CompanyStatus | '');
+    if (page !== 0) setPage(0);
+  };
 
   useEffect(() => {
     fetchDetail();
@@ -124,6 +160,7 @@ export const Companies: React.FC = () => {
     try {
       const queryParams = new URLSearchParams({ page: page.toString(), size: size.toString() });
       if (debouncedSearch) queryParams.append('name', debouncedSearch);
+      if (statusFilter) queryParams.append('status', statusFilter);
       const response = await api.get(`/companies/search?${queryParams.toString()}`);
       const items = response.data.content || [];
       const total = response.data.totalPages || 0;
@@ -227,6 +264,20 @@ export const Companies: React.FC = () => {
             <>
               <div className={splitStyles.listPaneHeader}>
                 <span className={splitStyles.listPaneTitle}>{t('companies.title')}</span>
+                <SimpleDropdown
+                  wrapperClassName={styles.statusFilter}
+                  value={statusFilter}
+                  onChange={handleStatusFilterChange}
+                  placeholder={t('companies.allStatuses')}
+                  options={[
+                    { id: '', name: t('companies.allStatuses') },
+                    { id: 'LEAD', name: t('companies.statusLead') },
+                    { id: 'PROSPECT', name: t('companies.statusProspect') },
+                    { id: 'CLIENT', name: t('companies.statusClient') },
+                    { id: 'LOST', name: t('companies.statusLost') },
+                    { id: 'INACTIVE', name: t('companies.statusInactive') },
+                  ]}
+                />
                 <CollapsibleSearchBar
                   value={searchTerm}
                   onChange={setSearchTerm}
@@ -262,6 +313,7 @@ export const Companies: React.FC = () => {
                         isActive={company.id === id}
                         primary={company.name}
                         secondary={company.email || company.alias}
+                        badge={<StatusBadge status={company.status} />}
                       />
                     ))}
                     {companies.length === 0 && (
@@ -289,6 +341,7 @@ export const Companies: React.FC = () => {
               <RecordPane
                 title={detail?.name || ''}
                 subtitle={detail?.description}
+                badge={detail ? <StatusBadge status={detail.status} /> : undefined}
                 loading={detailLoading}
                 error={detailError}
                 onEdit={detail ? () => handleOpenModal(detail) : undefined}
@@ -375,6 +428,18 @@ export const Companies: React.FC = () => {
           <Input label={t('companies.alias')} value={formData.alias} onChange={(e) => setFormData({ ...formData, alias: e.target.value })} />
           <Input label={t('companies.email')} type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
           <Input label={t('companies.phone')} value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} />
+          <SimpleDropdown
+            label={t('companies.status')}
+            value={formData.status}
+            onChange={(value) => setFormData({ ...formData, status: value as CompanyStatus })}
+            options={[
+              { id: 'LEAD', name: t('companies.statusLead') },
+              { id: 'PROSPECT', name: t('companies.statusProspect') },
+              { id: 'CLIENT', name: t('companies.statusClient') },
+              { id: 'LOST', name: t('companies.statusLost') },
+              { id: 'INACTIVE', name: t('companies.statusInactive') },
+            ]}
+          />
           <Textarea label={t('deals.description')} rows={3} value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} />
 
           {error && <div className="form-feedback">{error}</div>}

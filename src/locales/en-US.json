@@ -189,7 +189,14 @@
     "noCompanies": "No companies found",
     "deleteConfirm": "Are you sure you want to delete this company?",
     "errorDeleting": "Error deleting company",
-    "errorSaving": "Error saving company"
+    "errorSaving": "Error saving company",
+    "status": "Status",
+    "allStatuses": "All statuses",
+    "statusLead": "Lead",
+    "statusProspect": "Prospect",
+    "statusClient": "Client",
+    "statusLost": "Lost",
+    "statusInactive": "Inactive"
   },
   "stages": {
     "title": "Stages",

@@ -25,9 +25,10 @@ interface RecordListRowProps {
   primary: string;
   secondary?: string;
   meta?: string;
+  badge?: React.ReactNode;
 }
 
-export const RecordListRow: React.FC<RecordListRowProps> = ({ to, isActive, primary, secondary, meta }) => {
+export const RecordListRow: React.FC<RecordListRowProps> = ({ to, isActive, primary, secondary, meta, badge }) => {
   const navigate = useNavigate();
 
   return (
@@ -48,6 +49,7 @@ export const RecordListRow: React.FC<RecordListRowProps> = ({ to, isActive, prim
         <span className={styles.rowPrimary}>{primary}</span>
         {secondary && <span className={styles.rowSecondary}>{secondary}</span>}
       </span>
+      {badge}
       {meta && <span className={styles.rowMeta}>{meta}</span>}
     </div>
   );

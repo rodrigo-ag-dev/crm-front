@@ -189,7 +189,14 @@
     "noCompanies": "Nenhuma empresa encontrada",
     "deleteConfirm": "Tem certeza que deseja excluir esta empresa?",
     "errorDeleting": "Erro ao excluir empresa",
-    "errorSaving": "Erro ao salvar empresa"
+    "errorSaving": "Erro ao salvar empresa",
+    "status": "Status",
+    "allStatuses": "Todos os status",
+    "statusLead": "Lead",
+    "statusProspect": "Prospecção",
+    "statusClient": "Cliente",
+    "statusLost": "Perdida",
+    "statusInactive": "Inativa"
   },
   "stages": {
     "title": "Etapas",

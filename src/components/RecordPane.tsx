@@ -9,6 +9,7 @@ import styles from './RecordPane.module.css';
 interface RecordPaneProps {
   title: string;
   subtitle?: string;
+  badge?: React.ReactNode;
   loading: boolean;
   error?: string;
   onEdit?: () => void;
@@ -19,6 +20,7 @@ interface RecordPaneProps {
 export const RecordPane: React.FC<RecordPaneProps> = ({
   title,
   subtitle,
+  badge,
   loading,
   error,
   onEdit,
@@ -31,7 +33,10 @@ export const RecordPane: React.FC<RecordPaneProps> = ({
     <div className={styles.pane}>
       <div className={styles.paneHeader}>
         <div>
-          <h2 className={styles.paneTitle}>{title}</h2>
+          <h2 className={styles.paneTitle}>
+            {title}
+            {badge}
+          </h2>
           {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
         </div>
         {(onEdit || onDelete) && (
