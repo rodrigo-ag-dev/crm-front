@@ -23,6 +23,8 @@ const formatTime = (value?: string): string => {
   return date.toLocaleString(undefined, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
 };
 
+const normalizeConversationId = (value?: string) => value?.trim().toLowerCase();
+
 export const Chat: React.FC = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
@@ -48,7 +50,21 @@ export const Chat: React.FC = () => {
     activeIdRef.current = id;
   }, [id]);
 
-  const active = useMemo(() => conversations.find((c) => c.id === id), [conversations, id]);
+  const refreshActiveConversationMessages = async (conversationId?: string) => {
+    if (!conversationId) return;
+
+    try {
+      const response = await chatService.getMessages(conversationId);
+      setMessages(response.data || []);
+    } catch (err) {
+      console.error('Error refreshing messages for active conversation', err);
+    }
+  };
+
+  const active = useMemo(
+    () => conversations.find((c) => normalizeConversationId(c.id) === normalizeConversationId(id)),
+    [conversations, id],
+  );
 
   const fetchConversations = async () => {
     try {
@@ -73,59 +89,82 @@ export const Chat: React.FC = () => {
 
     let cancelled = false;
     setLoadingMessages(true);
-    chatService
-      .getMessages(id)
-      .then((response) => {
-        if (!cancelled) setMessages(response.data || []);
+    refreshActiveConversationMessages(id)
+      .then(() => {
+        if (!cancelled) setLoadingMessages(false);
       })
-      .catch((err) => {
-        console.error('Error fetching messages', err);
-        if (!cancelled) setMessages([]);
-      })
-      .finally(() => {
+      .catch(() => {
         if (!cancelled) setLoadingMessages(false);
       });
 
     // Opening a conversation is what marks it read; the backend echoes the new
     // total back over the stream so other tabs drop the badge too.
     chatService.markRead(id).catch((err) => console.error('Error marking conversation read', err));
-    setConversations((prev) => prev.map((c) => (c.id === id ? { ...c, unreadCount: 0 } : c)));
+    setConversations((prev) => prev.map((c) => (
+      normalizeConversationId(c.id) === normalizeConversationId(id) ? { ...c, unreadCount: 0 } : c
+    )));
 
     return () => {
       cancelled = true;
     };
   }, [id]);
 
+  const scrollToBottom = () => {
+    requestAnimationFrame(() => {
+      listEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    });
+  };
+
   useEffect(() => {
-    listEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages.length]);
+    if (!id || loadingMessages) return;
+    scrollToBottom();
+  }, [id, loadingMessages, messages.length]);
+
+  useEffect(() => {
+    if (!id) return;
+
+    const timer = window.setInterval(() => {
+      refreshActiveConversationMessages(id);
+    }, 15000);
+
+    return () => window.clearInterval(timer);
+  }, [id]);
+
+  const appendOrReplaceMessage = (message: ChatMessage) => {
+    setMessages((prev) => {
+      if (prev.some((item) => item.id === message.id)) {
+        return prev.map((item) => (item.id === message.id ? message : item));
+      }
+
+      return [...prev, message];
+    });
+  };
 
   useUserEvent<ChatStreamEvent>('chat', (event) => {
-    const isActive = event.conversation.id === activeIdRef.current;
+    const incomingConversationId = event.message?.conversationId ?? event.conversation?.id;
+    const currentConversationId = normalizeConversationId(id ?? activeIdRef.current ?? window.location.pathname.match(/^\/chat\/([^/]+)$/)?.[1]);
+    const isActive = Boolean(currentConversationId) && normalizeConversationId(incomingConversationId) === currentConversationId;
 
     setConversations((prev) => {
       const summary = isActive ? { ...event.conversation, unreadCount: 0 } : event.conversation;
-      const without = prev.filter((c) => c.id !== summary.id);
-      return [summary, ...without];
+      const without = prev.filter((c) => normalizeConversationId(c.id) !== normalizeConversationId(summary?.id ?? incomingConversationId));
+      return summary ? [summary, ...without] : prev;
     });
 
-    if (!isActive) return;
+    if (!isActive || !incomingConversationId) return;
 
-    // The backend publishes before the POST resolves, so this can be the echo of
-    // a message this tab just sent - dedupe by id instead of appending blindly.
-    setMessages((prev) => (
-      prev.some((m) => m.id === event.message.id)
-        ? prev.map((m) => (m.id === event.message.id ? event.message : m))
-        : [...prev, event.message]
-    ));
+    appendOrReplaceMessage(event.message);
+    scrollToBottom();
 
     if (event.message.senderId !== user?.id) {
-      chatService.markRead(event.conversation.id).catch(() => {});
+      chatService.markRead(incomingConversationId).catch(() => {});
     }
   });
 
   useUserEvent<ChatReadStreamEvent>('chat-read', (event) => {
-    setConversations((prev) => prev.map((c) => (c.id === event.conversationId ? { ...c, unreadCount: 0 } : c)));
+    setConversations((prev) => prev.map((c) => (
+      normalizeConversationId(c.id) === normalizeConversationId(event.conversationId) ? { ...c, unreadCount: 0 } : c
+    )));
   });
 
   const openContacts = async () => {
@@ -186,9 +225,7 @@ export const Chat: React.FC = () => {
       setBody('');
       // Same race as the ticket timeline: the SSE echo of this exact message can
       // beat this response back, so dedupe rather than appending.
-      setMessages((prev) => (
-        prev.some((m) => m.id === response.data.id) ? prev : [...prev, response.data]
-      ));
+      appendOrReplaceMessage(response.data);
     } catch (err) {
       console.error('Error sending message', err);
       setError(t('chat.errorSending'));
@@ -228,7 +265,7 @@ export const Chat: React.FC = () => {
                     <RecordListRow
                       key={conversation.id}
                       to={`/chat/${conversation.id}`}
-                      isActive={conversation.id === id}
+                      isActive={normalizeConversationId(conversation.id) === normalizeConversationId(id)}
                       primary={conversation.participant.fullName}
                       secondary={conversation.lastMessagePreview || conversation.participant.email}
                       meta={formatTime(conversation.lastMessageAt)}
