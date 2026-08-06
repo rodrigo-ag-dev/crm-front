@@ -15,6 +15,7 @@ import { Reports } from './pages/Reports';
 import { Financial } from './pages/Financial';
 import { UserSettings } from './pages/UserSettings';
 import { PublicTicketChat } from './pages/PublicTicketChat';
+import { MaintenanceBanner } from './components/MaintenanceBanner';
 import { parameterService } from './services/parameterService';
 import { applyAnimationPreference } from './utils/animationPreferences';
 
@@ -128,6 +129,7 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <LanguageProvider>
+          <MaintenanceBanner />
           <AppRoutes />
         </LanguageProvider>
       </AuthProvider>

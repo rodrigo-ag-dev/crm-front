@@ -242,6 +242,7 @@
     "tabFinancialCategories": "Categorias Financeiras",
     "tabUsers": "Usuários",
     "tabTenants": "Empresas",
+    "tabMaintenance": "Manutenção",
     "description": "Marque ou desmarque os parâmetros que deseja ativar para o seu usuário.",
     "listTitle": "Parâmetros disponíveis",
     "listHint": "Selecione os itens que deseja manter ativos e confirme com OK.",
@@ -453,6 +454,28 @@
     "noTenants": "Nenhuma empresa encontrada",
     "errorLoading": "Erro ao carregar empresas",
     "errorSaving": "Erro ao criar empresa"
+  },
+  "maintenanceWindows": {
+    "title": "Janelas de manutenção",
+    "createWindow": "Agendar manutenção",
+    "editWindow": "Editar manutenção",
+    "createHint": "Um aviso será exibido para todos os usuários, em todas as empresas, a partir de 1 hora antes do início.",
+    "startsAt": "Início",
+    "endsAt": "Fim",
+    "message": "Mensagem",
+    "statusScheduled": "Agendada",
+    "statusCancelled": "Cancelada",
+    "cancelWindow": "Cancelar manutenção",
+    "confirmCancel": "Tem certeza que deseja cancelar esta janela de manutenção?",
+    "noWindows": "Nenhuma manutenção agendada",
+    "errorLoading": "Erro ao carregar janelas de manutenção",
+    "errorSaving": "Erro ao salvar janela de manutenção",
+    "errorCancelling": "Erro ao cancelar janela de manutenção"
+  },
+  "maintenanceBanner": {
+    "upcoming": "Manutenção programada para {date}. O sistema poderá ficar instável ou indisponível.",
+    "ongoing": "O sistema está em manutenção no momento e pode ficar instável ou indisponível até {date}.",
+    "message": "Mensagem"
   },
   "financial": {
     "title": "Contas",

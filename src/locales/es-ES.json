@@ -242,6 +242,7 @@
     "tabFinancialCategories": "Categorías Financieras",
     "tabUsers": "Usuarios",
     "tabTenants": "Empresas",
+    "tabMaintenance": "Mantenimiento",
     "description": "Marque o desmarque los parámetros que desea habilitar para su usuario.",
     "listTitle": "Parámetros disponibles",
     "listHint": "Seleccione los elementos que desea mantener activos y confirme con OK.",
@@ -453,6 +454,28 @@
     "noTenants": "No se encontraron empresas",
     "errorLoading": "Error al cargar empresas",
     "errorSaving": "Error al crear empresa"
+  },
+  "maintenanceWindows": {
+    "title": "Ventanas de mantenimiento",
+    "createWindow": "Programar mantenimiento",
+    "editWindow": "Editar mantenimiento",
+    "createHint": "Se mostrará un aviso a todos los usuarios, en todas las empresas, a partir de 1 hora antes del inicio.",
+    "startsAt": "Inicio",
+    "endsAt": "Fin",
+    "message": "Mensaje",
+    "statusScheduled": "Programada",
+    "statusCancelled": "Cancelada",
+    "cancelWindow": "Cancelar mantenimiento",
+    "confirmCancel": "¿Está seguro de que desea cancelar esta ventana de mantenimiento?",
+    "noWindows": "No hay mantenimiento programado",
+    "errorLoading": "Error al cargar las ventanas de mantenimiento",
+    "errorSaving": "Error al guardar la ventana de mantenimiento",
+    "errorCancelling": "Error al cancelar la ventana de mantenimiento"
+  },
+  "maintenanceBanner": {
+    "upcoming": "Mantenimiento programado para {date}. El sistema puede volverse inestable o no estar disponible.",
+    "ongoing": "El sistema está actualmente en mantenimiento y puede estar inestable o no disponible hasta {date}.",
+    "message": "Mensaje"
   },
   "financial": {
     "title": "Cuentas",

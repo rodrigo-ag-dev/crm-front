@@ -242,6 +242,7 @@
     "tabFinancialCategories": "Finance Categories",
     "tabUsers": "Users",
     "tabTenants": "Companies",
+    "tabMaintenance": "Maintenance",
     "description": "Select the parameters you want to enable for your user account.",
     "listTitle": "Available parameters",
     "listHint": "Mark the items you want to keep active and confirm with OK.",
@@ -453,6 +454,28 @@
     "noTenants": "No companies found",
     "errorLoading": "Error loading companies",
     "errorSaving": "Error creating company"
+  },
+  "maintenanceWindows": {
+    "title": "Maintenance windows",
+    "createWindow": "Schedule maintenance",
+    "editWindow": "Edit maintenance",
+    "createHint": "A notice will be shown to all users, across every company, starting 1 hour before it begins.",
+    "startsAt": "Starts at",
+    "endsAt": "Ends at",
+    "message": "Message",
+    "statusScheduled": "Scheduled",
+    "statusCancelled": "Cancelled",
+    "cancelWindow": "Cancel maintenance",
+    "confirmCancel": "Are you sure you want to cancel this maintenance window?",
+    "noWindows": "No maintenance scheduled",
+    "errorLoading": "Error loading maintenance windows",
+    "errorSaving": "Error saving maintenance window",
+    "errorCancelling": "Error cancelling maintenance window"
+  },
+  "maintenanceBanner": {
+    "upcoming": "Maintenance scheduled for {date}. The system may become unstable or unavailable.",
+    "ongoing": "The system is currently under maintenance and may be unstable or unavailable until {date}.",
+    "message": "Message"
   },
   "financial": {
     "title": "Accounts",

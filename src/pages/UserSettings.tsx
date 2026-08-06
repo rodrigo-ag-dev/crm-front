@@ -5,10 +5,11 @@ import { UserPreferences } from './UserPreferences';
 import { Stages } from './Stages';
 import { Users } from './Users';
 import { Tenants } from './Tenants';
+import { MaintenanceWindows } from './MaintenanceWindows';
 import { FinancialCategories } from './FinancialCategories';
 import styles from './UserSettings.module.css';
 
-type SettingsTab = 'preferences' | 'stages' | 'financialCategories' | 'users' | 'tenants';
+type SettingsTab = 'preferences' | 'stages' | 'financialCategories' | 'users' | 'tenants' | 'maintenance';
 
 export const UserSettings: React.FC = () => {
   const { user } = useAuth();
@@ -69,6 +70,16 @@ export const UserSettings: React.FC = () => {
             {t('settings.tabTenants')}
           </button>
         )}
+        {isPlatformAdmin && (
+          <button
+            type="button"
+            onClick={() => setActiveTab('maintenance')}
+            className={`selector-button selector-button--surface ${activeTab === 'maintenance' ? 'selector-button--active' : 'selector-button--inactive'}`}
+            aria-pressed={activeTab === 'maintenance'}
+          >
+            {t('settings.tabMaintenance')}
+          </button>
+        )}
       </div>
 
       <div className={styles.tabContent}>
@@ -77,6 +88,7 @@ export const UserSettings: React.FC = () => {
         {activeTab === 'financialCategories' && <FinancialCategories />}
         {activeTab === 'users' && isAdmin && <Users />}
         {activeTab === 'tenants' && isPlatformAdmin && <Tenants />}
+        {activeTab === 'maintenance' && isPlatformAdmin && <MaintenanceWindows />}
       </div>
     </div>
   );
