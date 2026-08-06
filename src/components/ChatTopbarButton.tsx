@@ -6,9 +6,9 @@ import { useUserEvent } from '../contexts/UserEventsContext';
 import { chatService, type ChatReadStreamEvent, type ChatStreamEvent } from '../services/chatService';
 import styles from './NotificationBell.module.css';
 
-// Safety net only - the badge is pushed over the shared per-user stream. Same
-// role and interval as the notification bell's fallback.
-const FALLBACK_POLL_INTERVAL_MS = 60000;
+// The badge is driven by the shared per-user stream. Keeping this polling-free
+// avoids unnecessary API traffic and server load while still letting the UI
+// update on real chat events.
 
 // Deliberately just a badge + link, not a dropdown: reading a message means
 // opening the conversation, so there is nothing useful to show in a popover
@@ -29,15 +29,28 @@ export const ChatTopbarButton: React.FC = () => {
   };
 
   useEffect(() => {
-    refreshCount();
-    const timer = setInterval(() => refreshCount(), FALLBACK_POLL_INTERVAL_MS);
-    return () => clearInterval(timer);
+    void refreshCount();
   }, []);
 
   // totalUnreadCount is authoritative server-side - assign it rather than
   // incrementing, so a dropped or duplicated event can't make the badge drift.
-  useUserEvent<ChatStreamEvent>('chat', (event) => setUnreadCount(event.totalUnreadCount ?? 0));
-  useUserEvent<ChatReadStreamEvent>('chat-read', (event) => setUnreadCount(event.totalUnreadCount ?? 0));
+  // Re-sync from the backend on every chat event as a safety net, because the
+  // badge must stay correct even when the chat page is closed and the user is
+  // only looking at the header.
+  useUserEvent<ChatStreamEvent>('chat', (event) => {
+    console.debug('[chat-badge] chat event', event);
+    if (typeof event.totalUnreadCount === 'number') {
+      setUnreadCount(event.totalUnreadCount);
+    }
+    void refreshCount();
+  });
+  useUserEvent<ChatReadStreamEvent>('chat-read', (event) => {
+    console.debug('[chat-badge] chat-read event', event);
+    if (typeof event.totalUnreadCount === 'number') {
+      setUnreadCount(event.totalUnreadCount);
+    }
+    void refreshCount();
+  });
 
   return (
     <div className={styles.wrapper}>

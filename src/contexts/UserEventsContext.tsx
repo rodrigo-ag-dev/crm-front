@@ -27,6 +27,7 @@ export const UserEventsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       source.addEventListener(eventName, (event) => {
         try {
           const data = JSON.parse((event as MessageEvent).data);
+          console.debug(`[user-events] received ${eventName}`, data);
           handlersRef.current.get(eventName)?.forEach((handler) => handler(data));
         } catch (err) {
           console.error(`Error parsing "${eventName}" user event`, err);
