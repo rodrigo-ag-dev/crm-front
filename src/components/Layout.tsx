@@ -35,17 +35,20 @@ type NavItem = {
   to: string;
   icon: React.ElementType;
   labelKey: string;
+  color: string;
   end?: boolean;
 };
 
+const DASHBOARD_ICON_COLOR = 'var(--primary-color)';
+
 const RAIL_ITEMS: NavItem[] = [
-  { to: '/my-day', icon: CheckSquare, labelKey: 'navigation.myDay', end: true },
-  { to: '/deals', icon: Briefcase, labelKey: 'navigation.deals' },
-  { to: '/financial', icon: Wallet, labelKey: 'navigation.financial' },
-  { to: '/tickets', icon: Ticket, labelKey: 'navigation.tickets', end: true },
-  { to: '/companies', icon: Building2, labelKey: 'navigation.companies' },
-  { to: '/contacts', icon: Users, labelKey: 'navigation.contacts' },
-  { to: '/reports', icon: FileText, labelKey: 'navigation.reports' },
+  { to: '/my-day', icon: CheckSquare, labelKey: 'navigation.myDay', color: 'var(--secondary-color)', end: true },
+  { to: '/deals', icon: Briefcase, labelKey: 'navigation.deals', color: 'var(--tertiary-color)' },
+  { to: '/financial', icon: Wallet, labelKey: 'navigation.financial', color: 'var(--nav-color-gold)' },
+  { to: '/tickets', icon: Ticket, labelKey: 'navigation.tickets', color: 'var(--accent-color)', end: true },
+  { to: '/companies', icon: Building2, labelKey: 'navigation.companies', color: 'var(--nav-color-indigo)' },
+  { to: '/contacts', icon: Users, labelKey: 'navigation.contacts', color: 'var(--nav-color-cyan)' },
+  { to: '/reports', icon: FileText, labelKey: 'navigation.reports', color: 'var(--nav-color-coral)' },
 ];
 
 const PAGE_TITLE_MAP: Record<string, string> = {
@@ -76,11 +79,12 @@ interface RailLinkProps {
   to: string;
   icon: React.ElementType;
   label: string;
+  color: string;
   end?: boolean;
   onClick?: () => void;
 }
 
-const RailLink: React.FC<RailLinkProps> = ({ to, icon: Icon, label, end, onClick }) => (
+const RailLink: React.FC<RailLinkProps> = ({ to, icon: Icon, label, color, end, onClick }) => (
   <NavLink
     to={to}
     end={end}
@@ -88,7 +92,7 @@ const RailLink: React.FC<RailLinkProps> = ({ to, icon: Icon, label, end, onClick
     onClick={onClick}
     className={({ isActive }) => `${styles.railItem} ${isActive ? styles.active : ''}`}
   >
-    <Icon size={20} className={styles.railItemIcon} />
+    <Icon size={20} className={styles.railItemIcon} style={{ color }} />
     <span className={styles.railLabel}>{label}</span>
     <span className={styles.railTooltip}>
       {label}
@@ -222,12 +226,12 @@ export const Layout: React.FC = () => {
         </div>
 
         <nav className={styles.railNav}>
-          <RailLink to="/" end icon={LayoutDashboard} label={t('navigation.dashboard')} onClick={closeRail} />
+          <RailLink to="/" end icon={LayoutDashboard} label={t('navigation.dashboard')} color={DASHBOARD_ICON_COLOR} onClick={closeRail} />
 
           <div className={styles.railDivider} />
 
           {RAIL_ITEMS.map((item) => (
-            <RailLink key={item.to} to={item.to} end={item.end} icon={item.icon} label={t(item.labelKey)} onClick={closeRail} />
+            <RailLink key={item.to} to={item.to} end={item.end} icon={item.icon} label={t(item.labelKey)} color={item.color} onClick={closeRail} />
           ))}
         </nav>
 

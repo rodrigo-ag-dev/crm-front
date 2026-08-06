@@ -44,6 +44,14 @@
   --sidebar-hover: rgba(14, 107, 82, 0.09);
   --sidebar-active: rgba(14, 107, 82, 0.13);
 
+  /* Sidebar nav icon colors — one hue per item, kept distinct from
+     --warning-color/--danger-color so a colorful icon never reads as an
+     alert state. */
+  --nav-color-gold: #B8862E;
+  --nav-color-indigo: #4F5D9E;
+  --nav-color-cyan: #1F8A93;
+  --nav-color-coral: #C1623A;
+
   /* Topbar / overlays */
   --topbar-button-bg: rgba(23, 27, 24, 0.04);
   --topbar-button-border: rgba(23, 27, 24, 0.08);
@@ -112,6 +120,10 @@
   --sidebar-text: var(--text-primary);
   --sidebar-hover: rgba(255, 255, 255, 0.05);
   --sidebar-active: rgba(80, 250, 123, 0.16);
+  --nav-color-gold: #F1FA8C;
+  --nav-color-indigo: #8AA6FF;
+  --nav-color-cyan: #6EE7C4;
+  --nav-color-coral: #FF8A65;
   --related-avatar-color: #F8F8F2;
   --related-avatar-bg: rgba(80, 250, 123, 0.20);
   --related-avatar-border: rgba(80, 250, 123, 0.24);
