@@ -1,5 +1,6 @@
 .statusFilter {
-  max-width: 180px;
+  width: 180px;
+  flex-shrink: 0;
 }
 
 .pageRoot {
