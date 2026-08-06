@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../hooks/useTranslation';
 import api from '../services/api';
-import { UserPlus } from 'lucide-react';
 import { useFocusFirstInput } from '../hooks/useFocusFirstInput';
 import Input from '../components/Input';
+import qsIcon from '../assets/brand/qs-icon.svg';
 import styles from './Setup.module.css';
 
 export const Setup: React.FC = () => {
@@ -47,9 +47,8 @@ export const Setup: React.FC = () => {
     <div ref={formRef} className={styles.setupScreen}>
       <div className={`card ${styles.setupCard}`}>
         <div className={styles.setupHeader}>
-          <h1 className={styles.setupTitle}>
-            <UserPlus size={28} /> {t('setup.title')}
-          </h1>
+          <img src={qsIcon} alt="" className={styles.setupLogo} />
+          <h1 className={styles.setupTitle}>{t('setup.title')}</h1>
           <p className={styles.setupSubtitle}>{t('setup.subtitle')}</p>
         </div>
 

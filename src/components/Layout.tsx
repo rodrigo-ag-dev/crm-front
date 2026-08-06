@@ -10,6 +10,7 @@ import { NotificationBell } from './NotificationBell';
 import { QuickAddTask } from './QuickAddTask';
 import { ChangePasswordGate } from './ChangePasswordGate';
 import { getStoredSidebarExpanded, setStoredSidebarExpanded } from '../utils/sidebarPreferences';
+import qsIconWhite from '../assets/brand/qs-icon-white.svg';
 import styles from './Layout.module.css';
 import {
   LayoutDashboard,
@@ -221,7 +222,7 @@ export const Layout: React.FC = () => {
         className={`${styles.rail}${railOpen ? ` ${styles.railOpen}` : ''}${railExpanded ? ` ${styles.railExpanded}` : ''}`}
       >
         <div className={styles.railBrand} title={t('navigation.crmPro')}>
-          <Briefcase size={18} color="white" className={styles.railItemIcon} />
+          <img src={qsIconWhite} alt="" className={styles.railBrandIcon} />
           <span className={styles.railBrandLabel}>{t('navigation.crmPro')}</span>
         </div>
 

@@ -1,7 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-148 -174 321 321" width="321" height="321">
-  <title>QS — ícone</title>
+  <title>QS — ícone (fundo escuro)</title>
   <defs>
-    <!-- respiro em volta do X, para a cruz passar por tras -->
     <mask id="behind" maskUnits="userSpaceOnUse" x="-300" y="-300" width="600" height="600">
       <rect x="-300" y="-300" width="600" height="600" fill="#fff"/>
       <g fill="none" stroke="#000" stroke-width="68" stroke-linecap="round">
@@ -19,7 +18,6 @@
     </mask>
   </defs>
 
-  <!-- + : soma, aumento — ao fundo -->
   <g mask="url(#behind)">
     <g stroke="#2E86E6" stroke-width="46" stroke-linecap="round">
       <path d="M0 -81 L0 81"/>
@@ -27,18 +25,16 @@
     </g>
   </g>
 
-  <!-- X : quatro nos conectados — a frente -->
   <g fill="none" stroke-width="48" stroke-linecap="round">
     <path d="M0 0 L 93.3 -93.3" stroke="#35BF8A"/>
-    <path d="M0 0 L-83.4 -83.4" stroke="#7A5AA8"/>
-    <path d="M0 0 L-83.4  83.4" stroke="#7A5AA8"/>
-    <path d="M0 0 L 83.4  83.4" stroke="#7A5AA8"/>
+    <path d="M0 0 L-83.4 -83.4" stroke="#FFFFFF"/>
+    <path d="M0 0 L-83.4  83.4" stroke="#FFFFFF"/>
+    <path d="M0 0 L 83.4  83.4" stroke="#FFFFFF"/>
   </g>
   <g stroke="none">
-    <circle cx="-83.4" cy="-83.4" r="46" fill="#7A5AA8"/>
-    <circle cx="-83.4" cy="83.4"  r="46" fill="#7A5AA8"/>
-    <circle cx="83.4"  cy="83.4"  r="46" fill="#7A5AA8"/>
-    <!-- ponta maior : no em destaque -->
+    <circle cx="-83.4" cy="-83.4" r="46" fill="#FFFFFF"/>
+    <circle cx="-83.4" cy="83.4"  r="46" fill="#FFFFFF"/>
+    <circle cx="83.4"  cy="83.4"  r="46" fill="#FFFFFF"/>
     <circle cx="93.3"  cy="-93.3" r="62" fill="#35BF8A"/>
   </g>
 </svg>

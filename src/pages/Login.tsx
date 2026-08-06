@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../hooks/useTranslation';
 import api from '../services/api';
-import { LogIn } from 'lucide-react';
 import { useFocusFirstInput } from '../hooks/useFocusFirstInput';
 import Input from '../components/Input';
+import qsIcon from '../assets/brand/qs-icon.svg';
 import styles from './Login.module.css';
 
 export const Login: React.FC = () => {
@@ -51,9 +51,8 @@ export const Login: React.FC = () => {
     <div ref={formRef} className={styles.loginScreen}>
       <div className={`card ${styles.loginCard}`}>
         <div className={styles.loginHeader}>
-          <h1 className={styles.loginTitle}>
-            <LogIn size={28} /> {t('login.title')}
-          </h1>
+          <img src={qsIcon} alt="" className={styles.loginLogo} />
+          <h1 className={styles.loginTitle}>{t('login.title')}</h1>
           <p className={styles.loginSubtitle}>{t('login.subtitle')}</p>
         </div>
 

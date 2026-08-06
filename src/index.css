@@ -37,7 +37,7 @@
   /* Sidebar */
   --sidebar-bg: var(--surface-color);
   --sidebar-accent: rgba(14, 107, 82, 0.16);
-  --sidebar-brand-bg: #0E6B52;
+  --sidebar-brand-bg: #7A5AA8;
   --sidebar-brand-icon: #FFFFFF;
   --sidebar-active-accent: #0B6A52;
   --sidebar-text: var(--text-primary);
@@ -114,8 +114,8 @@
 
   --sidebar-bg: #2F3241;
   --sidebar-accent: rgba(80, 250, 123, 0.14);
-  --sidebar-brand-bg: rgba(80, 250, 123, 0.16);
-  --sidebar-brand-icon: #121826;
+  --sidebar-brand-bg: #7A5AA8;
+  --sidebar-brand-icon: #FFFFFF;
   --sidebar-active-accent: var(--primary-color);
   --sidebar-text: var(--text-primary);
   --sidebar-hover: rgba(255, 255, 255, 0.05);

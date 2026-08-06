@@ -37,7 +37,7 @@
     "tickets": "Tickets",
     "reports": "Informes",
     "settings": "Configuración",
-    "crmPro": "Nexo CRM",
+    "crmPro": "QS CRM",
     "groupCommercial": "Comercial",
     "groupSupport": "Soporte",
     "groupCrm": "CRM",
@@ -101,7 +101,7 @@
     "browserPushBody": "Tienes {count} tarea(s) atrasada(s) nueva(s)."
   },
   "login": {
-    "title": "Nexo CRM",
+    "title": "QS CRM",
     "subtitle": "Ingrese con su cuenta corporativa",
     "email": "Correo electrónico",
     "password": "Contraseña",
