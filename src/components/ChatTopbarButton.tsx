@@ -6,14 +6,6 @@ import { useUserEvent } from '../contexts/UserEventsContext';
 import { chatService, type ChatReadStreamEvent, type ChatStreamEvent } from '../services/chatService';
 import styles from './NotificationBell.module.css';
 
-// The badge is driven by the shared per-user stream. Keeping this polling-free
-// avoids unnecessary API traffic and server load while still letting the UI
-// update on real chat events.
-
-// Deliberately just a badge + link, not a dropdown: reading a message means
-// opening the conversation, so there is nothing useful to show in a popover
-// that the /chat page doesn't already show better. Reuses NotificationBell's
-// CSS module so both topbar icons stay visually identical.
 export const ChatTopbarButton: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -32,20 +24,13 @@ export const ChatTopbarButton: React.FC = () => {
     void refreshCount();
   }, []);
 
-  // totalUnreadCount is authoritative server-side - assign it rather than
-  // incrementing, so a dropped or duplicated event can't make the badge drift.
-  // Re-sync from the backend on every chat event as a safety net, because the
-  // badge must stay correct even when the chat page is closed and the user is
-  // only looking at the header.
   useUserEvent<ChatStreamEvent>('chat', (event) => {
-    console.debug('[chat-badge] chat event', event);
     if (typeof event.totalUnreadCount === 'number') {
       setUnreadCount(event.totalUnreadCount);
     }
     void refreshCount();
   });
   useUserEvent<ChatReadStreamEvent>('chat-read', (event) => {
-    console.debug('[chat-badge] chat-read event', event);
     if (typeof event.totalUnreadCount === 'number') {
       setUnreadCount(event.totalUnreadCount);
     }

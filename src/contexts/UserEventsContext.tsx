@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useRef } from 'react';
-import { getApiBaseUrl } from '../services/api';
+import { getApiBaseUrl, getAuthToken } from '../services/api';
 
 type EventHandler = (data: unknown) => void;
 
@@ -9,10 +9,6 @@ interface UserEventsContextValue {
 
 const UserEventsContext = createContext<UserEventsContextValue | null>(null);
 
-// Every server->client push aimed at the signed-in *user* (notifications, chat)
-// rides one SSE connection. Opening a second EventSource against the same URL
-// would just cost another of the browser's ~6 connections per host, so features
-// subscribe to this shared one by event name instead of opening their own.
 export const UserEventsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const handlersRef = useRef<Map<string, Set<EventHandler>>>(new Map());
   // Event names that already have a native listener attached. Kept outside the
@@ -21,13 +17,17 @@ export const UserEventsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const bindEventRef = useRef<(eventName: string) => void>(() => {});
 
   useEffect(() => {
-    const source = new EventSource(`${getApiBaseUrl()}/user-events/stream`, { withCredentials: true });
+    const token = getAuthToken();
+    const url = token
+      ? `${getApiBaseUrl()}/user-events/stream?token=${encodeURIComponent(token)}`
+      : `${getApiBaseUrl()}/user-events/stream`;
+
+    const source = new EventSource(url, { withCredentials: true });
 
     const bindEvent = (eventName: string) => {
       source.addEventListener(eventName, (event) => {
         try {
           const data = JSON.parse((event as MessageEvent).data);
-          console.debug(`[user-events] received ${eventName}`, data);
           handlersRef.current.get(eventName)?.forEach((handler) => handler(data));
         } catch (err) {
           console.error(`Error parsing "${eventName}" user event`, err);
@@ -72,10 +72,6 @@ export const UserEventsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   return <UserEventsContext.Provider value={value}>{children}</UserEventsContext.Provider>;
 };
 
-/**
- * Subscribe to one event name on the shared per-user stream. The handler is
- * kept in a ref, so passing an inline closure doesn't resubscribe every render.
- */
 export function useUserEvent<T>(eventName: string, handler: (data: T) => void) {
   const context = useContext(UserEventsContext);
   const handlerRef = useRef(handler);

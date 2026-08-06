@@ -9,6 +9,8 @@ const getStoredToken = () => {
   }
 };
 
+export const getAuthToken = () => getStoredToken();
+
 export const getApiBaseUrl = () => {
   const envUrl = import.meta.env.VITE_API_URL;
   if (envUrl) {
