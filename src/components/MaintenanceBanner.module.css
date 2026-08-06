@@ -1,4 +1,9 @@
 .banner {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100060;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -10,6 +15,7 @@
   text-align: center;
   justify-content: center;
   flex-wrap: wrap;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.12);
 }
 
 .icon {

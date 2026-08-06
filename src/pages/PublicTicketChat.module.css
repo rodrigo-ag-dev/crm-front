@@ -1,7 +1,7 @@
 .page {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: calc(100vh - var(--maintenance-banner-height, 0px));
   max-width: 720px;
   margin: 0 auto;
   background-color: var(--background-color);

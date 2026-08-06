@@ -1,6 +1,6 @@
 .setupScreen {
   display: flex;
-  min-height: 100vh;
+  min-height: calc(100vh - var(--maintenance-banner-height, 0px));
   align-items: center;
   justify-content: center;
   background-color: var(--bg-color);

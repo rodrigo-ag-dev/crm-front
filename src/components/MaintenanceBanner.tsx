@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
 import { maintenanceWindowService, type MaintenanceAnnouncement } from '../services/maintenanceWindowService';
@@ -16,6 +16,27 @@ export const MaintenanceBanner: React.FC = () => {
   const { t } = useTranslation();
   const [state, setState] = useState<BannerState | null>(null);
   const isCheckingRef = useRef(false);
+  const bannerRef = useRef<HTMLDivElement | null>(null);
+
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+
+    if (!state || !bannerRef.current) {
+      root.style.setProperty('--maintenance-banner-height', '0px');
+      return;
+    }
+
+    const el = bannerRef.current;
+    const applyHeight = () => root.style.setProperty('--maintenance-banner-height', `${el.offsetHeight}px`);
+
+    applyHeight();
+    const observer = new ResizeObserver(applyHeight);
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      root.style.setProperty('--maintenance-banner-height', '0px');
+    };
+  }, [state]);
 
   useEffect(() => {
     const check = async () => {
@@ -51,7 +72,7 @@ export const MaintenanceBanner: React.FC = () => {
     : t('maintenanceBanner.upcoming', { date: toFormatedDateTime(announcement.startsAt) });
 
   return (
-    <div className={styles.banner} role="alert">
+    <div ref={bannerRef} className={styles.banner} role="alert">
       <AlertTriangle size={16} className={styles.icon} />
       <span>{text}</span>
       {announcement.message && <span className={styles.separator}>—</span>}
