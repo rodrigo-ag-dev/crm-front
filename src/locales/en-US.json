@@ -34,6 +34,7 @@
     "financial": "Finance",
     "contacts": "Contacts",
     "companies": "Companies",
+    "chat": "Chat",
     "tickets": "Tickets",
     "reports": "Reports",
     "settings": "Settings",
@@ -99,6 +100,21 @@
     "enable": "Enable",
     "browserPushTitle": "Overdue tasks",
     "browserPushBody": "You have {count} new overdue task(s)."
+  },
+  "chat": {
+    "title": "Chat",
+    "conversations": "Conversations",
+    "newConversation": "New conversation",
+    "searchContacts": "Search for someone...",
+    "noConversations": "No conversations yet.",
+    "noContacts": "No people found.",
+    "noMessages": "No messages yet. Say hello!",
+    "selectConversation": "Pick a conversation to get started.",
+    "messagePlaceholder": "Write a message...",
+    "send": "Send",
+    "otherTenant": "Another company",
+    "errorSending": "Could not send the message.",
+    "errorStarting": "Could not start the conversation."
   },
   "login": {
     "title": "QS CRM",

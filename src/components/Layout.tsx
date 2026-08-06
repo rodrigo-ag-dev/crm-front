@@ -7,7 +7,9 @@ import { LanguageSelector } from './LanguageSelector';
 import { ThemeSelector } from './ThemeSelector';
 import { CommandPalette } from './CommandPalette';
 import { NotificationBell } from './NotificationBell';
+import { ChatTopbarButton } from './ChatTopbarButton';
 import { QuickAddTask } from './QuickAddTask';
+import { UserEventsProvider } from '../contexts/UserEventsContext';
 import { ChangePasswordGate } from './ChangePasswordGate';
 import { getStoredSidebarExpanded, setStoredSidebarExpanded } from '../utils/sidebarPreferences';
 import qsIconWhite from '../assets/brand/qs-icon-white.svg';
@@ -30,6 +32,7 @@ import {
   CheckSquare,
   FileText,
   Wallet,
+  MessageCircle,
 } from 'lucide-react';
 
 type NavItem = {
@@ -49,6 +52,7 @@ const RAIL_ITEMS: NavItem[] = [
   { to: '/tickets', icon: Ticket, labelKey: 'navigation.tickets', color: 'var(--accent-color)', end: true },
   { to: '/companies', icon: Building2, labelKey: 'navigation.companies', color: 'var(--nav-color-indigo)' },
   { to: '/contacts', icon: Users, labelKey: 'navigation.contacts', color: 'var(--nav-color-cyan)' },
+  { to: '/chat', icon: MessageCircle, labelKey: 'navigation.chat', color: 'var(--secondary-color)' },
   { to: '/reports', icon: FileText, labelKey: 'navigation.reports', color: 'var(--nav-color-coral)' },
 ];
 
@@ -59,6 +63,7 @@ const PAGE_TITLE_MAP: Record<string, string> = {
   '/financial': 'navigation.financial',
   '/companies': 'navigation.companies',
   '/contacts': 'navigation.contacts',
+  '/chat': 'navigation.chat',
   '/tickets': 'navigation.tickets',
   '/settings': 'navigation.settings',
 };
@@ -214,6 +219,9 @@ export const Layout: React.FC = () => {
   }, [commandPaletteOpen]);
 
   return (
+    // One SSE connection for the whole signed-in session: the bell and the chat
+    // badge both subscribe to it rather than opening one each.
+    <UserEventsProvider>
     <div className={styles.appContainer}>
       {railOpen && <div className={styles.railOverlay} onClick={closeRail} />}
 
@@ -304,6 +312,7 @@ export const Layout: React.FC = () => {
               <span>{t('commandPalette.placeholder')}</span>
               <kbd className={styles.topbarSearchKbd}>Ctrl K</kbd>
             </button>
+            <ChatTopbarButton />
             <NotificationBell />
             <div ref={accountMenuRef} className={styles.layoutAccountWrapper}>
               <button
@@ -378,5 +387,6 @@ export const Layout: React.FC = () => {
       <QuickAddTask isOpen={quickAddTaskOpen} onClose={() => setQuickAddTaskOpen(false)} />
       <ChangePasswordGate />
     </div>
+    </UserEventsProvider>
   );
 };

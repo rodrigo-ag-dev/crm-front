@@ -11,6 +11,7 @@ import { Contacts } from './pages/Contacts';
 import { Companies } from './pages/Companies';
 import { Tickets } from './pages/Tickets';
 import { MyDay } from './pages/MyDay';
+import { Chat } from './pages/Chat';
 import { Reports } from './pages/Reports';
 import { Financial } from './pages/Financial';
 import { UserSettings } from './pages/UserSettings';
@@ -114,6 +115,8 @@ const AppRoutes = () => {
         <Route path="tickets" element={<Tickets />} />
         <Route path="tickets/funnel" element={<Navigate to="/tickets" replace />} />
         <Route path="tickets/:id" element={<Tickets />} />
+        <Route path="chat" element={<Chat />} />
+        <Route path="chat/:id" element={<Chat />} />
         <Route path="reports" element={<Reports />} />
         <Route path="financial" element={<Financial />} />
         <Route path="stages" element={<Navigate to="/settings" replace />} />

@@ -1,4 +1,4 @@
-import api, { getApiBaseUrl } from './api';
+import api from './api';
 
 export interface TaskNotification {
   id: string;
@@ -30,8 +30,4 @@ export const notificationService = {
   markRead: (id: string) => api.patch(`/notifications/${id}/read`),
 
   markAllRead: () => api.patch('/notifications/read-all'),
-
-  // EventSource can't go through the axios instance, so the stream URL is built
-  // from the same base URL by hand (as TicketTimeline.tsx does for its stream).
-  getStreamUrl: () => `${getApiBaseUrl()}/notifications/stream`,
 };

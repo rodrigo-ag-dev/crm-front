@@ -1,0 +1,214 @@
+.thread {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  gap: 12px;
+  padding: 16px;
+}
+
+.threadHeader {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.threadTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.threadTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Only shown for a participant from another tenant - the whole point of the
+   platform-admin channel is knowing which company you're talking to. */
+.tenantTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--primary-color);
+  background-color: color-mix(in srgb, var(--primary-color) 12%, var(--surface-elevated));
+  border: 1px solid color-mix(in srgb, var(--primary-color) 30%, var(--border-color));
+}
+
+.closeThread {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.closeThread:hover {
+  background-color: var(--surface-elevated);
+  color: var(--primary-color);
+}
+
+.messageList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-height: 200px;
+  overflow-y: auto;
+}
+
+.bubble {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  max-width: 78%;
+  background-color: var(--surface-elevated);
+  border: 1px solid var(--border-color);
+}
+
+.bubbleMine {
+  align-self: flex-end;
+  background-color: color-mix(in srgb, var(--primary-color) 12%, var(--surface-elevated));
+  border-color: color-mix(in srgb, var(--primary-color) 35%, var(--border-color));
+}
+
+.bubbleTheirs {
+  align-self: flex-start;
+}
+
+.bubbleHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.bubbleAuthor {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.timestamp {
+  flex-shrink: 0;
+  font-size: 10px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.bubbleBody {
+  font-size: 13px;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.emptyText {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.composer {
+  display: flex;
+  flex-shrink: 0;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-color);
+}
+
+.composerTextarea {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 7px 9px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--surface-color);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.composer > button {
+  flex-shrink: 0;
+  align-self: flex-end;
+}
+
+.unreadBadge {
+  flex-shrink: 0;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background-color: var(--danger-color);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.contactList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.contactRow {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  text-align: left;
+}
+
+.contactRow:hover {
+  background-color: var(--surface-elevated);
+  border-color: var(--border-color);
+}
+
+.contactName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.contactMeta {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 880px) {
+  .messageList {
+    min-height: 160px;
+  }
+}

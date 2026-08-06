@@ -115,14 +115,29 @@ Platform admins (`user.platformAdmin`) schedule maintenance downtime windows fro
 - `services/ticketShareLinkService.ts` + `components/TicketShareLinkPanel.tsx` — the authenticated side, rendered in `pages/Tickets.tsx`'s detail pane above `TicketTimeline`. Lets an agent generate/copy/revoke the link (`GET/POST/DELETE /api/tickets/{id}/share-link`); generating replaces any existing active link.
 - The chat page force-closes the composer once the ticket is closed/canceled. New comments arrive via the SSE stream described below, not polling.
 
-## Real-time notifications (Server-Sent Events)
+## The shared per-user stream (Server-Sent Events)
 
-`components/NotificationBell.tsx` opens an `EventSource` on `GET /notifications/stream` (`notificationService.getStreamUrl()`, built off `getApiBaseUrl()` since `EventSource` can't go through the axios instance) via `hooks/useEventStream.ts`, so the bell badge updates the instant the backend creates a notification instead of up to a poll interval later. The old 30s `unread-count` poll is gone; a 60s poll survives only as `fallbackPoll` for a silently stalled connection.
+`contexts/UserEventsContext.tsx` opens the **one** `EventSource` on `GET /user-events/stream` (built off `getApiBaseUrl()` since `EventSource` can't go through the axios instance) for the whole signed-in session — mounted by `Layout.tsx` wrapping everything below it (`<UserEventsProvider>...<Outlet /></UserEventsProvider>`), so it only ever opens for an authenticated route. Any feature needing live push subscribes by event name via `useUserEvent<T>(eventName, handler)` instead of opening its own connection — one native `addEventListener` is attached per distinct event name the first time something subscribes to it (`boundEventsRef`), however many components subscribe to that same name. This replaced two features that used to each open their own stream (notifications, then chat) — without the shared context, every additional per-user feature would cost the browser another of its ~6-connections-per-host, on top of whatever ticket comment stream (below) happens to also be open.
+
+`components/NotificationBell.tsx` (`useUserEvent<NotificationStreamEvent>('notification', ...)`) and `components/ChatTopbarButton.tsx`/`pages/Chat.tsx` (`'chat'`/`'chat-read'`) are the two current subscribers — see their sections below. `hooks/useEventStream.ts` still exists as the *per-resource* (not per-user) version backing the ticket comment streams, which are keyed by `ticketId`, not by the signed-in user, so they don't belong on this shared connection.
+
+### Notifications
+
+The bell badge updates the instant the backend creates a notification instead of up to a poll interval later. The old 30s `unread-count` poll is gone; a 60s poll survives only as a fallback for a silently stalled connection.
 
 - The `notification` event payload carries `unreadCount` — **assign it, never increment a local badge**. It's authoritative server-side (see `crm-api/CLAUDE.md`), so a dropped or duplicated event can't make the count drift. `notification` (the `TaskNotification` itself) is only present when a genuinely new one arrived; that's what gates the browser `Notification` push, and it supplies the task title as its body instead of the generic "you have N overdue tasks" the fallback poll still uses.
 - Mark-read/mark-all-read also come back over the stream (count-only events), so clearing the bell in one tab clears it in the others.
 - The backend only purges notifications for no-longer-overdue tasks *lazily, on read*, so nothing gets pushed when a task is completed/snoozed elsewhere in the app. The bell covers that itself by subscribing to `utils/taskEvents.ts`'s `subscribeTaskChanged` (which `MyDay`/`TaskWidget`/`QuickAddTask` already emit) and re-reading the count — that read is what triggers the purge. Don't replace this with a server push from `TaskService`: `PublishUnreadCountAsync` must never fire on a plain read, or a tab reacting by re-reading would loop.
-- `NotificationBell` is mounted inside `Layout` (inside `ProtectedRoute`), so the stream only ever opens for an authenticated session. Note that each open stream holds an HTTP connection: on a ticket page the browser holds this one *plus* the ticket comment stream — still well under the ~6-per-host HTTP/1.1 cap, but worth remembering before adding a third always-on stream.
+
+### Direct chat
+
+`services/chatService.ts` wraps `/api/chat`. `pages/Chat.tsx` (route `/chat`, nav icon `MessageCircle`) is a `SplitViewShell` — conversation list (`RecordListRow`, unread count in its `badge` prop) on the left, the open thread on the right, bubbles styled like `components/TicketTimeline.module.css`'s but in `Chat.module.css` (`.bubbleMine`/`.bubbleTheirs`). Starting a new conversation opens a `Modal` listing `GET /chat/contacts` (debounced search), reusing the same list-row shape rather than a combobox since a person also needs their tenant shown when they're cross-tenant.
+
+- **`components/ChatTopbarButton.tsx`** sits next to `NotificationBell` in `Layout.tsx`'s topbar — badge only, no dropdown (deliberately: reading a chat message means opening the conversation, so there's nothing a popover could show that the `/chat` page doesn't already show better). Reuses `NotificationBell.module.css` so the two icons look identical.
+- **Dedupe by message `id`, same race as ticket comments**: the backend publishes the `chat` event before the `POST /conversations/{id}/messages` response returns, so the SSE echo of a message this tab just sent can beat that response back. `Chat.tsx`'s `chat` handler and its own optimistic append after `POST` resolves both check `prev.some(m => m.id === ...)` before appending — skip either side and your own message duplicates.
+- **`totalUnreadCount` in the `chat`/`chat-read` payloads is authoritative** across every conversation, same rule as the notification badge — `ChatTopbarButton` assigns it, never increments.
+- A conversation is marked read (`PATCH /conversations/{id}/read`) the moment `Chat.tsx` opens it (its `useEffect` on `id`), which is also how a `chat-read` event reaches this same user's *other* open tabs to zero their badge too.
+- Cross-tenant conversations (`participant.crossTenant`) show a small tenant-name pill (`.tenantTag`) in the thread header and next to the contact in the "new conversation" list — the entire point of the platform-admin channel is knowing which company you're talking to, since nothing else in the UI would tell you.
 
 ## Real-time ticket comments (Server-Sent Events)
 

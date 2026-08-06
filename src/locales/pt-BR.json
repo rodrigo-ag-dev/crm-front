@@ -34,6 +34,7 @@
     "financial": "Financeiro",
     "contacts": "Contatos",
     "companies": "Empresas",
+    "chat": "Chat",
     "tickets": "Tickets",
     "reports": "Relatórios",
     "settings": "Configurações",
@@ -99,6 +100,21 @@
     "enable": "Ativar",
     "browserPushTitle": "Tarefas atrasadas",
     "browserPushBody": "Você tem {count} nova(s) tarefa(s) atrasada(s)."
+  },
+  "chat": {
+    "title": "Chat",
+    "conversations": "Conversas",
+    "newConversation": "Nova conversa",
+    "searchContacts": "Buscar pessoa...",
+    "noConversations": "Nenhuma conversa ainda.",
+    "noContacts": "Nenhuma pessoa encontrada.",
+    "noMessages": "Nenhuma mensagem ainda. Diga olá!",
+    "selectConversation": "Selecione uma conversa para começar.",
+    "messagePlaceholder": "Escreva uma mensagem...",
+    "send": "Enviar",
+    "otherTenant": "Outra empresa",
+    "errorSending": "Não foi possível enviar a mensagem.",
+    "errorStarting": "Não foi possível iniciar a conversa."
   },
   "login": {
     "title": "QS CRM",

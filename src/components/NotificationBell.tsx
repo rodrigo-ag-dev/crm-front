@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Bell, Check, Clock } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
-import { useEventStream } from '../hooks/useEventStream';
+import { useUserEvent } from '../contexts/UserEventsContext';
 import {
   notificationService,
   type NotificationStreamEvent,
@@ -12,10 +12,10 @@ import { emitTaskChanged, subscribeTaskChanged } from '../utils/taskEvents';
 import { toFormatedDate } from '../utils/dateUtils';
 import styles from './NotificationBell.module.css';
 
-// The badge is driven by the SSE stream below, not by polling - this is only a
-// safety net for a silently stalled connection (backgrounded tab, a proxy that
-// drops the connection without firing EventSource.onerror), same role and
-// interval as the ticket comment streams' fallback.
+// The badge is driven by the shared per-user SSE stream, not by polling - this
+// is only a safety net for a silently stalled connection (backgrounded tab, a
+// proxy that drops the connection without firing EventSource.onerror), same
+// role and interval as the ticket comment streams' fallback.
 const FALLBACK_POLL_INTERVAL_MS = 60000;
 
 export const NotificationBell: React.FC = () => {
@@ -37,8 +37,6 @@ export const NotificationBell: React.FC = () => {
   useEffect(() => {
     openRef.current = open;
   }, [open]);
-
-  const streamUrl = notificationService.getStreamUrl();
 
   const fireBrowserNotification = (count: number, taskTitle?: string) => {
     if (permission !== 'granted' || typeof Notification === 'undefined') return;
@@ -99,24 +97,23 @@ export const NotificationBell: React.FC = () => {
   // Live push: the server sends this user's authoritative unread count (plus the
   // new notification itself, when there is one) the moment anything changes, so
   // the bell updates instantly rather than up to a poll interval later.
-  useEventStream<NotificationStreamEvent>({
-    url: streamUrl,
-    eventName: 'notification',
-    onEvent: (event) => {
-      const count = event.unreadCount ?? 0;
+  useUserEvent<NotificationStreamEvent>('notification', (event) => {
+    const count = event.unreadCount ?? 0;
 
-      if (event.notification) {
-        fireBrowserNotification(1, event.notification.taskTitle);
-        // Only when the dropdown is already open - otherwise toggleOpen fetches it.
-        if (open) fetchList();
-      }
+    if (event.notification) {
+      fireBrowserNotification(1, event.notification.taskTitle);
+      // Only when the dropdown is already open - otherwise toggleOpen fetches it.
+      if (open) fetchList();
+    }
 
-      previousCountRef.current = count;
-      setUnreadCount(count);
-    },
-    fallbackPoll: checkUnreadCount,
-    fallbackIntervalMs: FALLBACK_POLL_INTERVAL_MS,
+    previousCountRef.current = count;
+    setUnreadCount(count);
   });
+
+  useEffect(() => {
+    const timer = setInterval(() => checkUnreadCount(), FALLBACK_POLL_INTERVAL_MS);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
