@@ -5,6 +5,7 @@ import { useTranslation } from '../hooks/useTranslation';
 import { CompanyCombobox } from '../components/CompanyCombobox';
 import { ContactCombobox } from '../components/ContactCombobox';
 import { StageCombobox } from '../components/StageCombobox';
+import { SimpleDropdown } from '../components/SimpleDropdown';
 import { Modal } from '../components/Modal';
 import { getTicketStages, sortTicketStages, type TicketStageOption } from '../services/ticketStageService';
 import styles from './Reports.module.css';
@@ -45,7 +46,7 @@ export const Reports: React.FC = () => {
     getTicketStages().then((res) => setTicketStages(sortTicketStages(res.data || []))).catch(() => setTicketStages([]));
   }, []);
 
-  const [companyFilter, setCompanyFilter] = useState({ name: '', active: '' });
+  const [companyFilter, setCompanyFilter] = useState({ name: '', status: '' });
   const [contactFilter, setContactFilter] = useState({ companyId: '', name: '', active: '' });
   const [ticketFilter, setTicketFilter] = useState({ companyId: '', contactId: '', ticketStageId: '', canceled: '', dueFrom: '', dueTo: '' });
   const [dealFilter, setDealFilter] = useState({ companyId: '', stageId: '', status: '', closeDateFrom: '', closeDateTo: '' });
@@ -66,7 +67,7 @@ export const Reports: React.FC = () => {
           endpoint: '/reports/companies',
           params: {
             ...(companyFilter.name ? { name: companyFilter.name } : {}),
-            ...(companyFilter.active ? { active: companyFilter.active } : {}),
+            ...(companyFilter.status ? { status: companyFilter.status } : {}),
           },
         };
       case 'contacts':
@@ -185,14 +186,20 @@ export const Reports: React.FC = () => {
                 <label className="form-label">{t('companies.name')}</label>
                 <input className="input-field" value={companyFilter.name} onChange={(e) => setCompanyFilter({ ...companyFilter, name: e.target.value })} />
               </div>
-              <div className="form-group">
-                <label className="form-label">{t('reports.status')}</label>
-                <select className="input-field" value={companyFilter.active} onChange={(e) => setCompanyFilter({ ...companyFilter, active: e.target.value })}>
-                  <option value="">{t('reports.statusAll')}</option>
-                  <option value="true">{t('reports.statusActive')}</option>
-                  <option value="false">{t('reports.statusInactive')}</option>
-                </select>
-              </div>
+              <SimpleDropdown
+                label={t('reports.status')}
+                value={companyFilter.status}
+                onChange={(value) => setCompanyFilter({ ...companyFilter, status: value })}
+                placeholder={t('companies.allStatuses')}
+                options={[
+                  { id: '', name: t('companies.allStatuses') },
+                  { id: 'LEAD', name: t('companies.statusLead') },
+                  { id: 'PROSPECT', name: t('companies.statusProspect') },
+                  { id: 'CLIENT', name: t('companies.statusClient') },
+                  { id: 'LOST', name: t('companies.statusLost') },
+                  { id: 'INACTIVE', name: t('companies.statusInactive') },
+                ]}
+              />
             </>
           )}
 
