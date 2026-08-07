@@ -13,6 +13,8 @@ interface User {
   mustChangePassword?: boolean;
   tenantId?: string;
   tenantName?: string;
+  /** The user's actual tenant, unaffected by a platform admin's "viewing as" switch — see tenantId above, which is the effective one. */
+  homeTenantId?: string;
   platformAdmin?: boolean;
 }
 
@@ -27,6 +29,7 @@ interface RawUserPayload {
   mustChangePassword?: boolean;
   tenantId?: string;
   tenantName?: string;
+  homeTenantId?: string;
   platformAdmin?: boolean;
 }
 
@@ -58,6 +61,7 @@ const normalizeUser = (user: RawUserPayload): User => {
     mustChangePassword: Boolean(user.mustChangePassword),
     tenantId: user.tenantId,
     tenantName: user.tenantName,
+    homeTenantId: user.homeTenantId,
     platformAdmin: Boolean(user.platformAdmin),
   };
 };

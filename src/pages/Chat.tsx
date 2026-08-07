@@ -260,14 +260,24 @@ export const Chat: React.FC = () => {
     }
   };
 
-  // A platform admin currently viewing the participant's own tenant (the
-  // tenant switcher is what puts them there) has every message in *this*
-  // conversation sent as that person automatically — always recorded with an
-  // audit trail (impersonatedByUserId), never silently. This mirrors the
-  // backend's own check (ChatService.SendImpersonatedMessageAsync): same
-  // tenant match, and it can never apply to another platform admin.
+  // A platform admin who has actually switched (via the tenant switcher) into
+  // the participant's tenant has every message in *this* conversation sent as
+  // that person automatically — always recorded with an audit trail
+  // (impersonatedByUserId), never silently. This mirrors the backend's own
+  // check (ChatService.SendImpersonatedMessageAsync). The `homeTenantId`
+  // check is what makes this a real switch rather than just the admin
+  // chatting with a colleague in their own default tenant — without it, any
+  // same-tenant conversation would wrongly trigger impersonation, since the
+  // effective tenant trivially equals the participant's tenant even with no
+  // switch at all. Requiring `user.homeTenantId` to be truthy first (not just
+  // `!== user.tenantId`) matters too: an `undefined` homeTenantId — a stale
+  // session fetched before this field existed — must never be treated as
+  // "different from tenantId", or every same-tenant chat would incorrectly
+  // qualify again.
   const isImpersonatingContext = Boolean(
     user?.platformAdmin
+    && user.homeTenantId
+    && user.tenantId !== user.homeTenantId
     && active
     && !active.participant.platformAdmin
     && active.participant.tenantId === user.tenantId,
