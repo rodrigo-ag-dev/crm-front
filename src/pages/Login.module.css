@@ -76,6 +76,8 @@
   width: 100%;
   /* A bit taller than a plain form usually needs — leaves room for
      .errorTooltip (absolutely positioned, so it never shifts this button)
-     to sit fully above it instead of overlapping. */
-  margin-top: 28px;
+     to sit fully above it instead of overlapping, even when the message
+     wraps onto two lines (e.g. "Falha na autenticação. Verifique suas
+     credenciais." at 320px card width). */
+  margin-top: 52px;
 }

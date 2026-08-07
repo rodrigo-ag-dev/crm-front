@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../hooks/useTranslation';
@@ -7,6 +7,8 @@ import { useFocusFirstInput } from '../hooks/useFocusFirstInput';
 import Input from '../components/Input';
 import qsIcon from '../assets/brand/qs-icon.svg';
 import styles from './Login.module.css';
+
+const ERROR_DISMISS_MS = 6000;
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -18,6 +20,15 @@ export const Login: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const formRef = useFocusFirstInput();
+
+  // Auto-dismiss so a stale "wrong credentials" tooltip doesn't sit over the
+  // form forever — and clear immediately once the user starts fixing either
+  // field, same as most login forms.
+  useEffect(() => {
+    if (!error) return;
+    const timer = window.setTimeout(() => setError(''), ERROR_DISMISS_MS);
+    return () => window.clearTimeout(timer);
+  }, [error]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,7 +73,10 @@ export const Login: React.FC = () => {
               label={t('login.email')}
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (error) setError('');
+              }}
               required
               placeholder="seu@email.com"
             />
@@ -73,7 +87,10 @@ export const Login: React.FC = () => {
               label={t('login.password')}
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (error) setError('');
+              }}
               required
               placeholder="********"
             />
