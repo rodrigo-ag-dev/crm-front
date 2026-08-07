@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Building2, Check, ChevronDown, Loader2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../hooks/useTranslation';
@@ -10,9 +9,8 @@ import styles from './Layout.module.css';
 // Only rendered for a platform admin - a regular user's tenant is fixed, so
 // the badge stays a plain display element for them (see Layout.tsx).
 export const TenantSwitcher: React.FC = () => {
-  const { user, updateUser } = useAuth();
+  const { user } = useAuth();
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const [isOpen, setIsOpen] = useState(false);
   const [tenants, setTenants] = useState<TenantRecord[]>([]);
@@ -59,13 +57,15 @@ export const TenantSwitcher: React.FC = () => {
       if (response.data.token) {
         window.localStorage.setItem('crm_token', response.data.token);
       }
-      updateUser(response.data.user);
-      setIsOpen(false);
-      setFilter('');
-      navigate('/');
+      // A client-side navigate() to '/' is a no-op when already on the Dashboard
+      // (same route, nothing remounts) and every page's own in-memory list cache
+      // (utils/listCache.ts) would otherwise keep serving the previous tenant's
+      // data if the admin revisits it. A hard reload sidesteps both: the cookie
+      // is already swapped server-side, so it comes back up already authenticated
+      // as the new tenant.
+      window.location.assign('/');
     } catch (err) {
       console.error('Error switching tenant', err);
-    } finally {
       setSwitching(false);
     }
   };
