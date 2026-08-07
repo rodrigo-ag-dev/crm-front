@@ -106,6 +106,7 @@
     "conversations": "Conversas",
     "newConversation": "Nova conversa",
     "searchContacts": "Buscar pessoa...",
+    "searchConversations": "Buscar conversas...",
     "noConversations": "Nenhuma conversa ainda.",
     "noContacts": "Nenhuma pessoa encontrada.",
     "noMessages": "Nenhuma mensagem ainda. Diga olá!",
@@ -114,7 +115,10 @@
     "send": "Enviar",
     "otherTenant": "Outra empresa",
     "errorSending": "Não foi possível enviar a mensagem.",
-    "errorStarting": "Não foi possível iniciar a conversa."
+    "errorStarting": "Não foi possível iniciar a conversa.",
+    "deleteConversation": "Excluir conversa",
+    "confirmDeleteConversation": "Tem certeza que deseja excluir esta conversa? Todas as mensagens serão perdidas para ambas as partes.",
+    "errorDeletingConversation": "Não foi possível excluir a conversa."
   },
   "login": {
     "title": "QS CRM",

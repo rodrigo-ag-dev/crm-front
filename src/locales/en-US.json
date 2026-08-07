@@ -106,6 +106,7 @@
     "conversations": "Conversations",
     "newConversation": "New conversation",
     "searchContacts": "Search for someone...",
+    "searchConversations": "Search conversations...",
     "noConversations": "No conversations yet.",
     "noContacts": "No people found.",
     "noMessages": "No messages yet. Say hello!",
@@ -114,7 +115,10 @@
     "send": "Send",
     "otherTenant": "Another company",
     "errorSending": "Could not send the message.",
-    "errorStarting": "Could not start the conversation."
+    "errorStarting": "Could not start the conversation.",
+    "deleteConversation": "Delete conversation",
+    "confirmDeleteConversation": "Are you sure you want to delete this conversation? All messages will be lost for both sides.",
+    "errorDeletingConversation": "Could not delete the conversation."
   },
   "login": {
     "title": "QS CRM",

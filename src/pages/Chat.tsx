@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Building2, Plus, Send, X } from 'lucide-react';
+import { Building2, ChevronLeft, ChevronRight, Plus, Send, Trash2, X } from 'lucide-react';
 import {
   chatService,
   type ChatContact,
@@ -12,10 +12,15 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import { useUserEvent } from '../contexts/UserEventsContext';
 import { useTranslation } from '../hooks/useTranslation';
-import { SplitViewShell, RecordListRow, RecordListRowsSkeleton } from '../components/SplitViewShell';
+import { SplitViewShell, RecordListRow, RecordListRowsSkeleton, CollapsibleSearchBar } from '../components/SplitViewShell';
 import { Modal } from '../components/Modal';
+import { ConfirmModal } from '../components/ConfirmModal';
+import Input from '../components/Input';
 import splitStyles from '../components/SplitViewShell.module.css';
 import styles from './Chat.module.css';
+
+const CONVERSATIONS_PAGE_SIZE = 15;
+const CONTACTS_PAGE_SIZE = 8;
 
 const formatTime = (value?: string): string => {
   if (!value) return '';
@@ -33,6 +38,11 @@ export const Chat: React.FC = () => {
 
   const [conversations, setConversations] = useState<ChatConversation[]>([]);
   const [loadingConversations, setLoadingConversations] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [confirmDeleteConversationId, setConfirmDeleteConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [body, setBody] = useState('');
@@ -41,6 +51,9 @@ export const Chat: React.FC = () => {
 
   const [contactsOpen, setContactsOpen] = useState(false);
   const [contactSearch, setContactSearch] = useState('');
+  const [debouncedContactSearch, setDebouncedContactSearch] = useState('');
+  const [contactPage, setContactPage] = useState(0);
+  const [contactTotalPages, setContactTotalPages] = useState(0);
   const [contacts, setContacts] = useState<ChatContact[]>([]);
   const [loadingContacts, setLoadingContacts] = useState(false);
 
@@ -67,19 +80,37 @@ export const Chat: React.FC = () => {
   );
 
   const fetchConversations = async () => {
+    setLoadingConversations(true);
     try {
-      const response = await chatService.getConversations();
-      setConversations(response.data || []);
+      const response = await chatService.getConversations(debouncedSearch || undefined, page, CONVERSATIONS_PAGE_SIZE);
+      const total = response.data.totalPages || 0;
+      setConversations(response.data.content || []);
+      setTotalPages(total);
+      if (page > 0 && page >= total) setPage(Math.max(0, total - 1));
     } catch (err) {
       console.error('Error fetching conversations', err);
+      setConversations([]);
     } finally {
       setLoadingConversations(false);
     }
   };
 
+  const isFirstSearchRun = useRef(true);
+  useEffect(() => {
+    if (isFirstSearchRun.current) {
+      isFirstSearchRun.current = false;
+      return;
+    }
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+      if (page !== 0) setPage(0);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
   useEffect(() => {
     fetchConversations();
-  }, []);
+  }, [page, debouncedSearch]);
 
   useEffect(() => {
     if (!id) {
@@ -167,37 +198,52 @@ export const Chat: React.FC = () => {
     )));
   });
 
-  const openContacts = async () => {
+  const isFirstContactSearchRun = useRef(true);
+
+  const openContacts = () => {
+    isFirstContactSearchRun.current = true;
+    setContactSearch('');
+    setDebouncedContactSearch('');
+    setContactPage(0);
     setContactsOpen(true);
-    setLoadingContacts(true);
-    try {
-      const response = await chatService.getContacts();
-      setContacts(response.data || []);
-    } catch (err) {
-      console.error('Error fetching chat contacts', err);
-      setContacts([]);
-    } finally {
-      setLoadingContacts(false);
-    }
   };
+
+  useEffect(() => {
+    if (isFirstContactSearchRun.current) {
+      isFirstContactSearchRun.current = false;
+      return;
+    }
+    const timer = setTimeout(() => {
+      setDebouncedContactSearch(contactSearch);
+      setContactPage(0);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [contactSearch]);
 
   useEffect(() => {
     if (!contactsOpen) return;
 
-    const timer = setTimeout(async () => {
-      setLoadingContacts(true);
-      try {
-        const response = await chatService.getContacts(contactSearch || undefined);
-        setContacts(response.data || []);
-      } catch (err) {
-        console.error('Error searching chat contacts', err);
-      } finally {
-        setLoadingContacts(false);
-      }
-    }, 300);
+    let cancelled = false;
+    setLoadingContacts(true);
+    chatService.getContacts(debouncedContactSearch || undefined, contactPage, CONTACTS_PAGE_SIZE)
+      .then((response) => {
+        if (cancelled) return;
+        setContacts(response.data.content || []);
+        setContactTotalPages(response.data.totalPages || 0);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        console.error('Error fetching chat contacts', err);
+        setContacts([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingContacts(false);
+      });
 
-    return () => clearTimeout(timer);
-  }, [contactSearch, contactsOpen]);
+    return () => {
+      cancelled = true;
+    };
+  }, [contactsOpen, debouncedContactSearch, contactPage]);
 
   const startConversation = async (contact: ChatContact) => {
     try {
@@ -234,6 +280,23 @@ export const Chat: React.FC = () => {
     }
   };
 
+  const performDeleteConversation = async (confirmed: boolean) => {
+    const targetId = confirmDeleteConversationId;
+    setConfirmDeleteConversationId(null);
+    if (!confirmed || !targetId) return;
+
+    try {
+      await chatService.deleteConversation(targetId);
+      if (normalizeConversationId(targetId) === normalizeConversationId(id)) {
+        navigate('/chat');
+      }
+      fetchConversations();
+    } catch (err) {
+      console.error('Error deleting conversation', err);
+      setError(t('chat.errorDeletingConversation'));
+    }
+  };
+
   return (
     <>
       <div className={splitStyles.page}>
@@ -253,6 +316,11 @@ export const Chat: React.FC = () => {
             <>
               <div className={splitStyles.listPaneHeader}>
                 <span className={splitStyles.listPaneTitle}>{t('chat.conversations')}</span>
+                <CollapsibleSearchBar
+                  value={searchTerm}
+                  onChange={setSearchTerm}
+                  placeholder={t('chat.searchConversations')}
+                />
               </div>
 
               <div className={splitStyles.listPaneBody}>
@@ -276,9 +344,32 @@ export const Chat: React.FC = () => {
                           </span>
                         ) : undefined
                       }
+                      actions={
+                        <button
+                          type="button"
+                          className="btn-icon-danger"
+                          onClick={() => setConfirmDeleteConversationId(conversation.id)}
+                          title={t('chat.deleteConversation')}
+                          aria-label={t('chat.deleteConversation')}
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      }
                     />
                   ))
                 )}
+              </div>
+
+              <div className={splitStyles.listPaneFooter}>
+                <span>{t('pagination.pageOf', { page: page + 1, total: totalPages || 1 })}</span>
+                <div style={{ display: 'flex', gap: 4 }}>
+                  <button className="btn-secondary icon-button" disabled={page === 0} onClick={() => setPage((p) => Math.max(0, p - 1))} title={t('buttons.previous')}>
+                    <ChevronLeft size={16} />
+                  </button>
+                  <button className="btn-secondary icon-button" disabled={page >= totalPages - 1} onClick={() => setPage((p) => p + 1)} title={t('buttons.next')}>
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
               </div>
             </>
           }
@@ -358,16 +449,14 @@ export const Chat: React.FC = () => {
 
       {contactsOpen && (
         <Modal isOpen title={t('chat.newConversation')} onClose={() => setContactsOpen(false)}>
-          <div className="form-group">
-            <input
-              type="text"
-              className="form-input"
-              autoFocus
-              placeholder={t('chat.searchContacts')}
-              value={contactSearch}
-              onChange={(event) => setContactSearch(event.target.value)}
-            />
-          </div>
+          <Input
+            label=""
+            type="text"
+            autoFocus
+            placeholder={t('chat.searchContacts')}
+            value={contactSearch}
+            onChange={(event) => setContactSearch(event.target.value)}
+          />
 
           <div className={styles.contactList}>
             {loadingContacts ? (
@@ -391,8 +480,40 @@ export const Chat: React.FC = () => {
               ))
             )}
           </div>
+
+          <div className={styles.contactsFooter}>
+            <span>{t('pagination.pageOf', { page: contactPage + 1, total: contactTotalPages || 1 })}</span>
+            <div style={{ display: 'flex', gap: 4 }}>
+              <button
+                type="button"
+                className="btn-secondary icon-button"
+                disabled={contactPage === 0}
+                onClick={() => setContactPage((p) => Math.max(0, p - 1))}
+                title={t('buttons.previous')}
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <button
+                type="button"
+                className="btn-secondary icon-button"
+                disabled={contactPage >= contactTotalPages - 1}
+                onClick={() => setContactPage((p) => p + 1)}
+                title={t('buttons.next')}
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
         </Modal>
       )}
+
+      <ConfirmModal
+        isOpen={!!confirmDeleteConversationId}
+        title={t('chat.deleteConversation')}
+        message={t('chat.confirmDeleteConversation')}
+        onConfirm={performDeleteConversation}
+        isDangerous
+      />
     </>
   );
 };

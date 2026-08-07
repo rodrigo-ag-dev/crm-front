@@ -231,6 +231,12 @@
   font-variant-numeric: tabular-nums;
 }
 
+.rowActions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
 @media (max-width: 880px) {
   .shell {
     position: relative;

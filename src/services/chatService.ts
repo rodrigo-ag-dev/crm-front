@@ -1,5 +1,13 @@
 import api from './api';
 
+export interface PagedResult<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  page: number;
+  size: number;
+}
+
 export interface ChatContact {
   id: string;
   fullName: string;
@@ -44,10 +52,11 @@ export interface ChatReadStreamEvent {
 }
 
 export const chatService = {
-  getContacts: (search?: string) =>
-    api.get<ChatContact[]>('/chat/contacts', { params: search ? { search } : undefined }),
+  getContacts: (search?: string, page = 0, size = 10) =>
+    api.get<PagedResult<ChatContact>>('/chat/contacts', { params: { search: search || undefined, page, size } }),
 
-  getConversations: () => api.get<ChatConversation[]>('/chat/conversations'),
+  getConversations: (search?: string, page = 0, size = 15) =>
+    api.get<PagedResult<ChatConversation>>('/chat/conversations', { params: { search: search || undefined, page, size } }),
 
   startConversation: (userId: string) =>
     api.post<ChatConversation>('/chat/conversations', { userId }),
@@ -61,6 +70,8 @@ export const chatService = {
     api.post<ChatMessage>(`/chat/conversations/${conversationId}/messages`, { body }),
 
   markRead: (conversationId: string) => api.patch(`/chat/conversations/${conversationId}/read`),
+
+  deleteConversation: (conversationId: string) => api.delete(`/chat/conversations/${conversationId}`),
 
   getUnreadCount: () => api.get<{ count: number }>('/chat/unread-count'),
 };
