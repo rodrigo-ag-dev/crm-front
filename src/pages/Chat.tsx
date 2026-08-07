@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Building2, ChevronLeft, ChevronRight, Plus, Send, Trash2, X } from 'lucide-react';
+import { Building2, ChevronLeft, ChevronRight, Plus, Send, Trash2, UserCog, X } from 'lucide-react';
 import {
   chatService,
   type ChatContact,
@@ -260,6 +260,19 @@ export const Chat: React.FC = () => {
     }
   };
 
+  // A platform admin currently viewing the participant's own tenant (the
+  // tenant switcher is what puts them there) has every message in *this*
+  // conversation sent as that person automatically — always recorded with an
+  // audit trail (impersonatedByUserId), never silently. This mirrors the
+  // backend's own check (ChatService.SendImpersonatedMessageAsync): same
+  // tenant match, and it can never apply to another platform admin.
+  const isImpersonatingContext = Boolean(
+    user?.platformAdmin
+    && active
+    && !active.participant.platformAdmin
+    && active.participant.tenantId === user.tenantId,
+  );
+
   const handleSend = async () => {
     const trimmed = body.trim();
     if (!trimmed || !id || sending) return;
@@ -267,7 +280,9 @@ export const Chat: React.FC = () => {
     setSending(true);
     setError('');
     try {
-      const response = await chatService.sendMessage(id, trimmed);
+      const response = isImpersonatingContext
+        ? await chatService.sendImpersonatedMessage(id, trimmed)
+        : await chatService.sendMessage(id, trimmed);
       setBody('');
       // Same race as the ticket timeline: the SSE echo of this exact message can
       // beat this response back, so dedupe rather than appending.
@@ -414,6 +429,11 @@ export const Chat: React.FC = () => {
                           <span className={styles.timestamp}>{formatTime(message.createdAt)}</span>
                         </div>
                         <span className={styles.bubbleBody}>{message.body}</span>
+                        {message.impersonatedByUserId && (
+                          <span className={styles.impersonatedTag}>
+                            {t('chat.impersonatedTag', { name: message.impersonatedByName || '' })}
+                          </span>
+                        )}
                       </div>
                     ))
                   )}
@@ -422,12 +442,21 @@ export const Chat: React.FC = () => {
 
                 {error && <p className="form-error">{error}</p>}
 
+                {isImpersonatingContext && (
+                  <div className={styles.impersonateBar}>
+                    <UserCog size={13} />
+                    {t('chat.impersonatingNotice', { name: active.participant.fullName })}
+                  </div>
+                )}
+
                 <div className={styles.composer}>
                   <textarea
                     className={styles.composerTextarea}
                     rows={2}
                     value={body}
-                    placeholder={t('chat.messagePlaceholder')}
+                    placeholder={isImpersonatingContext
+                      ? t('chat.messagePlaceholderImpersonating', { name: active.participant.fullName })
+                      : t('chat.messagePlaceholder')}
                     onChange={(event) => setBody(event.target.value)}
                     onKeyDown={(event) => {
                       if (event.key === 'Enter' && !event.shiftKey) {

@@ -118,7 +118,10 @@
     "errorStarting": "Não foi possível iniciar a conversa.",
     "deleteConversation": "Excluir conversa",
     "confirmDeleteConversation": "Tem certeza que deseja excluir esta conversa? Todas as mensagens serão perdidas para ambas as partes.",
-    "errorDeletingConversation": "Não foi possível excluir a conversa."
+    "errorDeletingConversation": "Não foi possível excluir a conversa.",
+    "impersonatingNotice": "Você está vendo a empresa de {name} — as mensagens enviadas aqui aparecerão como se fossem dela, com uma marca indicando que foram enviadas por você.",
+    "messagePlaceholderImpersonating": "Escreva como {name}...",
+    "impersonatedTag": "enviado por {name}"
   },
   "login": {
     "title": "QS CRM",
@@ -462,6 +465,8 @@
     "resetPasswordConfirm": "Tem certeza que deseja redefinir a senha de {name}? Uma nova senha temporária será gerada e a pessoa precisará trocá-la no próximo login.",
     "resetPasswordResultTitle": "Senha redefinida",
     "resetPasswordResultHint": "Repasse esta senha temporária para {name} por um canal seguro. Ela será obrigada a trocá-la ao entrar no sistema.",
+    "copyPasswordSuccess": "Senha copiada para a área de transferência.",
+    "copyPasswordError": "Não foi possível copiar a senha.",
     "noUsers": "Nenhum usuário encontrado",
     "errorLoading": "Erro ao carregar usuários",
     "errorUpdating": "Erro ao atualizar o papel do usuário",

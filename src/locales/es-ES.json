@@ -118,7 +118,10 @@
     "errorStarting": "No se pudo iniciar la conversación.",
     "deleteConversation": "Eliminar conversación",
     "confirmDeleteConversation": "¿Seguro que deseas eliminar esta conversación? Todos los mensajes se perderán para ambas partes.",
-    "errorDeletingConversation": "No se pudo eliminar la conversación."
+    "errorDeletingConversation": "No se pudo eliminar la conversación.",
+    "impersonatingNotice": "Estás viendo la empresa de {name} — los mensajes enviados aquí aparecerán como suyos, marcados como enviados por ti.",
+    "messagePlaceholderImpersonating": "Escribe como {name}...",
+    "impersonatedTag": "enviado por {name}"
   },
   "login": {
     "title": "QS CRM",
@@ -462,6 +465,8 @@
     "resetPasswordConfirm": "¿Seguro que quieres restablecer la contraseña de {name}? Se generará una nueva contraseña temporal y deberá cambiarla en el próximo inicio de sesión.",
     "resetPasswordResultTitle": "Contraseña restablecida",
     "resetPasswordResultHint": "Comparte esta contraseña temporal con {name} por un canal seguro. Deberá cambiarla al iniciar sesión.",
+    "copyPasswordSuccess": "Contraseña copiada al portapapeles.",
+    "copyPasswordError": "No se pudo copiar la contraseña.",
     "noUsers": "No se encontraron usuarios",
     "errorLoading": "Error al cargar usuarios",
     "errorUpdating": "Error al actualizar el rol del usuario",

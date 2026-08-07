@@ -35,17 +35,47 @@
   margin-top: 8px;
 }
 
-.loginError {
-  background-color: rgba(192, 57, 43, 0.1);
-  color: var(--danger-color);
-  padding: 12px;
+.field {
+  position: relative;
+}
+
+/* Marks both fields on a failed login without touching the shared Input
+   component — :global reaches its hardcoded .input-field class. */
+.fieldError :global(.input-field) {
+  border-color: var(--danger-color) !important;
+}
+
+.errorTooltip {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 5;
+  margin-top: 6px;
+  padding: 7px 11px;
   border-radius: 8px;
-  margin-bottom: 16px;
-  font-size: 14px;
+  max-width: 100%;
+  font-size: 12px;
   font-weight: 600;
+  line-height: 1.35;
+  color: #fff;
+  background-color: var(--danger-color);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+  animation: slideDown 0.15s ease-out;
+}
+
+.errorTooltip::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 16px;
+  border: 5px solid transparent;
+  border-bottom-color: var(--danger-color);
 }
 
 .loginSubmit {
   width: 100%;
-  margin-top: 16px;
+  /* A bit taller than a plain form usually needs — leaves room for
+     .errorTooltip (absolutely positioned, so it never shifts this button)
+     to sit fully above it instead of overlapping. */
+  margin-top: 28px;
 }

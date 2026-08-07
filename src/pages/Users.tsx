@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Building2, Copy, Edit2, KeyRound, Plus, ShieldMinus, ShieldPlus, UserCheck, UserX } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext';
 import { userService, type UserRecord, type UserRole } from '../services/userService';
 import api from '../services/api';
 import { getInitials, getAvatarStyle } from '../utils/avatarUtils';
@@ -27,6 +28,7 @@ const emptyForm: UserFormData = { username: '', fullName: '', email: '', passwor
 export const Users: React.FC = () => {
   const { t } = useTranslation();
   const { user: currentUser } = useAuth();
+  const { showToast } = useToast();
   const [users, setUsers] = useState<UserRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -434,8 +436,13 @@ export const Users: React.FC = () => {
             className="btn-icon"
             title={t('common.copy')}
             aria-label={t('common.copy')}
-            onClick={() => {
-              if (resetPasswordResult) copyToClipboard(resetPasswordResult.temporaryPassword);
+            onClick={async () => {
+              if (!resetPasswordResult) return;
+              const success = await copyToClipboard(resetPasswordResult.temporaryPassword);
+              showToast(
+                success ? t('users.copyPasswordSuccess') : t('users.copyPasswordError'),
+                success ? 'success' : 'error',
+              );
             }}
           >
             <Copy size={16} />

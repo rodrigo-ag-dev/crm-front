@@ -1,0 +1,57 @@
+.toastStack {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  /* Above any open modal (--modal-z-index), so a toast triggered by an
+     action inside a modal (e.g. copying a value) is never hidden behind it. */
+  z-index: calc(var(--modal-z-index, 1000000) + 100);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  max-width: min(360px, calc(100vw - 32px));
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  animation: slideUp 0.2s ease-out;
+}
+
+.toastSuccess {
+  background-color: var(--success-color);
+}
+
+.toastError {
+  background-color: var(--danger-color);
+}
+
+.toastMessage {
+  flex: 1;
+  min-width: 0;
+  word-break: break-word;
+}
+
+.toastClose {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.toastClose:hover {
+  background: rgba(255, 255, 255, 0.28);
+}

@@ -124,6 +124,29 @@
   word-break: break-word;
 }
 
+/* Permanent audit tag on a message sent by an admin on behalf of the other
+   participant — never hidden, shown to both sides of the conversation. */
+.impersonatedTag {
+  align-self: flex-start;
+  font-size: 10px;
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+.impersonateBar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 6px 9px;
+  margin-bottom: -2px;
+  border-radius: 8px;
+  font-size: 11px;
+  color: var(--primary-color);
+  background-color: color-mix(in srgb, var(--primary-color) 10%, var(--surface-elevated));
+  border: 1px solid color-mix(in srgb, var(--primary-color) 30%, var(--border-color));
+}
+
 .emptyText {
   color: var(--text-secondary);
   font-size: 12px;

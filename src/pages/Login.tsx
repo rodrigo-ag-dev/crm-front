@@ -56,14 +56,8 @@ export const Login: React.FC = () => {
           <p className={styles.loginSubtitle}>{t('login.subtitle')}</p>
         </div>
 
-        {error && (
-          <div className={styles.loginError}>
-            {error}
-          </div>
-        )}
-
         <form autoComplete='off' onSubmit={handleLogin}>
-          <div className="form-group">
+          <div className={`${styles.field} ${error ? styles.fieldError : ''}`}>
             <Input
               label={t('login.email')}
               type="email"
@@ -74,14 +68,21 @@ export const Login: React.FC = () => {
             />
           </div>
 
-          <Input
-            label={t('login.password')}
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            placeholder="********"
-          />
+          <div className={`${styles.field} ${error ? styles.fieldError : ''}`}>
+            <Input
+              label={t('login.password')}
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              placeholder="********"
+            />
+            {error && (
+              <div className={styles.errorTooltip} role="alert">
+                {error}
+              </div>
+            )}
+          </div>
 
           <button type="submit" className={`btn-primary ${styles.loginSubmit}`} disabled={loading}>
             {loading ? t('login.loginProcessing') : t('login.loginButton')}

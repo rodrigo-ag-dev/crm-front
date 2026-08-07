@@ -35,6 +35,9 @@ export interface ChatMessage {
   senderName: string;
   body: string;
   createdAt: string;
+  /** Set when a platform admin sent this on behalf of senderId — the audit trail. */
+  impersonatedByUserId?: string;
+  impersonatedByName?: string;
 }
 
 /** Payload of the `chat` event on the shared per-user stream. */
@@ -68,6 +71,9 @@ export const chatService = {
 
   sendMessage: (conversationId: string, body: string) =>
     api.post<ChatMessage>(`/chat/conversations/${conversationId}/messages`, { body }),
+
+  sendImpersonatedMessage: (conversationId: string, body: string) =>
+    api.post<ChatMessage>(`/chat/conversations/${conversationId}/messages/impersonated`, { body }),
 
   markRead: (conversationId: string) => api.patch(`/chat/conversations/${conversationId}/read`),
 
