@@ -100,6 +100,7 @@
     "unreadTab": "No leídas",
     "readTab": "Leídas",
     "loadMore": "Cargar más",
+    "delete": "Eliminar notificación",
     "overdueSince": "Venció el {date}",
     "dueSoon": "Vence el {date}",
     "enableBrowserPush": "Actívalas para recibir avisos del navegador.",

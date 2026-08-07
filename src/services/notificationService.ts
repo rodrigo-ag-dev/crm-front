@@ -49,4 +49,6 @@ export const notificationService = {
   markRead: (id: string) => api.patch(`/notifications/${id}/read`),
 
   markAllRead: () => api.patch('/notifications/read-all'),
+
+  deleteNotification: (id: string) => api.delete(`/notifications/${id}`),
 };

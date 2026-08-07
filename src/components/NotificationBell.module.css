@@ -157,6 +157,33 @@
   background: var(--control-hover-bg);
 }
 
+.itemTopRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.itemDeleteButton {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text-light);
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.itemDeleteButton:hover {
+  background: var(--menu-danger-hover-bg, var(--control-hover-bg));
+  color: var(--danger-color);
+}
+
 .itemCategory {
   font-size: 0.66rem;
   font-weight: 700;

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, Check, Clock } from 'lucide-react';
+import { Bell, Check, Clock, Trash2 } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
 import { useUserEvent } from '../contexts/UserEventsContext';
 import {
@@ -274,6 +274,16 @@ export const NotificationBell: React.FC = () => {
     navigate(route);
   };
 
+  const handleDelete = async (event: React.MouseEvent, notification: AppNotification) => {
+    event.stopPropagation();
+    removeFromTab('read', notification.id);
+    try {
+      await notificationService.deleteNotification(notification.id);
+    } catch (error) {
+      console.error('Error deleting notification', error);
+    }
+  };
+
   const handleMarkAllRead = async () => {
     if (unreadCount === 0) return;
 
@@ -364,6 +374,7 @@ export const NotificationBell: React.FC = () => {
                   ? t('notifications.dueSoon', { date: toFormatedDate(notification.dueAt) })
                   : t('notifications.overdueSince', { date: toFormatedDate(notification.dueAt) });
                 const showActions = isTask && activeTab === 'unread';
+                const showDelete = activeTab === 'read';
 
                 return (
                   <div
@@ -371,8 +382,23 @@ export const NotificationBell: React.FC = () => {
                     className={`${styles.item} ${!notification.readAt ? styles.itemUnread : ''} ${!isTask ? styles.itemClickable : ''}`}
                     onClick={!isTask ? () => handleItemClick(notification) : undefined}
                   >
-                    {!isTask && (
-                      <span className={styles.itemCategory}>{t(ENTITY_TYPE_LABEL_KEY[notification.entityType])}</span>
+                    {(!isTask || showDelete) && (
+                      <div className={styles.itemTopRow}>
+                        {!isTask && (
+                          <span className={styles.itemCategory}>{t(ENTITY_TYPE_LABEL_KEY[notification.entityType])}</span>
+                        )}
+                        {showDelete && (
+                          <button
+                            type="button"
+                            className={styles.itemDeleteButton}
+                            onClick={(event) => handleDelete(event, notification)}
+                            aria-label={t('notifications.delete')}
+                            title={t('notifications.delete')}
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        )}
+                      </div>
                     )}
                     <span className={styles.itemTitle}>{notification.title || notification.entityId}</span>
                     <span className={`${styles.itemMeta} ${isUpcoming ? styles.itemMetaUpcoming : ''}`}>
