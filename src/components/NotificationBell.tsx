@@ -19,6 +19,19 @@ import styles from './NotificationBell.module.css';
 // proxy that drops the connection without firing EventSource.onerror), same
 // role and interval as the ticket comment streams' fallback.
 const FALLBACK_POLL_INTERVAL_MS = 60000;
+const PAGE_SIZE = 20;
+
+type TabKey = 'unread' | 'read';
+
+interface TabState {
+  items: AppNotification[];
+  page: number;
+  totalPages: number;
+  loading: boolean;
+  loaded: boolean;
+}
+
+const emptyTabState: TabState = { items: [], page: 0, totalPages: 0, loading: false, loaded: false };
 
 const ENTITY_TYPE_LABEL_KEY: Record<NotificationEntityType, string> = {
   TASK: 'notifications.entityTypeLabel.TASK',
@@ -52,8 +65,8 @@ export const NotificationBell: React.FC = () => {
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
   const [open, setOpen] = useState(false);
-  const [notifications, setNotifications] = useState<AppNotification[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabKey>('unread');
+  const [tabs, setTabs] = useState<Record<TabKey, TabState>>({ unread: emptyTabState, read: emptyTabState });
   const [permission, setPermission] = useState<NotificationPermission | 'unsupported'>(
     typeof Notification !== 'undefined' ? Notification.permission : 'unsupported',
   );
@@ -62,11 +75,13 @@ export const NotificationBell: React.FC = () => {
   const previousCountRef = useRef(0);
   const isCheckingRef = useRef(false);
   // Read from the mount-only taskChanged subscription below, which can't close
-  // over `open` without resubscribing on every toggle.
+  // over `open`/`activeTab` without resubscribing on every change.
   const openRef = useRef(false);
+  const activeTabRef = useRef<TabKey>('unread');
   useEffect(() => {
     openRef.current = open;
-  }, [open]);
+    activeTabRef.current = activeTab;
+  }, [open, activeTab]);
 
   const fireBrowserNotification = (count: number, title?: string) => {
     if (permission !== 'granted' || typeof Notification === 'undefined') return;
@@ -99,16 +114,26 @@ export const NotificationBell: React.FC = () => {
     }
   };
 
-  const fetchList = async () => {
-    setLoading(true);
+  // page 0 replaces the tab's items; any later page appends (the "Carregar
+  // mais" pagination footer).
+  const fetchTab = async (tab: TabKey, page: number) => {
+    setTabs((prev) => ({ ...prev, [tab]: { ...prev[tab], loading: true } }));
     try {
-      const response = await notificationService.getList(20);
-      setNotifications(response.data || []);
+      const response = await notificationService.getList(page, PAGE_SIZE, tab === 'read');
+      const data = response.data;
+      setTabs((prev) => ({
+        ...prev,
+        [tab]: {
+          items: page === 0 ? (data.content || []) : [...prev[tab].items, ...(data.content || [])],
+          page: data.page ?? page,
+          totalPages: data.totalPages ?? 0,
+          loading: false,
+          loaded: true,
+        },
+      }));
     } catch (error) {
       console.error('Error fetching notifications', error);
-      setNotifications([]);
-    } finally {
-      setLoading(false);
+      setTabs((prev) => ({ ...prev, [tab]: { ...prev[tab], loading: false, loaded: true } }));
     }
   };
 
@@ -122,22 +147,20 @@ export const NotificationBell: React.FC = () => {
     // equivalent event yet - the 60s fallback poll below is what catches those up.
     return subscribeTaskChanged(() => {
       checkUnreadCount();
-      if (openRef.current) fetchList();
+      if (openRef.current && activeTabRef.current === 'unread') fetchTab('unread', 0);
     });
   }, []);
 
-  // Live push: the server sends this user's authoritative unread count (plus the
-  // new notification itself, when there is one) the moment anything changes, so
-  // the bell updates instantly rather than up to a poll interval later.
+  // Live push: the server sends this user's authoritative unread count the
+  // moment anything changes, so the badge updates instantly rather than up to
+  // a poll interval later. The visible list isn't auto-refreshed on this event
+  // even when open - the unread tab is oldest-first, so a brand new item never
+  // lands on the page currently in view anyway.
   useUserEvent<NotificationStreamEvent>('notification', (event) => {
     const count = event.unreadCount ?? 0;
-
     if (event.notification) {
       fireBrowserNotification(1, event.notification.title);
-      // Only when the dropdown is already open - otherwise toggleOpen fetches it.
-      if (open) fetchList();
     }
-
     previousCountRef.current = count;
     setUnreadCount(count);
   });
@@ -170,7 +193,24 @@ export const NotificationBell: React.FC = () => {
   const toggleOpen = () => {
     const next = !open;
     setOpen(next);
-    if (next) fetchList();
+    if (next) {
+      // Always reopen on "não lidas"; "lidas" is only fetched once that tab
+      // is actually clicked, and starts fresh every time the dropdown opens.
+      setActiveTab('unread');
+      setTabs({ unread: emptyTabState, read: emptyTabState });
+      fetchTab('unread', 0);
+    }
+  };
+
+  const handleTabClick = (tab: TabKey) => {
+    setActiveTab(tab);
+    if (!tabs[tab].loaded) fetchTab(tab, 0);
+  };
+
+  const handleLoadMore = () => {
+    const tab = tabs[activeTab];
+    if (tab.loading || tab.page + 1 >= tab.totalPages) return;
+    fetchTab(activeTab, tab.page + 1);
   };
 
   const requestPushPermission = async () => {
@@ -179,14 +219,21 @@ export const NotificationBell: React.FC = () => {
     setPermission(result);
   };
 
-  const removeLocally = (notificationId: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
+  const removeFromTab = (tab: TabKey, notificationId: string) => {
+    setTabs((prev) => ({
+      ...prev,
+      [tab]: { ...prev[tab], items: prev[tab].items.filter((n) => n.id !== notificationId) },
+    }));
+  };
+
+  const decrementUnread = () => {
     setUnreadCount((prev) => Math.max(0, prev - 1));
     previousCountRef.current = Math.max(0, previousCountRef.current - 1);
   };
 
   const handleComplete = async (notification: AppNotification) => {
-    removeLocally(notification.id);
+    removeFromTab('unread', notification.id);
+    decrementUnread();
     try {
       await Promise.all([
         taskService.changeStatus(notification.entityId, 'DONE'),
@@ -199,7 +246,8 @@ export const NotificationBell: React.FC = () => {
   };
 
   const handleSnooze = async (notification: AppNotification) => {
-    removeLocally(notification.id);
+    removeFromTab('unread', notification.id);
+    decrementUnread();
     const base = notification.dueAt ? new Date(notification.dueAt) : new Date();
     base.setDate(base.getDate() + 1);
     try {
@@ -219,25 +267,32 @@ export const NotificationBell: React.FC = () => {
 
     setOpen(false);
     if (!notification.readAt) {
-      removeLocally(notification.id);
+      removeFromTab('unread', notification.id);
+      decrementUnread();
       notificationService.markRead(notification.id).catch(() => {});
     }
     navigate(route);
   };
 
   const handleMarkAllRead = async () => {
-    const unreadIds = notifications.filter((n) => !n.readAt).map((n) => n.id);
-    setNotifications((prev) => prev.map((n) => (n.readAt ? n : { ...n, readAt: new Date().toISOString() })));
+    if (unreadCount === 0) return;
+
     setUnreadCount(0);
     previousCountRef.current = 0;
-    if (unreadIds.length === 0) return;
-
     try {
       await notificationService.markAllRead();
     } catch (error) {
       console.error('Error marking all notifications as read', error);
     }
+
+    fetchTab('unread', 0);
+    // The read tab's cache is now stale (everything just moved into it) -
+    // drop it so the next visit fetches fresh instead of showing old data.
+    setTabs((prev) => ({ ...prev, read: emptyTabState }));
+    if (activeTab === 'read') fetchTab('read', 0);
   };
+
+  const currentTab = tabs[activeTab];
 
   return (
     <div ref={wrapperRef} className={styles.wrapper}>
@@ -268,6 +323,23 @@ export const NotificationBell: React.FC = () => {
             </button>
           </div>
 
+          <div className={styles.tabs}>
+            <button
+              type="button"
+              className={`${styles.tab} ${activeTab === 'unread' ? styles.tabActive : ''}`}
+              onClick={() => handleTabClick('unread')}
+            >
+              {t('notifications.unreadTab')}{unreadCount > 0 ? ` (${unreadCount > 99 ? '99+' : unreadCount})` : ''}
+            </button>
+            <button
+              type="button"
+              className={`${styles.tab} ${activeTab === 'read' ? styles.tabActive : ''}`}
+              onClick={() => handleTabClick('read')}
+            >
+              {t('notifications.readTab')}
+            </button>
+          </div>
+
           {permission === 'default' && (
             <div className={styles.permissionBanner}>
               <span>{t('notifications.enableBrowserPush')}</span>
@@ -277,18 +349,21 @@ export const NotificationBell: React.FC = () => {
             </div>
           )}
 
-          {loading ? (
+          {currentTab.loading && currentTab.items.length === 0 ? (
             <div className="page-loading">{t('common.loading')}</div>
-          ) : notifications.length === 0 ? (
-            <p className={styles.emptyState}>{t('notifications.empty')}</p>
+          ) : currentTab.items.length === 0 ? (
+            <p className={styles.emptyState}>
+              {activeTab === 'unread' ? t('notifications.empty') : t('notifications.emptyRead')}
+            </p>
           ) : (
             <div className={styles.list}>
-              {notifications.map((notification) => {
+              {currentTab.items.map((notification) => {
                 const isTask = notification.entityType === 'TASK';
                 const isUpcoming = notification.kind === 'UPCOMING';
                 const metaText = isUpcoming
                   ? t('notifications.dueSoon', { date: toFormatedDate(notification.dueAt) })
                   : t('notifications.overdueSince', { date: toFormatedDate(notification.dueAt) });
+                const showActions = isTask && activeTab === 'unread';
 
                 return (
                   <div
@@ -303,7 +378,7 @@ export const NotificationBell: React.FC = () => {
                     <span className={`${styles.itemMeta} ${isUpcoming ? styles.itemMetaUpcoming : ''}`}>
                       {metaText}
                     </span>
-                    {isTask && (
+                    {showActions && (
                       <div className={styles.itemActions}>
                         <button
                           type="button"
@@ -326,6 +401,17 @@ export const NotificationBell: React.FC = () => {
                   </div>
                 );
               })}
+
+              {currentTab.page + 1 < currentTab.totalPages && (
+                <button
+                  type="button"
+                  className={styles.loadMoreButton}
+                  onClick={handleLoadMore}
+                  disabled={currentTab.loading}
+                >
+                  {currentTab.loading ? t('common.loading') : t('notifications.loadMore')}
+                </button>
+              )}
             </div>
           )}
         </div>

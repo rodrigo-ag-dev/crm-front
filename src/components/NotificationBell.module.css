@@ -79,6 +79,32 @@
   cursor: default;
 }
 
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.tab {
+  flex: 1;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 9px 6px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.tab:hover {
+  color: var(--text-primary);
+}
+
+.tabActive {
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
+}
+
 .permissionBanner {
   display: flex;
   align-items: center;
@@ -184,4 +210,24 @@
   text-align: center;
   color: var(--text-light);
   font-size: 0.84rem;
+}
+
+.loadMoreButton {
+  background: none;
+  border: none;
+  color: var(--secondary-color);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 10px 14px;
+  text-align: center;
+}
+
+.loadMoreButton:hover {
+  background: var(--control-hover-bg);
+}
+
+.loadMoreButton:disabled {
+  color: var(--text-light);
+  cursor: default;
 }
