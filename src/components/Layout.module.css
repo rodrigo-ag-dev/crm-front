@@ -45,10 +45,24 @@
   pointer-events: none;
 }
 
+/* Holds the brand box and the expand/collapse toggle side by side - centered
+   as a pair when collapsed, spread to the row's edges once expanded. */
+.railBrandRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.railExpanded .railBrandRow {
+  justify-content: space-between;
+}
+
 .railBrand {
-  width: 34px;
-  height: 34px;
-  border-radius: 9px;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
   background: var(--sidebar-brand-bg);
   color: var(--sidebar-brand-icon);
   display: flex;
@@ -65,15 +79,14 @@
 }
 
 .railExpanded .railBrand {
-  width: 100%;
-  justify-content: flex-start;
-  padding-left: 8px;
+  width: auto;
+  padding: 0 8px;
   gap: 10px;
 }
 
 .railBrandIcon {
-  width: 18px;
-  height: 18px;
+  width: 15px;
+  height: 15px;
   flex-shrink: 0;
   object-fit: contain;
 }
@@ -121,6 +134,40 @@
 .railExpanded .railDivider {
   width: 100%;
   align-self: stretch;
+}
+
+.railGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.railExpanded .railGroup {
+  align-items: stretch;
+}
+
+.railGroupLabel {
+  align-self: flex-start;
+  margin-left: 11px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-light);
+  white-space: nowrap;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: opacity 0.15s ease, max-height 0.2s ease !important;
+}
+
+.railExpanded .railGroupLabel {
+  max-height: 20px;
+  opacity: 1;
+  margin-top: 2px;
+  transition-delay: 0.08s;
 }
 
 .railItem {
@@ -174,33 +221,27 @@
   transition-delay: 0.08s;
 }
 
-.railToggle {
+/* Sits in .railBrandRow next to the logo instead of a full-width footer
+   row - a normal flex sibling, not floated on the rail's edge, so no
+   absolute positioning or expanded-state variant is needed. */
+.railEdgeToggle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 10px;
+  background: var(--sidebar-bg);
   color: var(--text-secondary);
-  background: transparent;
-  border: none;
+  border: 1px solid var(--border-color);
   flex-shrink: 0;
-  margin-top: auto;
-  align-self: center;
-  transition: background-color 0.18s ease, color 0.18s ease, width 0.25s cubic-bezier(0.4, 0, 0.2, 1), padding 0.25s ease !important;
+  transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease !important;
 }
 
-.railToggle:hover {
+.railEdgeToggle:hover {
   background-color: var(--sidebar-hover);
   color: var(--text-primary);
-}
-
-.railExpanded .railToggle {
-  width: 100%;
-  justify-content: flex-start;
-  padding: 0 11px;
-  align-self: stretch;
-  gap: 12px;
+  border-color: var(--sidebar-hover);
 }
 
 .railTooltip {
@@ -593,6 +634,13 @@
        isn't in the global theme-transition allowlist either. */
     transition: transform 0.2s ease !important;
     z-index: 100050;
+  }
+
+  /* The off-canvas drawer is either fully open or fully closed via the
+     hamburger button above - there's no separate collapsed/expanded width
+     to toggle here. */
+  .railEdgeToggle {
+    display: none;
   }
 
   .rail.railOpen {

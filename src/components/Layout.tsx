@@ -44,17 +44,45 @@ type NavItem = {
   end?: boolean;
 };
 
+type NavGroup = {
+  labelKey: string;
+  items: NavItem[];
+};
+
 const DASHBOARD_ICON_COLOR = 'var(--primary-color)';
 
-const RAIL_ITEMS: NavItem[] = [
-  { to: '/my-day', icon: CheckSquare, labelKey: 'navigation.myDay', color: 'var(--secondary-color)', end: true },
-  { to: '/deals', icon: Briefcase, labelKey: 'navigation.deals', color: 'var(--tertiary-color)' },
-  { to: '/financial', icon: Wallet, labelKey: 'navigation.financial', color: 'var(--nav-color-gold)' },
-  { to: '/tickets', icon: Ticket, labelKey: 'navigation.tickets', color: 'var(--accent-color)', end: true },
-  { to: '/companies', icon: Building2, labelKey: 'navigation.companies', color: 'var(--nav-color-indigo)' },
-  { to: '/contacts', icon: Users, labelKey: 'navigation.contacts', color: 'var(--nav-color-cyan)' },
-  { to: '/chat', icon: MessageCircle, labelKey: 'navigation.chat', color: 'var(--secondary-color)' },
-  { to: '/reports', icon: FileText, labelKey: 'navigation.reports', color: 'var(--nav-color-coral)' },
+// Grouped by how the item is actually used day to day, not by data model -
+// e.g. Chat sits with Meu Dia (daily personal tools) rather than off on its
+// own, and Empresas/Contatos sit with Negócios (the sales pipeline they feed).
+const RAIL_GROUPS: NavGroup[] = [
+  {
+    labelKey: 'navigation.groupWork',
+    items: [
+      { to: '/my-day', icon: CheckSquare, labelKey: 'navigation.myDay', color: 'var(--secondary-color)', end: true },
+      { to: '/chat', icon: MessageCircle, labelKey: 'navigation.chat', color: 'var(--secondary-color)' },
+    ],
+  },
+  {
+    labelKey: 'navigation.groupSales',
+    items: [
+      { to: '/deals', icon: Briefcase, labelKey: 'navigation.deals', color: 'var(--tertiary-color)' },
+      { to: '/companies', icon: Building2, labelKey: 'navigation.companies', color: 'var(--nav-color-indigo)' },
+      { to: '/contacts', icon: Users, labelKey: 'navigation.contacts', color: 'var(--nav-color-cyan)' },
+    ],
+  },
+  {
+    labelKey: 'navigation.groupSupport',
+    items: [
+      { to: '/tickets', icon: Ticket, labelKey: 'navigation.tickets', color: 'var(--accent-color)', end: true },
+    ],
+  },
+  {
+    labelKey: 'navigation.groupManagement',
+    items: [
+      { to: '/financial', icon: Wallet, labelKey: 'navigation.financial', color: 'var(--nav-color-gold)' },
+      { to: '/reports', icon: FileText, labelKey: 'navigation.reports', color: 'var(--nav-color-coral)' },
+    ],
+  },
 ];
 
 const PAGE_TITLE_MAP: Record<string, string> = {
@@ -230,31 +258,36 @@ export const Layout: React.FC = () => {
         ref={railRef}
         className={`${styles.rail}${railOpen ? ` ${styles.railOpen}` : ''}${railExpanded ? ` ${styles.railExpanded}` : ''}`}
       >
-        <div className={styles.railBrand} title={t('navigation.crmPro')}>
-          <img src={qsIconWhite} alt="" className={styles.railBrandIcon} />
-          <span className={styles.railBrandLabel}>{t('navigation.crmPro')}</span>
+        <div className={styles.railBrandRow}>
+          <div className={styles.railBrand} title={t('navigation.crmPro')}>
+            <img src={qsIconWhite} alt="" className={styles.railBrandIcon} />
+            <span className={styles.railBrandLabel}>{t('navigation.crmPro')}</span>
+          </div>
+
+          <button
+            type="button"
+            className={styles.railEdgeToggle}
+            onClick={toggleRailExpanded}
+            aria-label={railExpanded ? t('navigation.collapseMenu') : t('navigation.expandMenu')}
+            title={railExpanded ? t('navigation.collapseMenu') : t('navigation.expandMenu')}
+          >
+            {railExpanded ? <ChevronLeft size={14} /> : <ChevronRight size={14} />}
+          </button>
         </div>
 
         <nav className={styles.railNav}>
           <RailLink to="/" end icon={LayoutDashboard} label={t('navigation.dashboard')} color={DASHBOARD_ICON_COLOR} onClick={closeRail} />
 
-          <div className={styles.railDivider} />
-
-          {RAIL_ITEMS.map((item) => (
-            <RailLink key={item.to} to={item.to} end={item.end} icon={item.icon} label={t(item.labelKey)} color={item.color} onClick={closeRail} />
+          {RAIL_GROUPS.map((group) => (
+            <div className={styles.railGroup} key={group.labelKey}>
+              <div className={styles.railDivider} />
+              <span className={styles.railGroupLabel}>{t(group.labelKey)}</span>
+              {group.items.map((item) => (
+                <RailLink key={item.to} to={item.to} end={item.end} icon={item.icon} label={t(item.labelKey)} color={item.color} onClick={closeRail} />
+              ))}
+            </div>
           ))}
         </nav>
-
-        <button
-          type="button"
-          className={styles.railToggle}
-          onClick={toggleRailExpanded}
-          aria-label={railExpanded ? t('navigation.collapseMenu') : t('navigation.expandMenu')}
-          title={railExpanded ? t('navigation.collapseMenu') : t('navigation.expandMenu')}
-        >
-          {railExpanded ? <ChevronLeft size={18} className={styles.railItemIcon} /> : <ChevronRight size={18} className={styles.railItemIcon} />}
-          <span className={styles.railLabel}>{t('navigation.collapseMenu')}</span>
-        </button>
       </aside>
 
       <main className={styles.mainContent}>
