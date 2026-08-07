@@ -34,6 +34,11 @@
   margin: 0;
 }
 
+/* Colored from the ticket's own stage (--stage-color, see getStageColor in
+   services/ticketStageService.ts) instead of a flat neutral tone, same
+   color-mix technique the rest of the app uses for stage/status badges —
+   keeps this page's own uppercase pill shape since it's a standalone,
+   unauthenticated header, not one of the internal list cards. */
 .stageBadge {
   flex-shrink: 0;
   font-size: 11px;
@@ -42,9 +47,9 @@
   letter-spacing: 0.4px;
   padding: 4px 10px;
   border-radius: 999px;
-  background-color: var(--surface-elevated);
-  color: var(--text-secondary);
-  border: 1px solid var(--border-color);
+  background-color: color-mix(in srgb, var(--stage-color, var(--text-secondary)) 14%, transparent);
+  color: var(--stage-color, var(--text-secondary));
+  border: 1px solid color-mix(in srgb, var(--stage-color, var(--text-secondary)) 30%, transparent);
 }
 
 .messages {

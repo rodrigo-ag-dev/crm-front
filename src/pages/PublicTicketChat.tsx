@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Send } from 'lucide-react';
 import { publicTicketService, getApiBaseUrl, type PublicTicket, type PublicTicketComment } from '../services/publicTicketService';
+import { getStageColor } from '../services/ticketStageService';
 import { useTranslation } from '../hooks/useTranslation';
 import { useTicketCommentsStream } from '../hooks/useTicketCommentsStream';
 import styles from './PublicTicketChat.module.css';
@@ -118,7 +119,14 @@ export const PublicTicketChat: React.FC = () => {
     <div className={styles.page}>
       <header className={styles.header}>
         <h1 className={styles.title}>{ticket.title}</h1>
-        {ticket.stageName && <span className={styles.stageBadge}>{ticket.stageName}</span>}
+        {ticket.stageName && (
+          <span
+            className={styles.stageBadge}
+            style={{ '--stage-color': getStageColor(ticket.stageColor) } as React.CSSProperties}
+          >
+            {ticket.stageName}
+          </span>
+        )}
       </header>
 
       <div className={styles.messages}>

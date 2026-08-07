@@ -27,6 +27,7 @@ export interface PublicTicket {
   id: string;
   title: string;
   stageName?: string;
+  stageColor?: string;
   canceled: boolean;
   closedAt?: string;
 }

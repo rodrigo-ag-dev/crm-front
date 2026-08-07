@@ -12,6 +12,7 @@ import { RecordPane, RecordPaneEmptyState, RelatedItem, RelatedSection } from '.
 import { TaskWidget } from '../components/TaskWidget';
 import { TicketTimeline } from '../components/TicketTimeline';
 import { TicketShareLinkPanel } from '../components/TicketShareLinkPanel';
+import { TicketStageBadge } from '../components/TicketStageBadge';
 import { getTicketStages, type TicketStageOption } from '../services/ticketStageService';
 import { toFormatedDate } from '../utils/dateUtils';
 import { getStoredViewMode, setStoredViewMode, type ViewMode } from '../utils/viewPreferences';
@@ -20,12 +21,9 @@ import { useFittedPageSize } from '../hooks/useFittedPageSize';
 import { TicketsKanbanView } from './TicketsKanbanView';
 import splitStyles from '../components/SplitViewShell.module.css';
 import paneStyles from '../components/RecordPane.module.css';
+import styles from './Tickets.module.css';
 
 const LIST_CACHE_KEY = 'tickets';
-
-const stageLabelById = (ticketStageId: string, stages: TicketStageOption[]) => {
-  return stages.find((stage) => stage.id === ticketStageId)?.name || ticketStageId || '-';
-};
 
 export const Tickets: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -143,12 +141,15 @@ export const Tickets: React.FC = () => {
     fetchDetail();
   };
 
-  const stageName = ticketStages.find((stage) => stage.id === detail?.ticketStageId)?.name || '';
-
   const detailPane = (
     <RecordPane
       title={detail?.title || ''}
-      subtitle={detail?.canceled ? t('tickets.statusCanceled') : stageName}
+      subtitle={detail?.companyName || detail?.contactName}
+      badge={detail ? (
+        detail.canceled
+          ? <span className={styles.canceledBadge}>{t('tickets.statusCanceled')}</span>
+          : <TicketStageBadge ticketStageId={detail.ticketStageId} stages={ticketStages} />
+      ) : undefined}
       loading={detailLoading}
       error={detailError}
       onEdit={detail ? () => handleOpenModal(detail) : undefined}
@@ -267,7 +268,7 @@ export const Tickets: React.FC = () => {
                         isActive={ticket.id === id}
                         primary={ticket.title}
                         secondary={ticket.companyName || ticket.contactName}
-                        meta={stageLabelById(ticket.ticketStageId, ticketStages)}
+                        badge={<TicketStageBadge ticketStageId={ticket.ticketStageId} stages={ticketStages} />}
                       />
                     ))}
                     {tickets.length === 0 && (

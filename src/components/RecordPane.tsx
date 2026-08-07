@@ -138,9 +138,10 @@ interface RelatedItemProps {
   primary: string;
   secondary?: string;
   description?: string;
+  badge?: React.ReactNode;
 }
 
-export const RelatedItem: React.FC<RelatedItemProps> = ({ to, primary, secondary, description }) => (
+export const RelatedItem: React.FC<RelatedItemProps> = ({ to, primary, secondary, description, badge }) => (
   <Link to={to} draggable={false} className={styles.relatedItem}>
     <span className={styles.relatedItemAvatar} style={getAvatarStyle(primary)}>
       {getInitials(primary)}
@@ -154,6 +155,7 @@ export const RelatedItem: React.FC<RelatedItemProps> = ({ to, primary, secondary
         </span>
       )}
     </span>
+    {badge && <span className={styles.relatedItemBadge}>{badge}</span>}
     <ChevronRight size={16} />
   </Link>
 );

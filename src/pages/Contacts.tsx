@@ -10,6 +10,7 @@ import { TicketModal } from '../components/TicketModal';
 import { SplitViewShell, RecordListRow, RecordListRowsSkeleton, CollapsibleSearchBar } from '../components/SplitViewShell';
 import { RecordPane, RecordPaneEmptyState, RelatedItem, RelatedSection } from '../components/RecordPane';
 import { TaskWidget } from '../components/TaskWidget';
+import { TicketStageBadge } from '../components/TicketStageBadge';
 import { abbreviateNumber } from '../utils/numberUtils';
 import { getListCache, setListCache } from '../utils/listCache';
 import { useFittedPageSize } from '../hooks/useFittedPageSize';
@@ -108,7 +109,6 @@ export const Contacts: React.FC = () => {
   }, []);
 
   const dealStageDescription = (stageId?: string) => dealStages.find((s) => s.id === stageId)?.description;
-  const ticketStageName = (stageId?: string) => ticketStages.find((s) => s.id === stageId)?.name;
 
   async function fetchContacts() {
     setLoading(true);
@@ -320,7 +320,7 @@ export const Contacts: React.FC = () => {
                         to={`/tickets/${ticket.id}`}
                         primary={ticket.title}
                         secondary={ticket.companyName}
-                        description={ticketStageName(ticket.ticketStageId)}
+                        badge={<TicketStageBadge ticketStageId={ticket.ticketStageId} stages={ticketStages} />}
                       />
                     ))}
                   </RelatedSection>

@@ -11,6 +11,7 @@ import { TicketModal } from '../components/TicketModal';
 import { SplitViewShell, RecordListRow, RecordListRowsSkeleton, CollapsibleSearchBar } from '../components/SplitViewShell';
 import { RecordPane, RecordPaneEmptyState, RelatedItem, RelatedSection } from '../components/RecordPane';
 import { TaskWidget } from '../components/TaskWidget';
+import { TicketStageBadge } from '../components/TicketStageBadge';
 import Input from '../components/Input';
 import Textarea from '../components/Textarea';
 import { SimpleDropdown } from '../components/SimpleDropdown';
@@ -153,7 +154,6 @@ export const Companies: React.FC = () => {
   }, []);
 
   const dealStageDescription = (stageId?: string) => dealStages.find((s) => s.id === stageId)?.description;
-  const ticketStageName = (stageId?: string) => ticketStages.find((s) => s.id === stageId)?.name;
 
   async function fetchCompanies() {
     setLoading(true);
@@ -408,7 +408,7 @@ export const Companies: React.FC = () => {
                         to={`/tickets/${ticket.id}`}
                         primary={ticket.title}
                         secondary={ticket.contactName}
-                        description={ticketStageName(ticket.ticketStageId)}
+                        badge={<TicketStageBadge ticketStageId={ticket.ticketStageId} stages={ticketStages} />}
                       />
                     ))}
                   </RelatedSection>

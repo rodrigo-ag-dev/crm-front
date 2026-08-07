@@ -8,6 +8,7 @@ import { TicketFunnelCard } from '../components/TicketFunnelCard';
 import { ViewToggle } from '../components/ViewToggle';
 import type { ViewMode } from '../utils/viewPreferences';
 import {
+  getStageColor,
   getTicketStages,
   sortTicketStages,
   type TicketStageOption,
@@ -18,11 +19,6 @@ interface TicketsKanbanViewProps {
   viewMode: ViewMode;
   onViewModeChange: (mode: ViewMode) => void;
 }
-
-const getStageColor = (color?: string) => {
-  if (!color) return 'var(--primary-color)';
-  return color.startsWith('#') || color.startsWith('var(') ? color : `#${color}`;
-};
 
 export const TicketsKanbanView: React.FC<TicketsKanbanViewProps> = ({ viewMode, onViewModeChange }) => {
   const { t } = useTranslation();

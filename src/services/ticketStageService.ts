@@ -19,3 +19,9 @@ export const sortTicketStages = (stages: TicketStageOption[]) => {
 export const getInitialTicketStageId = (stages: TicketStageOption[]) => {
   return sortTicketStages(stages)[0]?.id || '';
 };
+
+/** Normalizes a stage's stored color into something usable directly in CSS (hex or a var()). */
+export const getStageColor = (color?: string) => {
+  if (!color) return 'var(--primary-color)';
+  return color.startsWith('#') || color.startsWith('var(') ? color : `#${color}`;
+};
