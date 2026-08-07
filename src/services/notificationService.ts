@@ -1,11 +1,21 @@
 import api from './api';
 
-export interface TaskNotification {
+export type NotificationEntityType =
+  | 'TASK'
+  | 'FINANCIAL_INSTALLMENT'
+  | 'TICKET'
+  | 'DEAL_CLOSE_DATE'
+  | 'DEAL_STAGE_SLA';
+
+export type NotificationKind = 'UPCOMING' | 'OVERDUE';
+
+export interface AppNotification {
   id: string;
-  taskId: string;
-  taskTitle?: string;
-  taskDueAt?: string;
-  type: 'OVERDUE';
+  entityType: NotificationEntityType;
+  entityId: string;
+  title?: string;
+  dueAt?: string;
+  kind: NotificationKind;
   readAt?: string;
   createdAt: string;
 }
@@ -19,13 +29,13 @@ export interface TaskNotification {
  */
 export interface NotificationStreamEvent {
   unreadCount: number;
-  notification?: TaskNotification | null;
+  notification?: AppNotification | null;
 }
 
 export const notificationService = {
   getUnreadCount: () => api.get<{ count: number }>('/notifications/unread-count'),
 
-  getList: (limit = 20) => api.get<TaskNotification[]>(`/notifications?limit=${limit}`),
+  getList: (limit = 20) => api.get<AppNotification[]>(`/notifications?limit=${limit}`),
 
   markRead: (id: string) => api.patch(`/notifications/${id}/read`),
 

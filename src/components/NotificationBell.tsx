@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Bell, Check, Clock } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
 import { useUserEvent } from '../contexts/UserEventsContext';
 import {
   notificationService,
+  type AppNotification,
+  type NotificationEntityType,
   type NotificationStreamEvent,
-  type TaskNotification,
 } from '../services/notificationService';
 import { taskService } from '../services/taskService';
 import { emitTaskChanged, subscribeTaskChanged } from '../utils/taskEvents';
@@ -18,11 +20,39 @@ import styles from './NotificationBell.module.css';
 // role and interval as the ticket comment streams' fallback.
 const FALLBACK_POLL_INTERVAL_MS = 60000;
 
+const ENTITY_TYPE_LABEL_KEY: Record<NotificationEntityType, string> = {
+  TASK: 'notifications.entityTypeLabel.TASK',
+  FINANCIAL_INSTALLMENT: 'notifications.entityTypeLabel.FINANCIAL_INSTALLMENT',
+  TICKET: 'notifications.entityTypeLabel.TICKET',
+  DEAL_CLOSE_DATE: 'notifications.entityTypeLabel.DEAL_CLOSE_DATE',
+  DEAL_STAGE_SLA: 'notifications.entityTypeLabel.DEAL_STAGE_SLA',
+};
+
+// Tasks keep their own quick actions (Concluir/Adiar) below; everything else
+// is a plain click-through that marks read and navigates to where the
+// overdue/due-soon item actually lives. Financial installments have no
+// per-installment detail route (Financial.tsx is list+modal only), so that
+// one just opens the list.
+const routeForNotification = (notification: AppNotification): string | null => {
+  switch (notification.entityType) {
+    case 'TICKET':
+      return `/tickets/${notification.entityId}`;
+    case 'DEAL_CLOSE_DATE':
+    case 'DEAL_STAGE_SLA':
+      return `/deals/${notification.entityId}`;
+    case 'FINANCIAL_INSTALLMENT':
+      return '/financial';
+    default:
+      return null;
+  }
+};
+
 export const NotificationBell: React.FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
   const [open, setOpen] = useState(false);
-  const [notifications, setNotifications] = useState<TaskNotification[]>([]);
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [loading, setLoading] = useState(false);
   const [permission, setPermission] = useState<NotificationPermission | 'unsupported'>(
     typeof Notification !== 'undefined' ? Notification.permission : 'unsupported',
@@ -38,13 +68,13 @@ export const NotificationBell: React.FC = () => {
     openRef.current = open;
   }, [open]);
 
-  const fireBrowserNotification = (count: number, taskTitle?: string) => {
+  const fireBrowserNotification = (count: number, title?: string) => {
     if (permission !== 'granted' || typeof Notification === 'undefined') return;
     try {
       new Notification(t('notifications.browserPushTitle'), {
-        // A pushed notification knows exactly which task it is, so show that
-        // instead of the generic "you have N overdue tasks" the poll path uses.
-        body: taskTitle || t('notifications.browserPushBody', { count }),
+        // A pushed notification knows exactly which item it is, so show that
+        // instead of the generic "you have N new alerts" the poll path uses.
+        body: title || t('notifications.browserPushBody', { count }),
       });
     } catch {
       // Some browsers disallow direct construction in certain contexts; safe to ignore.
@@ -88,6 +118,8 @@ export const NotificationBell: React.FC = () => {
     // Kanban, a TaskWidget, the quick-add bar) can invalidate this user's own
     // notifications. The backend only purges those lazily, on read - so re-read
     // here to drop the badge immediately instead of waiting for the fallback poll.
+    // Financial/Ticket/Deal mutations elsewhere in the app don't have an
+    // equivalent event yet - the 60s fallback poll below is what catches those up.
     return subscribeTaskChanged(() => {
       checkUnreadCount();
       if (openRef.current) fetchList();
@@ -101,7 +133,7 @@ export const NotificationBell: React.FC = () => {
     const count = event.unreadCount ?? 0;
 
     if (event.notification) {
-      fireBrowserNotification(1, event.notification.taskTitle);
+      fireBrowserNotification(1, event.notification.title);
       // Only when the dropdown is already open - otherwise toggleOpen fetches it.
       if (open) fetchList();
     }
@@ -153,11 +185,11 @@ export const NotificationBell: React.FC = () => {
     previousCountRef.current = Math.max(0, previousCountRef.current - 1);
   };
 
-  const handleComplete = async (notification: TaskNotification) => {
+  const handleComplete = async (notification: AppNotification) => {
     removeLocally(notification.id);
     try {
       await Promise.all([
-        taskService.changeStatus(notification.taskId, 'DONE'),
+        taskService.changeStatus(notification.entityId, 'DONE'),
         notificationService.markRead(notification.id),
       ]);
       emitTaskChanged();
@@ -166,19 +198,31 @@ export const NotificationBell: React.FC = () => {
     }
   };
 
-  const handleSnooze = async (notification: TaskNotification) => {
+  const handleSnooze = async (notification: AppNotification) => {
     removeLocally(notification.id);
-    const base = notification.taskDueAt ? new Date(notification.taskDueAt) : new Date();
+    const base = notification.dueAt ? new Date(notification.dueAt) : new Date();
     base.setDate(base.getDate() + 1);
     try {
       await Promise.all([
-        taskService.snooze(notification.taskId, base.toISOString()),
+        taskService.snooze(notification.entityId, base.toISOString()),
         notificationService.markRead(notification.id),
       ]);
       emitTaskChanged();
     } catch (error) {
       console.error('Error snoozing task from notification', error);
     }
+  };
+
+  const handleItemClick = (notification: AppNotification) => {
+    const route = routeForNotification(notification);
+    if (!route) return;
+
+    setOpen(false);
+    if (!notification.readAt) {
+      removeLocally(notification.id);
+      notificationService.markRead(notification.id).catch(() => {});
+    }
+    navigate(route);
   };
 
   const handleMarkAllRead = async () => {
@@ -239,35 +283,49 @@ export const NotificationBell: React.FC = () => {
             <p className={styles.emptyState}>{t('notifications.empty')}</p>
           ) : (
             <div className={styles.list}>
-              {notifications.map((notification) => (
-                <div
-                  key={notification.id}
-                  className={`${styles.item} ${!notification.readAt ? styles.itemUnread : ''}`}
-                >
-                  <span className={styles.itemTitle}>{notification.taskTitle || notification.taskId}</span>
-                  <span className={styles.itemMeta}>
-                    {t('notifications.overdueSince', { date: toFormatedDate(notification.taskDueAt) })}
-                  </span>
-                  <div className={styles.itemActions}>
-                    <button
-                      type="button"
-                      className={`${styles.itemActionButton} ${styles.itemActionPrimary}`}
-                      onClick={() => handleComplete(notification)}
-                    >
-                      <Check size={13} />
-                      {t('tasks.markDone')}
-                    </button>
-                    <button
-                      type="button"
-                      className={styles.itemActionButton}
-                      onClick={() => handleSnooze(notification)}
-                    >
-                      <Clock size={13} />
-                      {t('tasks.snoozeOneDay')}
-                    </button>
+              {notifications.map((notification) => {
+                const isTask = notification.entityType === 'TASK';
+                const isUpcoming = notification.kind === 'UPCOMING';
+                const metaText = isUpcoming
+                  ? t('notifications.dueSoon', { date: toFormatedDate(notification.dueAt) })
+                  : t('notifications.overdueSince', { date: toFormatedDate(notification.dueAt) });
+
+                return (
+                  <div
+                    key={notification.id}
+                    className={`${styles.item} ${!notification.readAt ? styles.itemUnread : ''} ${!isTask ? styles.itemClickable : ''}`}
+                    onClick={!isTask ? () => handleItemClick(notification) : undefined}
+                  >
+                    {!isTask && (
+                      <span className={styles.itemCategory}>{t(ENTITY_TYPE_LABEL_KEY[notification.entityType])}</span>
+                    )}
+                    <span className={styles.itemTitle}>{notification.title || notification.entityId}</span>
+                    <span className={`${styles.itemMeta} ${isUpcoming ? styles.itemMetaUpcoming : ''}`}>
+                      {metaText}
+                    </span>
+                    {isTask && (
+                      <div className={styles.itemActions}>
+                        <button
+                          type="button"
+                          className={`${styles.itemActionButton} ${styles.itemActionPrimary}`}
+                          onClick={() => handleComplete(notification)}
+                        >
+                          <Check size={13} />
+                          {t('tasks.markDone')}
+                        </button>
+                        <button
+                          type="button"
+                          className={styles.itemActionButton}
+                          onClick={() => handleSnooze(notification)}
+                        >
+                          <Clock size={13} />
+                          {t('tasks.snoozeOneDay')}
+                        </button>
+                      </div>
+                    )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

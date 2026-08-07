@@ -97,10 +97,18 @@
     "markAllRead": "Marcar todas como leídas",
     "empty": "Todavía no hay notificaciones.",
     "overdueSince": "Venció el {date}",
+    "dueSoon": "Vence el {date}",
     "enableBrowserPush": "Actívalas para recibir avisos del navegador.",
     "enable": "Activar",
-    "browserPushTitle": "Tareas atrasadas",
-    "browserPushBody": "Tienes {count} tarea(s) atrasada(s) nueva(s)."
+    "browserPushTitle": "Notificaciones",
+    "browserPushBody": "Tienes {count} aviso(s) nuevo(s).",
+    "entityTypeLabel": {
+      "TASK": "Tarea",
+      "FINANCIAL_INSTALLMENT": "Finanzas",
+      "TICKET": "Ticket",
+      "DEAL_CLOSE_DATE": "Negocio",
+      "DEAL_STAGE_SLA": "Negocio · SLA de etapa"
+    }
   },
   "chat": {
     "title": "Chat",
@@ -289,6 +297,9 @@
     "ok": "OK",
     "animationActive": "Activar animación",
     "taskNotifyOverdue": "Avisarme sobre tareas atrasadas",
+    "financialNotifyOverdue": "Avisarme sobre cuentas por pagar/cobrar atrasadas",
+    "ticketNotifyOverdue": "Avisarme sobre tickets con plazo vencido",
+    "dealNotifyOverdue": "Avisarme sobre previsión de cierre y SLA de etapa de negocios",
     "saveSuccess": "Parámetros actualizados correctamente.",
     "saveError": "No se pudieron guardar los parámetros.",
     "loadError": "No se pudieron cargar los parámetros."

@@ -123,6 +123,22 @@
   background: var(--menu-active-bg);
 }
 
+.itemClickable {
+  cursor: pointer;
+}
+
+.itemClickable:hover {
+  background: var(--control-hover-bg);
+}
+
+.itemCategory {
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-light);
+}
+
 .itemTitle {
   font-size: 0.85rem;
   color: var(--text-primary);
@@ -132,6 +148,10 @@
   font-size: 0.72rem;
   color: var(--danger-color);
   font-weight: 600;
+}
+
+.itemMetaUpcoming {
+  color: var(--warning-color, var(--secondary-color));
 }
 
 .itemActions {

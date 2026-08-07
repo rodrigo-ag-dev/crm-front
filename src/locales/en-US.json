@@ -97,10 +97,18 @@
     "markAllRead": "Mark all as read",
     "empty": "No notifications yet.",
     "overdueSince": "Was due {date}",
+    "dueSoon": "Due {date}",
     "enableBrowserPush": "Enable to get browser alerts.",
     "enable": "Enable",
-    "browserPushTitle": "Overdue tasks",
-    "browserPushBody": "You have {count} new overdue task(s)."
+    "browserPushTitle": "Notifications",
+    "browserPushBody": "You have {count} new alert(s).",
+    "entityTypeLabel": {
+      "TASK": "Task",
+      "FINANCIAL_INSTALLMENT": "Finance",
+      "TICKET": "Ticket",
+      "DEAL_CLOSE_DATE": "Deal",
+      "DEAL_STAGE_SLA": "Deal · Stage SLA"
+    }
   },
   "chat": {
     "title": "Chat",
@@ -289,6 +297,9 @@
     "ok": "OK",
     "animationActive": "Enable animation",
     "taskNotifyOverdue": "Notify me about overdue tasks",
+    "financialNotifyOverdue": "Notify me about overdue bills/receivables",
+    "ticketNotifyOverdue": "Notify me about tickets past their due date",
+    "dealNotifyOverdue": "Notify me about deal close-date and stage SLA overdue",
     "saveSuccess": "Parameters updated successfully.",
     "saveError": "Unable to save the parameters.",
     "loadError": "Unable to load the parameters."
