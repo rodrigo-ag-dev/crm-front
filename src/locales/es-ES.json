@@ -422,6 +422,9 @@
     "placeholder": "Buscar empresas, contactos, negocios, tickets...",
     "hint": "Escribe al menos 2 caracteres para buscar"
   },
+  "layout": {
+    "searchTenants": "Buscar empresa..."
+  },
   "combobox": {
     "company": "Empresa",
     "searchCompany": "Buscar empresa...",

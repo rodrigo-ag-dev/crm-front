@@ -11,6 +11,7 @@ import { ChatTopbarButton } from './ChatTopbarButton';
 import { QuickAddTask } from './QuickAddTask';
 import { UserEventsProvider } from '../contexts/UserEventsContext';
 import { ChangePasswordGate } from './ChangePasswordGate';
+import { TenantSwitcher } from './TenantSwitcher';
 import { getStoredSidebarExpanded, setStoredSidebarExpanded } from '../utils/sidebarPreferences';
 import qsIconWhite from '../assets/brand/qs-icon-white.svg';
 import styles from './Layout.module.css';
@@ -298,10 +299,14 @@ export const Layout: React.FC = () => {
 
           <div className={styles.layoutShell}>
             {user?.tenantName && (
-              <div className={styles.tenantBadge} title={user.tenantName}>
-                <Building2 size={14} />
-                <span>{user.tenantName}</span>
-              </div>
+              user.platformAdmin ? (
+                <TenantSwitcher />
+              ) : (
+                <div className={styles.tenantBadge} title={user.tenantName}>
+                  <Building2 size={14} />
+                  <span>{user.tenantName}</span>
+                </div>
+              )
             )}
             <button
               type="button"

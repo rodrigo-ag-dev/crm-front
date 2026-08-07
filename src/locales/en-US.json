@@ -422,6 +422,9 @@
     "placeholder": "Search companies, contacts, deals, tickets...",
     "hint": "Type at least 2 characters to search"
   },
+  "layout": {
+    "searchTenants": "Search company..."
+  },
   "combobox": {
     "company": "Company",
     "searchCompany": "Search company...",
