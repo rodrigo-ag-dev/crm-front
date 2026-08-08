@@ -27,6 +27,8 @@ export interface SaveUserParameterPayload {
 export const parameterService = {
   listParameters: () => api.get<ParameterDefinition[]>('/parameter'),
 
+  saveParameter: (payload: ParameterDefinition) => api.post<ParameterDefinition>('/parameter', payload),
+
   listUserParameters: (userId: string) =>
     api.get<UserParameterOverride[]>(`/parameter/user/${userId}`),
 

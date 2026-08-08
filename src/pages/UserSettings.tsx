@@ -7,9 +7,10 @@ import { Users } from './Users';
 import { Tenants } from './Tenants';
 import { MaintenanceWindows } from './MaintenanceWindows';
 import { FinancialCategories } from './FinancialCategories';
+import { NotificationSchedule } from './NotificationSchedule';
 import styles from './UserSettings.module.css';
 
-type SettingsTab = 'preferences' | 'stages' | 'financialCategories' | 'users' | 'tenants' | 'maintenance';
+type SettingsTab = 'preferences' | 'stages' | 'financialCategories' | 'notificationSchedule' | 'users' | 'tenants' | 'maintenance';
 
 export const UserSettings: React.FC = () => {
   const { user } = useAuth();
@@ -53,6 +54,16 @@ export const UserSettings: React.FC = () => {
         {isAdmin && (
           <button
             type="button"
+            onClick={() => setActiveTab('notificationSchedule')}
+            className={`selector-button selector-button--surface ${activeTab === 'notificationSchedule' ? 'selector-button--active' : 'selector-button--inactive'}`}
+            aria-pressed={activeTab === 'notificationSchedule'}
+          >
+            {t('settings.tabNotificationSchedule')}
+          </button>
+        )}
+        {isAdmin && (
+          <button
+            type="button"
             onClick={() => setActiveTab('users')}
             className={`selector-button selector-button--surface ${activeTab === 'users' ? 'selector-button--active' : 'selector-button--inactive'}`}
             aria-pressed={activeTab === 'users'}
@@ -86,6 +97,7 @@ export const UserSettings: React.FC = () => {
         {activeTab === 'preferences' && <UserPreferences />}
         {activeTab === 'stages' && <Stages />}
         {activeTab === 'financialCategories' && <FinancialCategories />}
+        {activeTab === 'notificationSchedule' && isAdmin && <NotificationSchedule />}
         {activeTab === 'users' && isAdmin && <Users />}
         {activeTab === 'tenants' && isPlatformAdmin && <Tenants />}
         {activeTab === 'maintenance' && isPlatformAdmin && <MaintenanceWindows />}

@@ -1,0 +1,15 @@
+.row {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.row:last-child {
+  margin-bottom: 0;
+}
+
+.input {
+  flex: 1;
+  max-width: 200px;
+}
